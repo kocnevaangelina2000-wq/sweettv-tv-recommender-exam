@@ -1,0 +1,112 @@
+cohort=4643 test-subset=1238 warm (train positives)=4540 cold=103 pool=6363 train positives=317043 train (user,programme) pairs=115325 shared fallback for cohort built in 5.83s
+  popularity (ref)             global top-5, fallback for cold            MAP@5 cohort=0.23684 test=0.26799 rewatch=0.543 time=0.00s
+== a) personal history
+  history                      score=train positive count                 MAP@5 cohort=0.31362 test=0.35617 rewatch=0.945 time=0.05s
+  history                      recency-weighted count, half-life 2w       MAP@5 cohort=0.28248 test=0.32271 rewatch=0.945 time=0.08s
+  history                      recency-weighted count, half-life 4w       MAP@5 cohort=0.30008 test=0.34509 rewatch=0.945 time=0.11s
+  history                      expected count = pos/airing(train) x airings(target) MAP@5 cohort=0.29560 test=0.33879 rewatch=0.945 time=0.05s
+== b) implicit ALS (15 iterations, seed 42)
+  matrix users=4738 items=2501 nnz=115325; train items in pool=1875
+  ALS                          conf=count f=32 reg=0.01 alpha=1           MAP@5 cohort=0.20239 test=0.21518 rewatch=0.869 time=1.30s
+  ALS x log1p(airings)         conf=count f=32 reg=0.01 alpha=1           MAP@5 cohort=0.28183 test=0.30615 rewatch=0.843 time=1.29s
+  ALS                          conf=count f=32 reg=0.01 alpha=10          MAP@5 cohort=0.16669 test=0.17337 rewatch=0.673 time=1.18s
+  ALS x log1p(airings)         conf=count f=32 reg=0.01 alpha=10          MAP@5 cohort=0.24388 test=0.26478 rewatch=0.674 time=1.18s
+  ALS                          conf=count f=32 reg=0.01 alpha=40          MAP@5 cohort=0.10850 test=0.10214 rewatch=0.436 time=1.19s
+  ALS x log1p(airings)         conf=count f=32 reg=0.01 alpha=40          MAP@5 cohort=0.19528 test=0.20654 rewatch=0.551 time=1.20s
+  ALS                          conf=count f=32 reg=0.1 alpha=1            MAP@5 cohort=0.20073 test=0.21264 rewatch=0.870 time=1.21s
+  ALS x log1p(airings)         conf=count f=32 reg=0.1 alpha=1            MAP@5 cohort=0.28206 test=0.30682 rewatch=0.845 time=1.22s
+  ALS                          conf=count f=32 reg=0.1 alpha=10           MAP@5 cohort=0.16708 test=0.17485 rewatch=0.679 time=1.18s
+  ALS x log1p(airings)         conf=count f=32 reg=0.1 alpha=10           MAP@5 cohort=0.24091 test=0.26169 rewatch=0.663 time=1.18s
+  ALS                          conf=count f=32 reg=0.1 alpha=40           MAP@5 cohort=0.10471 test=0.10054 rewatch=0.454 time=1.19s
+  ALS x log1p(airings)         conf=count f=32 reg=0.1 alpha=40           MAP@5 cohort=0.15999 test=0.17497 rewatch=0.520 time=1.19s
+  ALS                          conf=count f=64 reg=0.01 alpha=1           MAP@5 cohort=0.17913 test=0.18273 rewatch=0.902 time=1.38s
+  ALS x log1p(airings)         conf=count f=64 reg=0.01 alpha=1           MAP@5 cohort=0.27144 test=0.29428 rewatch=0.895 time=1.40s
+  ALS                          conf=count f=64 reg=0.01 alpha=10          MAP@5 cohort=0.16816 test=0.17410 rewatch=0.776 time=1.31s
+  ALS x log1p(airings)         conf=count f=64 reg=0.01 alpha=10          MAP@5 cohort=0.24961 test=0.26454 rewatch=0.741 time=1.31s
+  ALS                          conf=count f=64 reg=0.01 alpha=40          MAP@5 cohort=0.11568 test=0.11315 rewatch=0.563 time=1.32s
+  ALS x log1p(airings)         conf=count f=64 reg=0.01 alpha=40          MAP@5 cohort=0.21309 test=0.22663 rewatch=0.640 time=1.33s
+  ALS                          conf=count f=64 reg=0.1 alpha=1            MAP@5 cohort=0.17757 test=0.18265 rewatch=0.899 time=1.38s
+  ALS x log1p(airings)         conf=count f=64 reg=0.1 alpha=1            MAP@5 cohort=0.27008 test=0.29183 rewatch=0.888 time=1.39s
+  ALS                          conf=count f=64 reg=0.1 alpha=10           MAP@5 cohort=0.17053 test=0.17609 rewatch=0.782 time=1.31s
+  ALS x log1p(airings)         conf=count f=64 reg=0.1 alpha=10           MAP@5 cohort=0.24925 test=0.26670 rewatch=0.737 time=1.31s
+  ALS                          conf=count f=64 reg=0.1 alpha=40           MAP@5 cohort=0.11611 test=0.11222 rewatch=0.589 time=1.33s
+  ALS x log1p(airings)         conf=count f=64 reg=0.1 alpha=40           MAP@5 cohort=0.20651 test=0.22130 rewatch=0.619 time=1.33s
+  ALS                          conf=count f=128 reg=0.01 alpha=1          MAP@5 cohort=0.17765 test=0.18481 rewatch=0.921 time=2.14s
+  ALS x log1p(airings)         conf=count f=128 reg=0.01 alpha=1          MAP@5 cohort=0.25128 test=0.27142 rewatch=0.913 time=2.15s
+  ALS                          conf=count f=128 reg=0.01 alpha=10         MAP@5 cohort=0.17505 test=0.18155 rewatch=0.912 time=2.24s
+  ALS x log1p(airings)         conf=count f=128 reg=0.01 alpha=10         MAP@5 cohort=0.25255 test=0.26899 rewatch=0.868 time=2.24s
+  ALS                          conf=count f=128 reg=0.01 alpha=40         MAP@5 cohort=0.15383 test=0.15431 rewatch=0.847 time=2.28s
+  ALS x log1p(airings)         conf=count f=128 reg=0.01 alpha=40         MAP@5 cohort=0.23455 test=0.24841 rewatch=0.813 time=2.29s
+  ALS                          conf=count f=128 reg=0.1 alpha=1           MAP@5 cohort=0.17918 test=0.18945 rewatch=0.921 time=2.18s
+  ALS x log1p(airings)         conf=count f=128 reg=0.1 alpha=1           MAP@5 cohort=0.25221 test=0.27249 rewatch=0.913 time=2.20s
+  ALS                          conf=count f=128 reg=0.1 alpha=10          MAP@5 cohort=0.17477 test=0.18249 rewatch=0.892 time=2.25s
+  ALS x log1p(airings)         conf=count f=128 reg=0.1 alpha=10          MAP@5 cohort=0.25263 test=0.27145 rewatch=0.817 time=2.25s
+  ALS                          conf=count f=128 reg=0.1 alpha=40          MAP@5 cohort=0.14876 test=0.15412 rewatch=0.835 time=2.24s
+  ALS x log1p(airings)         conf=count f=128 reg=0.1 alpha=40          MAP@5 cohort=0.23183 test=0.24628 rewatch=0.769 time=2.25s
+  ALS                          conf=log1p(count) f=32 reg=0.01 alpha=1    MAP@5 cohort=0.18567 test=0.19471 rewatch=0.878 time=1.17s
+  ALS x log1p(airings)         conf=log1p(count) f=32 reg=0.01 alpha=1    MAP@5 cohort=0.27269 test=0.29478 rewatch=0.870 time=1.18s
+  ALS                          conf=log1p(count) f=32 reg=0.01 alpha=10   MAP@5 cohort=0.18788 test=0.19497 rewatch=0.739 time=1.18s
+  ALS x log1p(airings)         conf=log1p(count) f=32 reg=0.01 alpha=10   MAP@5 cohort=0.25466 test=0.27446 rewatch=0.715 time=1.17s
+  ALS                          conf=log1p(count) f=32 reg=0.01 alpha=40   MAP@5 cohort=0.13050 test=0.12610 rewatch=0.509 time=1.18s
+  ALS x log1p(airings)         conf=log1p(count) f=32 reg=0.01 alpha=40   MAP@5 cohort=0.21450 test=0.23116 rewatch=0.595 time=1.21s
+  ALS                          conf=log1p(count) f=32 reg=0.1 alpha=1     MAP@5 cohort=0.18538 test=0.19181 rewatch=0.877 time=1.15s
+  ALS x log1p(airings)         conf=log1p(count) f=32 reg=0.1 alpha=1     MAP@5 cohort=0.27323 test=0.29514 rewatch=0.869 time=1.17s
+  ALS                          conf=log1p(count) f=32 reg=0.1 alpha=10    MAP@5 cohort=0.18859 test=0.19686 rewatch=0.739 time=1.20s
+  ALS x log1p(airings)         conf=log1p(count) f=32 reg=0.1 alpha=10    MAP@5 cohort=0.25445 test=0.27345 rewatch=0.716 time=1.19s
+  ALS                          conf=log1p(count) f=32 reg=0.1 alpha=40    MAP@5 cohort=0.13365 test=0.13016 rewatch=0.521 time=1.18s
+  ALS x log1p(airings)         conf=log1p(count) f=32 reg=0.1 alpha=40    MAP@5 cohort=0.21571 test=0.23392 rewatch=0.598 time=1.19s
+  ALS                          conf=log1p(count) f=64 reg=0.01 alpha=1    MAP@5 cohort=0.16241 test=0.16095 rewatch=0.899 time=1.29s
+  ALS x log1p(airings)         conf=log1p(count) f=64 reg=0.01 alpha=1    MAP@5 cohort=0.25697 test=0.27684 rewatch=0.896 time=1.30s
+  ALS                          conf=log1p(count) f=64 reg=0.01 alpha=10   MAP@5 cohort=0.18929 test=0.19607 rewatch=0.849 time=1.30s
+  ALS x log1p(airings)         conf=log1p(count) f=64 reg=0.01 alpha=10   MAP@5 cohort=0.25745 test=0.27179 rewatch=0.807 time=1.30s
+  ALS                          conf=log1p(count) f=64 reg=0.01 alpha=40   MAP@5 cohort=0.14016 test=0.13754 rewatch=0.653 time=1.33s
+  ALS x log1p(airings)         conf=log1p(count) f=64 reg=0.01 alpha=40   MAP@5 cohort=0.22380 test=0.23697 rewatch=0.686 time=1.31s
+  ALS                          conf=log1p(count) f=64 reg=0.1 alpha=1     MAP@5 cohort=0.16265 test=0.16145 rewatch=0.899 time=1.28s
+  ALS x log1p(airings)         conf=log1p(count) f=64 reg=0.1 alpha=1     MAP@5 cohort=0.25632 test=0.27617 rewatch=0.896 time=1.29s
+  ALS                          conf=log1p(count) f=64 reg=0.1 alpha=10    MAP@5 cohort=0.18942 test=0.19423 rewatch=0.846 time=1.29s
+  ALS x log1p(airings)         conf=log1p(count) f=64 reg=0.1 alpha=10    MAP@5 cohort=0.25630 test=0.27135 rewatch=0.797 time=1.30s
+  ALS                          conf=log1p(count) f=64 reg=0.1 alpha=40    MAP@5 cohort=0.14250 test=0.13941 rewatch=0.670 time=1.32s
+  ALS x log1p(airings)         conf=log1p(count) f=64 reg=0.1 alpha=40    MAP@5 cohort=0.22467 test=0.23801 rewatch=0.684 time=1.33s
+  ALS                          conf=log1p(count) f=128 reg=0.01 alpha=1   MAP@5 cohort=0.16476 test=0.16640 rewatch=0.917 time=2.24s
+  ALS x log1p(airings)         conf=log1p(count) f=128 reg=0.01 alpha=1   MAP@5 cohort=0.23806 test=0.25334 rewatch=0.913 time=2.25s
+  ALS                          conf=log1p(count) f=128 reg=0.01 alpha=10  MAP@5 cohort=0.17849 test=0.17980 rewatch=0.935 time=2.26s
+  ALS x log1p(airings)         conf=log1p(count) f=128 reg=0.01 alpha=10  MAP@5 cohort=0.25244 test=0.26935 rewatch=0.910 time=2.28s
+  ALS                          conf=log1p(count) f=128 reg=0.01 alpha=40  MAP@5 cohort=0.16930 test=0.17189 rewatch=0.908 time=2.26s
+  ALS x log1p(airings)         conf=log1p(count) f=128 reg=0.01 alpha=40  MAP@5 cohort=0.24004 test=0.25480 rewatch=0.887 time=2.27s
+  ALS                          conf=log1p(count) f=128 reg=0.1 alpha=1    MAP@5 cohort=0.16496 test=0.16742 rewatch=0.918 time=2.25s
+  ALS x log1p(airings)         conf=log1p(count) f=128 reg=0.1 alpha=1    MAP@5 cohort=0.23789 test=0.25367 rewatch=0.913 time=2.25s
+  ALS                          conf=log1p(count) f=128 reg=0.1 alpha=10   MAP@5 cohort=0.17423 test=0.17307 rewatch=0.935 time=2.27s
+  ALS x log1p(airings)         conf=log1p(count) f=128 reg=0.1 alpha=10   MAP@5 cohort=0.25191 test=0.26988 rewatch=0.910 time=2.27s
+  ALS                          conf=log1p(count) f=128 reg=0.1 alpha=40   MAP@5 cohort=0.16584 test=0.16437 rewatch=0.907 time=2.26s
+  ALS x log1p(airings)         conf=log1p(count) f=128 reg=0.1 alpha=40   MAP@5 cohort=0.24096 test=0.25413 rewatch=0.882 time=2.27s
+== c) personalized PageRank (alpha = prob. of following an edge; restart 1-alpha at the user)
+  mass check (real graph, 500 users, 1 update, alpha=0.85): max |colsum-1|=2.89e-15, min entry=0.00e+00; dangling nodes in graph=0
+  mass check (synthetic, dangling node holding 0.4): colsum with dangling return=1.000000000000, colsum if dangling mass were dropped=0.7200
+  PPR                          alpha=0.3                                  MAP@5 cohort=0.31456 test=0.35733 rewatch=0.945 time=15.21s {'mean_iter': 13.0, 'max_iter': 13, 'max_residual': 3.189e-07, 'non_converged': 0}
+  PPR x log1p(airings)         alpha=0.3                                  MAP@5 cohort=0.32293 test=0.36567 rewatch=0.944 time=15.21s {'mean_iter': 13.0, 'max_iter': 13, 'max_residual': 3.189e-07, 'non_converged': 0}
+  PPR                          alpha=0.5                                  MAP@5 cohort=0.31816 test=0.36017 rewatch=0.941 time=24.33s {'mean_iter': 21.0, 'max_iter': 21, 'max_residual': 9.537e-07, 'non_converged': 0}
+  PPR x log1p(airings)         alpha=0.5                                  MAP@5 cohort=0.32559 test=0.36866 rewatch=0.923 time=24.33s {'mean_iter': 21.0, 'max_iter': 21, 'max_residual': 9.537e-07, 'non_converged': 0}
+  PPR                          alpha=0.7                                  MAP@5 cohort=0.31944 test=0.36125 rewatch=0.885 time=47.04s {'mean_iter': 41.0, 'max_iter': 41, 'max_residual': 8.914e-07, 'non_converged': 0}
+  PPR x log1p(airings)         alpha=0.7                                  MAP@5 cohort=0.31792 test=0.35598 rewatch=0.801 time=47.09s {'mean_iter': 41.0, 'max_iter': 41, 'max_residual': 8.914e-07, 'non_converged': 0}
+  PPR                          alpha=0.85                                 MAP@5 cohort=0.29859 test=0.33621 rewatch=0.737 time=102.74s {'mean_iter': 90.0, 'max_iter': 90, 'max_residual': 8.887e-07, 'non_converged': 0}
+  PPR x log1p(airings)         alpha=0.85                                 MAP@5 cohort=0.29221 test=0.32664 rewatch=0.704 time=102.81s {'mean_iter': 90.0, 'max_iter': 90, 'max_residual': 8.887e-07, 'non_converged': 0}
+== d) content-based tf-idf (category, genres, channel, director, actors)
+  items=6989 vocab=13791 (cat 8, gen 66, ch 190, dir 3808, act 9719); pool items with no tokens: 0
+  content tf-idf               cosine(user profile, item)                 MAP@5 cohort=0.22467 test=0.24891 rewatch=0.598 time=3.70s
+  content tf-idf x log1p(airings) cosine(user profile, item)                 MAP@5 cohort=0.29870 test=0.33400 rewatch=0.712 time=3.66s
+best ALS by cohort MAP: conf=count f=32 reg=0.01 alpha=1
+  ALS determinism (two fits, best config): item factors identical=True, max abs diff=0.00e+00
+
+| method | params (selected on validation cohort MAP@5) | MAP@5 cohort | MAP@5 test subset | re-watch share of slots | runtime (s) |
+|---|---|---|---|---|---|
+| popularity (ref) | global top-5, fallback for cold | 0.23684 | 0.26799 | 0.543 | 0.00 |
+| history | score=train positive count | 0.31362 | 0.35617 | 0.945 | 0.05 |
+| history | recency-weighted count, half-life 2w | 0.28248 | 0.32271 | 0.945 | 0.08 |
+| history | recency-weighted count, half-life 4w | 0.30008 | 0.34509 | 0.945 | 0.11 |
+| history | expected count = pos/airing(train) x airings(target) | 0.29560 | 0.33879 | 0.945 | 0.05 |
+| ALS | conf=count f=32 reg=0.01 alpha=1 | 0.20239 | 0.21518 | 0.869 | 1.30 |
+| ALS x log1p(airings) | conf=count f=32 reg=0.1 alpha=1 | 0.28206 | 0.30682 | 0.845 | 1.22 |
+| PPR | alpha=0.7 | 0.31944 | 0.36125 | 0.885 | 47.04 |
+| PPR x log1p(airings) | alpha=0.5 | 0.32559 | 0.36866 | 0.923 | 24.33 |
+| content tf-idf | cosine(user profile, item) | 0.22467 | 0.24891 | 0.598 | 3.70 |
+| content tf-idf x log1p(airings) | cosine(user profile, item) | 0.29870 | 0.33400 | 0.712 | 3.66 |

@@ -154,3 +154,50 @@ Global top-5 from 11-20 positives: 2400480 (39,944 positives), 240081 (27,032), 
 - trained on 11-30 positives; top-5 = 2400480, 12001682, 240081, 20088, 2400508
 - 1,256 test users get the global list; 4 get the channel fallback; 4 distinct lists in total
 - checks (all True): header == template, 1,260 rows + header (1,261 lines), user order == template, 5 unique ids per row, all ids integers in the 31-42 pool
+
+## Step 3 — methods and components, each alone on validation
+
+Command: `.venv/bin/python src/s3_methods.py` → logs/s3_methods.log (summary + checks), logs/s3_grid.csv (all 87 evaluated rows: 72 ALS grid rows + 15 others).
+Protocol: train 11-20 → truth 21-30, cohort 4,643 users (4,540 warm with train positives, 103 cold → shared fallback), test subset 1,238, pool 6,363, MAP@5 (D16). Short lists are topped up from the shared fallback (D17), whose 5.83 s build is shared and **not** included in per-method runtime. Runtime = fit + score + rank for the cohort on one CPU process (BLAS 1 thread). Parameters are selected on validation cohort MAP@5 (D21), so the best-of-grid rows are optimistic.
+
+| method | params (selected on validation) | MAP@5 cohort (n = 4,643) | MAP@5 test subset (n = 1,238) | re-watch share of 5 slots | runtime (s) |
+|---|---|---|---|---|---|
+| popularity (reference, = step 2) | global top-5; fallback for cold | 0.23684 | 0.26799 | 0.543 | 0.00 |
+| a) history (1) | score = train positive count | 0.31362 | 0.35617 | 0.945 | 0.05 |
+| a) history (2) | recency-weighted count, half-life 2 w | 0.28248 | 0.32271 | 0.945 | 0.08 |
+| a) history (2) | recency-weighted count, half-life 4 w | 0.30008 | 0.34509 | 0.945 | 0.11 |
+| a) history (3) | expected count = pos per train airing × target airings | 0.29560 | 0.33879 | 0.945 | 0.05 |
+| b) ALS | conf = count, f = 32, reg = 0.01, alpha = 1 | 0.20239 | 0.21518 | 0.869 | 1.30 |
+| b+e) ALS × log1p(airings) | conf = count, f = 32, reg = 0.1, alpha = 1 | 0.28206 | 0.30682 | 0.845 | 1.22 |
+| c) PPR | alpha = 0.7 | 0.31944 | 0.36125 | 0.885 | 47.04 |
+| c+e) PPR × log1p(airings) | alpha = 0.5 | **0.32559** | **0.36866** | 0.923 | 24.33 |
+| d) content tf-idf | cosine(profile, item) | 0.22467 | 0.24891 | 0.598 | 3.70 |
+| d+e) content tf-idf × log1p(airings) | cosine(profile, item) | 0.29870 | 0.33400 | 0.712 | 3.66 |
+
+### Grids (logs/s3_grid.csv)
+ALS, MAP@5 cohort (rows conf / factors, columns reg / alpha):
+
+| conf, f | .01/1 | .01/10 | .01/40 | .1/1 | .1/10 | .1/40 |
+|---|---|---|---|---|---|---|
+| count, 32 | **0.2024** | 0.1667 | 0.1085 | 0.2007 | 0.1671 | 0.1047 |
+| count, 64 | 0.1791 | 0.1682 | 0.1157 | 0.1776 | 0.1705 | 0.1161 |
+| count, 128 | 0.1777 | 0.1750 | 0.1538 | 0.1792 | 0.1748 | 0.1488 |
+| log1p, 32 | 0.1857 | 0.1879 | 0.1305 | 0.1854 | 0.1886 | 0.1336 |
+| log1p, 64 | 0.1624 | 0.1893 | 0.1402 | 0.1626 | 0.1894 | 0.1425 |
+| log1p, 128 | 0.1648 | 0.1785 | 0.1693 | 0.1650 | 0.1742 | 0.1658 |
+
+ALS × log1p(airings): best 0.2821 (count, 32, 0.1, 1); range 0.1600–0.2821. The full table is in the log.
+The ALS optimum is at the **grid corner** (fewest factors, smallest alpha); reg changes MAP@5 by ≤ 0.0051 for plain ALS and by up to 0.0353 for ALS × log1p(airings) (count, f 32, alpha 40). Two fits of the selected config give identical item factors (max abs diff 0.0).
+
+PPR (cohort / test; convergence):
+
+| alpha | PPR | PPR × log1p(airings) | mean iter | max iter | max residual (L1) | non-converged |
+|---|---|---|---|---|---|---|
+| 0.3 | 0.31456 / 0.35733 | 0.32293 / 0.36567 | 13.0 | 13 | 3.19e-07 | 0 |
+| 0.5 | 0.31816 / 0.36017 | **0.32559 / 0.36866** | 21.0 | 21 | 9.54e-07 | 0 |
+| 0.7 | **0.31944 / 0.36125** | 0.31792 / 0.35598 | 41.0 | 41 | 8.91e-07 | 0 |
+| 0.85 | 0.29859 / 0.33621 | 0.29221 / 0.32664 | 90.0 | 90 | 8.89e-07 | 0 |
+
+PPR checks: after one update from one-hot restarts on the real graph (500 users, α = 0.85), max |column sum − 1| = 2.89e-15 and min entry = 0. The real graph has 0 dangling nodes, so a synthetic graph with a dangling item holding 0.4 mass is used too: column sum after the update = 1.000000000000 with the dangling return, 0.7200 if that mass were dropped.
+
+Graph / matrix sizes: 4,738 train users × 2,501 train programmes, 115,325 edges; 1,875 train programmes are in the pool, so ALS and PPR can only rank those, and the rest come from fallback. Content: 6,989 items, vocabulary 13,791 tokens (cat 8, genres 66, channels 190, directors 3,808, actors 9,719); 0 pool items without tokens.
