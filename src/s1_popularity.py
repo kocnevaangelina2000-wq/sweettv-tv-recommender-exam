@@ -5,8 +5,7 @@ import numpy as np
 import pandas as pd
 
 from load import DATA, ROOT, SUB_FILE, load_sub
-from protocol import (SPLITS, THR, channel_fallback, check_lists, fill, ground_truth, load_interactions,
-                      mapk, pool_programmes, popularity)
+from protocol import THR, Split, channel_fallback, check_lists, load_interactions, load_unlab, mapk
 
 SUB_DIR = ROOT / "submissions"
 SUB_DIR.mkdir(exist_ok=True)
@@ -23,32 +22,29 @@ def pool_report(name, pool_sched):
         print(f"    {pid:>10}  airings={n:>4}  [{cat[pid]}]  {title[pid]}")
 
 
-def predict(users, train_inter, train_periods, pool_sched, pop, with_fallback):
+def predict(users, train_inter, unlab_train, pool_sched, pop, with_fallback):
     glob = pop.tv_show_id.head(5).tolist()
     has_pos = set(train_inter.user_id[train_inter.screen_time >= THR])
     warm = [u for u in users if u in has_pos]
     cold = [u for u in users if u not in has_pos]
     preds = {u: list(glob) for u in warm}
     if with_fallback:
-        preds.update(channel_fallback(cold, train_inter, train_periods, pool_sched, pop))
+        preds.update(channel_fallback(cold, train_inter, unlab_train, pool_sched, pop))
     else:
         preds.update({u: list(glob) for u in cold})
     return preds, len(warm), len(cold)
 
 
 def main():
-    inter = load_interactions()
+    inter, unlab = load_interactions(), load_unlab()
     test = load_sub().user_id.tolist()
     test_set = set(test)
 
-    # ---------------- validation ----------------
-    sp = SPLITS["val"]
-    tr = inter[inter.period.isin(sp["train"])]
-    tg = inter[inter.period == sp["target"]]
-    truth = ground_truth(tg)
-    cohort = sorted(truth)
+    # ---------------- validation (split B) ----------------
+    sd = Split("B", inter, unlab)
+    tr, truth, cohort = sd.tr, sd.truth, sd.cohort
     all_users = set(inter.user_id)  # users with >=1 joined labelled view in 11-30
-    train_pos_users = set(tr.user_id[tr.screen_time >= THR])
+    train_pos_users = set(sd.hist)
     cohort_test = [u for u in cohort if u in test_set]
     print("== VALIDATION COHORT (train 11-20 -> truth 21-30)")
     print(f"evaluable users (>=1 positive in 21-30): {len(cohort)}; users with labelled interactions in 11-30 but no truth: "
@@ -58,19 +54,16 @@ def main():
     tl = pd.Series([len(t) for t in truth.values()])
     print(f"truth length distribution (all cohort): {tl.value_counts().sort_index().to_dict()}")
 
-    pool_sched = pool_programmes(sp["target"])
-    pool_ids = set(pool_sched.tv_show_id)
+    pool_sched, pool_ids, pop = sd.pool_sched, sd.pool_set, sd.pop
     out = sum(1 for t in truth.values() for p in t if p not in pool_ids)
     print(f"[val] truth programme slots outside the 21-30 pool: {out} of {int(tl.sum())}; "
           f"distinct truth programmes: {len({p for t in truth.values() for p in t})}")
     pool_report("val 21-30", pool_sched)
-
-    pop = popularity(tr, pool_ids)
     print("[val] global popularity top-5 (n_pos in 11-20):",
           pop.head(5)[["tv_show_id", "n_pos"]].to_dict("records"))
     print(f"[val] pool programmes with 0 positives in train: {(pop.n_pos == 0).sum()} of {len(pop)}")
     for fb in [False, True]:
-        preds, nw, nc = predict(cohort, tr, sp["train"], pool_sched, pop, fb)
+        preds, nw, nc = predict(cohort, tr, sd.unlab_tr, pool_sched, pop, fb)
         check_lists(preds, pool_ids)
         cold = [u for u in cohort if u not in train_pos_users]
         cold_t = [u for u in cohort_test if u not in train_pos_users]
@@ -79,21 +72,22 @@ def main():
               f"cold-only cohort={mapk(preds, truth, cold):.5f} (n={len(cold)}) cold-only test={mapk(preds, truth, cold_t) if cold_t else float('nan'):.5f} (n={len(cold_t)})")
 
     # ---------------- final ----------------
-    sp = SPLITS["final"]
-    tr = inter[inter.period.isin(sp["train"])]
-    pool_sched = pool_programmes(sp["target"])
-    pool_ids = set(pool_sched.tv_show_id)
+    sd = Split("final", inter, unlab, eval_users=test)
+    tr, pool_sched, pool_ids, pop = sd.tr, sd.pool_sched, sd.pool_set, sd.pop
     pool_report("final 31-42", pool_sched)
-    pop = popularity(tr, pool_ids)
     print("[final] global popularity top-5 (n_pos in 11-30):",
           pop.head(5)[["tv_show_id", "n_pos"]].to_dict("records"))
-    preds, nw, nc = predict(test, tr, sp["train"], pool_sched, pop, True)
+    preds, nw, nc = predict(test, tr, sd.unlab_tr, pool_sched, pop, True)
     check_lists(preds, pool_ids)
     print(f"[final] test users with positives in 11-30: {nw}; fallback users: {nc}")
     path = SUB_DIR / "s1_popularity.csv"
-    pd.DataFrame({"user_id": [str(u) for u in test],
-                  "tv_show_id": [" ".join(map(str, preds[u])) for u in test]}).to_csv(path, index=False)
+    write_submission(path, test, preds)
     validate_submission(path, pool_ids)
+
+
+def write_submission(path, users, preds):
+    pd.DataFrame({"user_id": [str(u) for u in users],
+                  "tv_show_id": [" ".join(map(str, preds[u])) for u in users]}).to_csv(path, index=False)
 
 
 def validate_submission(path, pool_ids):

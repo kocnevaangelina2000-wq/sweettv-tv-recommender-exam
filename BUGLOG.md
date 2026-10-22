@@ -57,3 +57,9 @@ The description used for comparison is the one quoted in the exam brief; I did n
 - **B18** Selection and reporting use the same validation split (D21). For a 36-point ALS grid, the best row is biased upward; PPR has 4 points, history and content 1 each.
 - **B19** PPR iterations are identical for every user (mean = max), as expected: the L1 residual contracts as α^t independent of the start node, so this is not an error in per-user tracking.
 - **B20** The airing multiplier helps very differently by method: content +0.074, ALS +0.080, PPR +0.006 at the best α (and it hurts at α ≥ 0.7). It is largest where the base score ignores how often a programme airs, consistent with B14.
+
+## Step 4A
+- **B17 (resolved)** The ALS grid corner was the problem: with alpha 0.1/0.3, plain ALS reaches 0.2854 on B (from 0.2024). The fold-A pick (log1p, f = 128, reg = 0.1, alpha = 0.1) is **again on the grid edge**: alpha 0.1 is the lowest value tried and f = 128 the highest, so the optimum may still lie outside the grid. Not extended further.
+- **B21** The requested history tie-break (total seconds) is worse than the popularity tie-break on both folds: −0.0099 MAP@5 on A, −0.0069 on B (logs/check_history_ties.log). `s2_history.csv` follows the request; the choice is flagged, not changed.
+- **B22** Fold A's truth window (weeks 16-20) includes week 20 with the start of the collection gap (B7d; rows week 20 = 232k vs ~410k). Fold A's target therefore looks somewhat like fold B's, but not like a normal-volume period.
+- **B23** `src/s3_methods.py` was removed: its code moved to `src/methods.py` (shared by part A and the hybrids). The step-3 numbers are reproducible at commit `ba2e383`, and fold B reproduces them (RESULTS step 4A, regression line).

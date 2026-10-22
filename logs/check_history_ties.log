@@ -1,0 +1,4 @@
+[A] history count, ties by seconds: cohort=0.32386 test=0.36449
+[A] history count, ties by popularity: cohort=0.33372 test=0.37524
+[B] history count, ties by seconds: cohort=0.30671 test=0.35027
+[B] history count, ties by popularity: cohort=0.31362 test=0.35617

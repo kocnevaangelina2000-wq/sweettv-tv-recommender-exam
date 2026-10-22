@@ -1,0 +1,676 @@
+[A] train rows=925164 positives=154462 warm users=4572 train programmes(pos)=1376 | eval users=4574 (warm 4409, cold 165) | pool=4402 pool airings=58345 | train airings(labelled)=56985 | test subset=1212
+  [A] popularity               {}                                                             cohort=0.24370 test=0.27584 rw=0.451 t=0.00s
+  [A] history count            {}                                                             cohort=0.32386 test=0.36449 rw=0.876 t=0.05s
+  [A] history recency          {"half_life_w": 2}                                             cohort=0.31141 test=0.35138 rw=0.876 t=0.07s
+  [A] history recency          {"half_life_w": 4}                                             cohort=0.31811 test=0.35874 rw=0.876 t=0.09s
+  [A] history expected         {}                                                             cohort=0.32312 test=0.36118 rw=0.876 t=0.05s
+  [A] ALS                      {"alpha": 0.1, "conf": "count", "factors": 8, "reg": 0.01}     cohort=0.27901 test=0.30830 rw=0.668 t=0.37s
+  [A] ALS x air                {"alpha": 0.1, "conf": "count", "factors": 8, "reg": 0.01}     cohort=0.30303 test=0.33627 rw=0.666 t=0.38s
+  [A] ALS                      {"alpha": 0.3, "conf": "count", "factors": 8, "reg": 0.01}     cohort=0.28864 test=0.31874 rw=0.674 t=0.32s
+  [A] ALS x air                {"alpha": 0.3, "conf": "count", "factors": 8, "reg": 0.01}     cohort=0.30895 test=0.34104 rw=0.660 t=0.33s
+  [A] ALS                      {"alpha": 1, "conf": "count", "factors": 8, "reg": 0.01}       cohort=0.29012 test=0.32034 rw=0.661 t=0.35s
+  [A] ALS x air                {"alpha": 1, "conf": "count", "factors": 8, "reg": 0.01}       cohort=0.30908 test=0.33702 rw=0.637 t=0.36s
+  [A] ALS                      {"alpha": 10, "conf": "count", "factors": 8, "reg": 0.01}      cohort=0.21517 test=0.22965 rw=0.532 t=0.32s
+  [A] ALS x air                {"alpha": 10, "conf": "count", "factors": 8, "reg": 0.01}      cohort=0.25911 test=0.27723 rw=0.519 t=0.33s
+  [A] ALS                      {"alpha": 40, "conf": "count", "factors": 8, "reg": 0.01}      cohort=0.15849 test=0.15788 rw=0.401 t=0.34s
+  [A] ALS x air                {"alpha": 40, "conf": "count", "factors": 8, "reg": 0.01}      cohort=0.16389 test=0.17493 rw=0.401 t=0.33s
+  [A] ALS                      {"alpha": 0.1, "conf": "count", "factors": 8, "reg": 0.1}      cohort=0.27130 test=0.29787 rw=0.667 t=0.31s
+  [A] ALS x air                {"alpha": 0.1, "conf": "count", "factors": 8, "reg": 0.1}      cohort=0.29679 test=0.32782 rw=0.662 t=0.32s
+  [A] ALS                      {"alpha": 0.3, "conf": "count", "factors": 8, "reg": 0.1}      cohort=0.28956 test=0.31957 rw=0.674 t=0.31s
+  [A] ALS x air                {"alpha": 0.3, "conf": "count", "factors": 8, "reg": 0.1}      cohort=0.30853 test=0.34076 rw=0.661 t=0.32s
+  [A] ALS                      {"alpha": 1, "conf": "count", "factors": 8, "reg": 0.1}        cohort=0.29150 test=0.32146 rw=0.661 t=0.35s
+  [A] ALS x air                {"alpha": 1, "conf": "count", "factors": 8, "reg": 0.1}        cohort=0.30875 test=0.33713 rw=0.639 t=0.36s
+  [A] ALS                      {"alpha": 10, "conf": "count", "factors": 8, "reg": 0.1}       cohort=0.21927 test=0.23455 rw=0.538 t=0.32s
+  [A] ALS x air                {"alpha": 10, "conf": "count", "factors": 8, "reg": 0.1}       cohort=0.26036 test=0.28162 rw=0.515 t=0.33s
+  [A] ALS                      {"alpha": 40, "conf": "count", "factors": 8, "reg": 0.1}       cohort=0.15594 test=0.15559 rw=0.404 t=0.32s
+  [A] ALS x air                {"alpha": 40, "conf": "count", "factors": 8, "reg": 0.1}       cohort=0.14984 test=0.15891 rw=0.364 t=0.35s
+  [A] ALS                      {"alpha": 0.1, "conf": "count", "factors": 16, "reg": 0.01}    cohort=0.26316 test=0.29298 rw=0.732 t=0.39s
+  [A] ALS x air                {"alpha": 0.1, "conf": "count", "factors": 16, "reg": 0.01}    cohort=0.29896 test=0.33434 rw=0.729 t=0.39s
+  [A] ALS                      {"alpha": 0.3, "conf": "count", "factors": 16, "reg": 0.01}    cohort=0.27041 test=0.29921 rw=0.746 t=0.38s
+  [A] ALS x air                {"alpha": 0.3, "conf": "count", "factors": 16, "reg": 0.01}    cohort=0.30763 test=0.34337 rw=0.736 t=0.38s
+  [A] ALS                      {"alpha": 1, "conf": "count", "factors": 16, "reg": 0.01}      cohort=0.27777 test=0.30841 rw=0.753 t=0.44s
+  [A] ALS x air                {"alpha": 1, "conf": "count", "factors": 16, "reg": 0.01}      cohort=0.31385 test=0.34472 rw=0.723 t=0.44s
+  [A] ALS                      {"alpha": 10, "conf": "count", "factors": 16, "reg": 0.01}     cohort=0.21401 test=0.22417 rw=0.599 t=0.39s
+  [A] ALS x air                {"alpha": 10, "conf": "count", "factors": 16, "reg": 0.01}     cohort=0.27504 test=0.29543 rw=0.582 t=0.40s
+  [A] ALS                      {"alpha": 40, "conf": "count", "factors": 16, "reg": 0.01}     cohort=0.15311 test=0.14956 rw=0.423 t=0.41s
+  [A] ALS x air                {"alpha": 40, "conf": "count", "factors": 16, "reg": 0.01}     cohort=0.22654 test=0.23839 rw=0.476 t=0.41s
+  [A] ALS                      {"alpha": 0.1, "conf": "count", "factors": 16, "reg": 0.1}     cohort=0.26349 test=0.28993 rw=0.731 t=0.41s
+  [A] ALS x air                {"alpha": 0.1, "conf": "count", "factors": 16, "reg": 0.1}     cohort=0.30095 test=0.33765 rw=0.728 t=0.40s
+  [A] ALS                      {"alpha": 0.3, "conf": "count", "factors": 16, "reg": 0.1}     cohort=0.26810 test=0.29717 rw=0.744 t=0.39s
+  [A] ALS x air                {"alpha": 0.3, "conf": "count", "factors": 16, "reg": 0.1}     cohort=0.30600 test=0.34202 rw=0.735 t=0.40s
+  [A] ALS                      {"alpha": 1, "conf": "count", "factors": 16, "reg": 0.1}       cohort=0.27508 test=0.30534 rw=0.755 t=0.43s
+  [A] ALS x air                {"alpha": 1, "conf": "count", "factors": 16, "reg": 0.1}       cohort=0.31304 test=0.34389 rw=0.725 t=0.44s
+  [A] ALS                      {"alpha": 10, "conf": "count", "factors": 16, "reg": 0.1}      cohort=0.21365 test=0.22611 rw=0.604 t=0.40s
+  [A] ALS x air                {"alpha": 10, "conf": "count", "factors": 16, "reg": 0.1}      cohort=0.27675 test=0.29973 rw=0.585 t=0.40s
+  [A] ALS                      {"alpha": 40, "conf": "count", "factors": 16, "reg": 0.1}      cohort=0.14802 test=0.14838 rw=0.425 t=0.40s
+  [A] ALS x air                {"alpha": 40, "conf": "count", "factors": 16, "reg": 0.1}      cohort=0.17557 test=0.19139 rw=0.453 t=0.40s
+  [A] ALS                      {"alpha": 0.1, "conf": "count", "factors": 32, "reg": 0.01}    cohort=0.24005 test=0.26463 rw=0.793 t=0.65s
+  [A] ALS x air                {"alpha": 0.1, "conf": "count", "factors": 32, "reg": 0.01}    cohort=0.28642 test=0.31591 rw=0.792 t=0.65s
+  [A] ALS                      {"alpha": 0.3, "conf": "count", "factors": 32, "reg": 0.01}    cohort=0.23701 test=0.26134 rw=0.798 t=0.64s
+  [A] ALS x air                {"alpha": 0.3, "conf": "count", "factors": 32, "reg": 0.01}    cohort=0.29511 test=0.32592 rw=0.794 t=0.65s
+  [A] ALS                      {"alpha": 1, "conf": "count", "factors": 32, "reg": 0.01}      cohort=0.24345 test=0.26405 rw=0.810 t=0.68s
+  [A] ALS x air                {"alpha": 1, "conf": "count", "factors": 32, "reg": 0.01}      cohort=0.30279 test=0.33342 rw=0.795 t=0.68s
+  [A] ALS                      {"alpha": 10, "conf": "count", "factors": 32, "reg": 0.01}     cohort=0.22542 test=0.23846 rw=0.715 t=0.64s
+  [A] ALS x air                {"alpha": 10, "conf": "count", "factors": 32, "reg": 0.01}     cohort=0.28387 test=0.30818 rw=0.669 t=0.64s
+  [A] ALS                      {"alpha": 40, "conf": "count", "factors": 32, "reg": 0.01}     cohort=0.15523 test=0.15508 rw=0.527 t=0.64s
+  [A] ALS x air                {"alpha": 40, "conf": "count", "factors": 32, "reg": 0.01}     cohort=0.20849 test=0.21817 rw=0.537 t=0.64s
+  [A] ALS                      {"alpha": 0.1, "conf": "count", "factors": 32, "reg": 0.1}     cohort=0.26057 test=0.28964 rw=0.792 t=0.63s
+  [A] ALS x air                {"alpha": 0.1, "conf": "count", "factors": 32, "reg": 0.1}     cohort=0.28669 test=0.31598 rw=0.791 t=0.64s
+  [A] ALS                      {"alpha": 0.3, "conf": "count", "factors": 32, "reg": 0.1}     cohort=0.23738 test=0.25891 rw=0.798 t=0.61s
+  [A] ALS x air                {"alpha": 0.3, "conf": "count", "factors": 32, "reg": 0.1}     cohort=0.29186 test=0.32126 rw=0.794 t=0.62s
+  [A] ALS                      {"alpha": 1, "conf": "count", "factors": 32, "reg": 0.1}       cohort=0.24158 test=0.26177 rw=0.811 t=0.66s
+  [A] ALS x air                {"alpha": 1, "conf": "count", "factors": 32, "reg": 0.1}       cohort=0.30197 test=0.33437 rw=0.796 t=0.67s
+  [A] ALS                      {"alpha": 10, "conf": "count", "factors": 32, "reg": 0.1}      cohort=0.22514 test=0.23811 rw=0.706 t=0.61s
+  [A] ALS x air                {"alpha": 10, "conf": "count", "factors": 32, "reg": 0.1}      cohort=0.28276 test=0.30639 rw=0.653 t=0.62s
+  [A] ALS                      {"alpha": 40, "conf": "count", "factors": 32, "reg": 0.1}      cohort=0.16042 test=0.16100 rw=0.545 t=0.61s
+  [A] ALS x air                {"alpha": 40, "conf": "count", "factors": 32, "reg": 0.1}      cohort=0.19401 test=0.20593 rw=0.523 t=0.62s
+  [A] ALS                      {"alpha": 0.1, "conf": "count", "factors": 64, "reg": 0.01}    cohort=0.25577 test=0.28176 rw=0.825 t=0.77s
+  [A] ALS x air                {"alpha": 0.1, "conf": "count", "factors": 64, "reg": 0.01}    cohort=0.28151 test=0.30747 rw=0.824 t=0.78s
+  [A] ALS                      {"alpha": 0.3, "conf": "count", "factors": 64, "reg": 0.01}    cohort=0.23607 test=0.25812 rw=0.830 t=0.77s
+  [A] ALS x air                {"alpha": 0.3, "conf": "count", "factors": 64, "reg": 0.01}    cohort=0.28169 test=0.30880 rw=0.827 t=0.78s
+  [A] ALS                      {"alpha": 1, "conf": "count", "factors": 64, "reg": 0.01}      cohort=0.22583 test=0.24347 rw=0.836 t=0.86s
+  [A] ALS x air                {"alpha": 1, "conf": "count", "factors": 64, "reg": 0.01}      cohort=0.29012 test=0.31843 rw=0.831 t=0.87s
+  [A] ALS                      {"alpha": 10, "conf": "count", "factors": 64, "reg": 0.01}     cohort=0.23391 test=0.24897 rw=0.848 t=0.81s
+  [A] ALS x air                {"alpha": 10, "conf": "count", "factors": 64, "reg": 0.01}     cohort=0.28534 test=0.30755 rw=0.807 t=0.82s
+  [A] ALS                      {"alpha": 40, "conf": "count", "factors": 64, "reg": 0.01}     cohort=0.20439 test=0.20742 rw=0.795 t=0.81s
+  [A] ALS x air                {"alpha": 40, "conf": "count", "factors": 64, "reg": 0.01}     cohort=0.26795 test=0.28556 rw=0.749 t=0.81s
+  [A] ALS                      {"alpha": 0.1, "conf": "count", "factors": 64, "reg": 0.1}     cohort=0.28239 test=0.31681 rw=0.826 t=0.82s
+  [A] ALS x air                {"alpha": 0.1, "conf": "count", "factors": 64, "reg": 0.1}     cohort=0.28040 test=0.30576 rw=0.824 t=0.82s
+  [A] ALS                      {"alpha": 0.3, "conf": "count", "factors": 64, "reg": 0.1}     cohort=0.23732 test=0.25849 rw=0.830 t=0.81s
+  [A] ALS x air                {"alpha": 0.3, "conf": "count", "factors": 64, "reg": 0.1}     cohort=0.28102 test=0.30784 rw=0.827 t=0.81s
+  [A] ALS                      {"alpha": 1, "conf": "count", "factors": 64, "reg": 0.1}       cohort=0.22535 test=0.23979 rw=0.837 t=0.88s
+  [A] ALS x air                {"alpha": 1, "conf": "count", "factors": 64, "reg": 0.1}       cohort=0.29106 test=0.31905 rw=0.831 t=0.89s
+  [A] ALS                      {"alpha": 10, "conf": "count", "factors": 64, "reg": 0.1}      cohort=0.23751 test=0.25425 rw=0.840 t=0.81s
+  [A] ALS x air                {"alpha": 10, "conf": "count", "factors": 64, "reg": 0.1}      cohort=0.28907 test=0.31084 rw=0.802 t=0.81s
+  [A] ALS                      {"alpha": 40, "conf": "count", "factors": 64, "reg": 0.1}      cohort=0.19972 test=0.20589 rw=0.786 t=0.83s
+  [A] ALS x air                {"alpha": 40, "conf": "count", "factors": 64, "reg": 0.1}      cohort=0.26881 test=0.28555 rw=0.722 t=0.83s
+  [A] ALS                      {"alpha": 0.1, "conf": "count", "factors": 128, "reg": 0.01}   cohort=0.26288 test=0.29453 rw=0.844 t=1.53s
+  [A] ALS x air                {"alpha": 0.1, "conf": "count", "factors": 128, "reg": 0.01}   cohort=0.28415 test=0.31292 rw=0.840 t=1.55s
+  [A] ALS                      {"alpha": 0.3, "conf": "count", "factors": 128, "reg": 0.01}   cohort=0.24966 test=0.27858 rw=0.849 t=1.55s
+  [A] ALS x air                {"alpha": 0.3, "conf": "count", "factors": 128, "reg": 0.01}   cohort=0.27678 test=0.29962 rw=0.845 t=1.55s
+  [A] ALS                      {"alpha": 1, "conf": "count", "factors": 128, "reg": 0.01}     cohort=0.22748 test=0.24378 rw=0.855 t=1.58s
+  [A] ALS x air                {"alpha": 1, "conf": "count", "factors": 128, "reg": 0.01}     cohort=0.27808 test=0.30102 rw=0.848 t=1.59s
+  [A] ALS                      {"alpha": 10, "conf": "count", "factors": 128, "reg": 0.01}    cohort=0.23212 test=0.24888 rw=0.872 t=1.53s
+  [A] ALS x air                {"alpha": 10, "conf": "count", "factors": 128, "reg": 0.01}    cohort=0.27972 test=0.30160 rw=0.851 t=1.54s
+  [A] ALS                      {"alpha": 40, "conf": "count", "factors": 128, "reg": 0.01}    cohort=0.22368 test=0.24082 rw=0.874 t=1.46s
+  [A] ALS x air                {"alpha": 40, "conf": "count", "factors": 128, "reg": 0.01}    cohort=0.27465 test=0.29483 rw=0.839 t=1.46s
+  [A] ALS                      {"alpha": 0.1, "conf": "count", "factors": 128, "reg": 0.1}    cohort=0.28436 test=0.31768 rw=0.845 t=1.52s
+  [A] ALS x air                {"alpha": 0.1, "conf": "count", "factors": 128, "reg": 0.1}    cohort=0.28256 test=0.30907 rw=0.841 t=1.53s
+  [A] ALS                      {"alpha": 0.3, "conf": "count", "factors": 128, "reg": 0.1}    cohort=0.25149 test=0.27925 rw=0.848 t=1.53s
+  [A] ALS x air                {"alpha": 0.3, "conf": "count", "factors": 128, "reg": 0.1}    cohort=0.27665 test=0.30060 rw=0.844 t=1.54s
+  [A] ALS                      {"alpha": 1, "conf": "count", "factors": 128, "reg": 0.1}      cohort=0.22767 test=0.24706 rw=0.854 t=1.57s
+  [A] ALS x air                {"alpha": 1, "conf": "count", "factors": 128, "reg": 0.1}      cohort=0.27894 test=0.30131 rw=0.848 t=1.58s
+  [A] ALS                      {"alpha": 10, "conf": "count", "factors": 128, "reg": 0.1}     cohort=0.22582 test=0.24382 rw=0.872 t=1.52s
+  [A] ALS x air                {"alpha": 10, "conf": "count", "factors": 128, "reg": 0.1}     cohort=0.28140 test=0.30336 rw=0.849 t=1.53s
+  [A] ALS                      {"alpha": 40, "conf": "count", "factors": 128, "reg": 0.1}     cohort=0.21135 test=0.22325 rw=0.871 t=1.52s
+  [A] ALS x air                {"alpha": 40, "conf": "count", "factors": 128, "reg": 0.1}     cohort=0.27342 test=0.29292 rw=0.814 t=1.52s
+  [A] ALS                      {"alpha": 0.1, "conf": "log1p", "factors": 8, "reg": 0.01}     cohort=0.26388 test=0.29333 rw=0.674 t=0.31s
+  [A] ALS x air                {"alpha": 0.1, "conf": "log1p", "factors": 8, "reg": 0.01}     cohort=0.29020 test=0.32517 rw=0.665 t=0.32s
+  [A] ALS                      {"alpha": 0.3, "conf": "log1p", "factors": 8, "reg": 0.01}     cohort=0.27266 test=0.30336 rw=0.679 t=0.31s
+  [A] ALS x air                {"alpha": 0.3, "conf": "log1p", "factors": 8, "reg": 0.01}     cohort=0.30105 test=0.33589 rw=0.674 t=0.32s
+  [A] ALS                      {"alpha": 1, "conf": "log1p", "factors": 8, "reg": 0.01}       cohort=0.28299 test=0.31503 rw=0.683 t=0.31s
+  [A] ALS x air                {"alpha": 1, "conf": "log1p", "factors": 8, "reg": 0.01}       cohort=0.30662 test=0.33944 rw=0.665 t=0.32s
+  [A] ALS                      {"alpha": 10, "conf": "log1p", "factors": 8, "reg": 0.01}      cohort=0.24807 test=0.26764 rw=0.581 t=0.31s
+  [A] ALS x air                {"alpha": 10, "conf": "log1p", "factors": 8, "reg": 0.01}      cohort=0.27913 test=0.30554 rw=0.554 t=0.32s
+  [A] ALS                      {"alpha": 40, "conf": "log1p", "factors": 8, "reg": 0.01}      cohort=0.19300 test=0.19851 rw=0.452 t=0.33s
+  [A] ALS x air                {"alpha": 40, "conf": "log1p", "factors": 8, "reg": 0.01}      cohort=0.21719 test=0.23208 rw=0.439 t=0.33s
+  [A] ALS                      {"alpha": 0.1, "conf": "log1p", "factors": 8, "reg": 0.1}      cohort=0.27469 test=0.30257 rw=0.669 t=0.31s
+  [A] ALS x air                {"alpha": 0.1, "conf": "log1p", "factors": 8, "reg": 0.1}      cohort=0.29889 test=0.32966 rw=0.666 t=0.32s
+  [A] ALS                      {"alpha": 0.3, "conf": "log1p", "factors": 8, "reg": 0.1}      cohort=0.27034 test=0.30099 rw=0.677 t=0.31s
+  [A] ALS x air                {"alpha": 0.3, "conf": "log1p", "factors": 8, "reg": 0.1}      cohort=0.29750 test=0.33177 rw=0.672 t=0.32s
+  [A] ALS                      {"alpha": 1, "conf": "log1p", "factors": 8, "reg": 0.1}        cohort=0.28304 test=0.31534 rw=0.683 t=0.31s
+  [A] ALS x air                {"alpha": 1, "conf": "log1p", "factors": 8, "reg": 0.1}        cohort=0.30669 test=0.33992 rw=0.665 t=0.32s
+  [A] ALS                      {"alpha": 10, "conf": "log1p", "factors": 8, "reg": 0.1}       cohort=0.24743 test=0.26559 rw=0.579 t=0.31s
+  [A] ALS x air                {"alpha": 10, "conf": "log1p", "factors": 8, "reg": 0.1}       cohort=0.27900 test=0.30653 rw=0.552 t=0.32s
+  [A] ALS                      {"alpha": 40, "conf": "log1p", "factors": 8, "reg": 0.1}       cohort=0.19529 test=0.19775 rw=0.459 t=0.32s
+  [A] ALS x air                {"alpha": 40, "conf": "log1p", "factors": 8, "reg": 0.1}       cohort=0.21521 test=0.22888 rw=0.440 t=0.33s
+  [A] ALS                      {"alpha": 0.1, "conf": "log1p", "factors": 16, "reg": 0.01}    cohort=0.24311 test=0.26781 rw=0.737 t=0.38s
+  [A] ALS x air                {"alpha": 0.1, "conf": "log1p", "factors": 16, "reg": 0.01}    cohort=0.29175 test=0.32704 rw=0.732 t=0.39s
+  [A] ALS                      {"alpha": 0.3, "conf": "log1p", "factors": 16, "reg": 0.01}    cohort=0.24236 test=0.26513 rw=0.741 t=0.38s
+  [A] ALS x air                {"alpha": 0.3, "conf": "log1p", "factors": 16, "reg": 0.01}    cohort=0.29457 test=0.32846 rw=0.737 t=0.39s
+  [A] ALS                      {"alpha": 1, "conf": "log1p", "factors": 16, "reg": 0.01}      cohort=0.26003 test=0.28927 rw=0.758 t=0.38s
+  [A] ALS x air                {"alpha": 1, "conf": "log1p", "factors": 16, "reg": 0.01}      cohort=0.30259 test=0.33765 rw=0.745 t=0.39s
+  [A] ALS                      {"alpha": 10, "conf": "log1p", "factors": 16, "reg": 0.01}     cohort=0.24125 test=0.25593 rw=0.662 t=0.38s
+  [A] ALS x air                {"alpha": 10, "conf": "log1p", "factors": 16, "reg": 0.01}     cohort=0.28521 test=0.30794 rw=0.621 t=0.39s
+  [A] ALS                      {"alpha": 40, "conf": "log1p", "factors": 16, "reg": 0.01}     cohort=0.17801 test=0.17899 rw=0.486 t=0.39s
+  [A] ALS x air                {"alpha": 40, "conf": "log1p", "factors": 16, "reg": 0.01}     cohort=0.24712 test=0.25993 rw=0.520 t=0.39s
+  [A] ALS                      {"alpha": 0.1, "conf": "log1p", "factors": 16, "reg": 0.1}     cohort=0.28468 test=0.31990 rw=0.739 t=0.37s
+  [A] ALS x air                {"alpha": 0.1, "conf": "log1p", "factors": 16, "reg": 0.1}     cohort=0.29107 test=0.32385 rw=0.734 t=0.38s
+  [A] ALS                      {"alpha": 0.3, "conf": "log1p", "factors": 16, "reg": 0.1}     cohort=0.24708 test=0.27086 rw=0.742 t=0.37s
+  [A] ALS x air                {"alpha": 0.3, "conf": "log1p", "factors": 16, "reg": 0.1}     cohort=0.29496 test=0.32880 rw=0.737 t=0.38s
+  [A] ALS                      {"alpha": 1, "conf": "log1p", "factors": 16, "reg": 0.1}       cohort=0.25995 test=0.28804 rw=0.759 t=0.37s
+  [A] ALS x air                {"alpha": 1, "conf": "log1p", "factors": 16, "reg": 0.1}       cohort=0.30264 test=0.33654 rw=0.745 t=0.38s
+  [A] ALS                      {"alpha": 10, "conf": "log1p", "factors": 16, "reg": 0.1}      cohort=0.24273 test=0.25890 rw=0.660 t=0.38s
+  [A] ALS x air                {"alpha": 10, "conf": "log1p", "factors": 16, "reg": 0.1}      cohort=0.28574 test=0.30856 rw=0.621 t=0.39s
+  [A] ALS                      {"alpha": 40, "conf": "log1p", "factors": 16, "reg": 0.1}      cohort=0.18231 test=0.18845 rw=0.493 t=0.38s
+  [A] ALS x air                {"alpha": 40, "conf": "log1p", "factors": 16, "reg": 0.1}      cohort=0.24813 test=0.26253 rw=0.522 t=0.39s
+  [A] ALS                      {"alpha": 0.1, "conf": "log1p", "factors": 32, "reg": 0.01}    cohort=0.23466 test=0.25709 rw=0.792 t=0.60s
+  [A] ALS x air                {"alpha": 0.1, "conf": "log1p", "factors": 32, "reg": 0.01}    cohort=0.27848 test=0.30742 rw=0.791 t=0.62s
+  [A] ALS                      {"alpha": 0.3, "conf": "log1p", "factors": 32, "reg": 0.01}    cohort=0.22611 test=0.24444 rw=0.794 t=0.64s
+  [A] ALS x air                {"alpha": 0.3, "conf": "log1p", "factors": 32, "reg": 0.01}    cohort=0.28351 test=0.31390 rw=0.793 t=0.64s
+  [A] ALS                      {"alpha": 1, "conf": "log1p", "factors": 32, "reg": 0.01}      cohort=0.22679 test=0.24126 rw=0.803 t=0.61s
+  [A] ALS x air                {"alpha": 1, "conf": "log1p", "factors": 32, "reg": 0.01}      cohort=0.29409 test=0.32523 rw=0.797 t=0.62s
+  [A] ALS                      {"alpha": 10, "conf": "log1p", "factors": 32, "reg": 0.01}     cohort=0.24078 test=0.25599 rw=0.774 t=0.61s
+  [A] ALS x air                {"alpha": 10, "conf": "log1p", "factors": 32, "reg": 0.01}     cohort=0.29104 test=0.31370 rw=0.723 t=0.62s
+  [A] ALS                      {"alpha": 40, "conf": "log1p", "factors": 32, "reg": 0.01}     cohort=0.18261 test=0.17906 rw=0.599 t=0.61s
+  [A] ALS x air                {"alpha": 40, "conf": "log1p", "factors": 32, "reg": 0.01}     cohort=0.25840 test=0.27594 rw=0.591 t=0.62s
+  [A] ALS                      {"alpha": 0.1, "conf": "log1p", "factors": 32, "reg": 0.1}     cohort=0.29909 test=0.33944 rw=0.791 t=0.62s
+  [A] ALS x air                {"alpha": 0.1, "conf": "log1p", "factors": 32, "reg": 0.1}     cohort=0.28591 test=0.31523 rw=0.790 t=0.63s
+  [A] ALS                      {"alpha": 0.3, "conf": "log1p", "factors": 32, "reg": 0.1}     cohort=0.24472 test=0.26648 rw=0.795 t=0.63s
+  [A] ALS x air                {"alpha": 0.3, "conf": "log1p", "factors": 32, "reg": 0.1}     cohort=0.28585 test=0.31573 rw=0.794 t=0.64s
+  [A] ALS                      {"alpha": 1, "conf": "log1p", "factors": 32, "reg": 0.1}       cohort=0.22419 test=0.23819 rw=0.803 t=0.60s
+  [A] ALS x air                {"alpha": 1, "conf": "log1p", "factors": 32, "reg": 0.1}       cohort=0.29292 test=0.32393 rw=0.798 t=0.61s
+  [A] ALS                      {"alpha": 10, "conf": "log1p", "factors": 32, "reg": 0.1}      cohort=0.23972 test=0.25612 rw=0.774 t=0.61s
+  [A] ALS x air                {"alpha": 10, "conf": "log1p", "factors": 32, "reg": 0.1}      cohort=0.29161 test=0.31437 rw=0.723 t=0.62s
+  [A] ALS                      {"alpha": 40, "conf": "log1p", "factors": 32, "reg": 0.1}      cohort=0.18506 test=0.18427 rw=0.600 t=0.61s
+  [A] ALS x air                {"alpha": 40, "conf": "log1p", "factors": 32, "reg": 0.1}      cohort=0.25739 test=0.27354 rw=0.586 t=0.62s
+  [A] ALS                      {"alpha": 0.1, "conf": "log1p", "factors": 64, "reg": 0.01}    cohort=0.24005 test=0.25971 rw=0.824 t=0.80s
+  [A] ALS x air                {"alpha": 0.1, "conf": "log1p", "factors": 64, "reg": 0.01}    cohort=0.27382 test=0.29975 rw=0.824 t=0.80s
+  [A] ALS                      {"alpha": 0.3, "conf": "log1p", "factors": 64, "reg": 0.01}    cohort=0.22502 test=0.24399 rw=0.826 t=0.81s
+  [A] ALS x air                {"alpha": 0.3, "conf": "log1p", "factors": 64, "reg": 0.01}    cohort=0.27314 test=0.29898 rw=0.825 t=0.84s
+  [A] ALS                      {"alpha": 1, "conf": "log1p", "factors": 64, "reg": 0.01}      cohort=0.21434 test=0.22647 rw=0.832 t=0.77s
+  [A] ALS x air                {"alpha": 1, "conf": "log1p", "factors": 64, "reg": 0.01}      cohort=0.28251 test=0.31009 rw=0.830 t=0.78s
+  [A] ALS                      {"alpha": 10, "conf": "log1p", "factors": 64, "reg": 0.01}     cohort=0.23750 test=0.25635 rw=0.851 t=0.77s
+  [A] ALS x air                {"alpha": 10, "conf": "log1p", "factors": 64, "reg": 0.01}     cohort=0.28696 test=0.31137 rw=0.818 t=0.78s
+  [A] ALS                      {"alpha": 40, "conf": "log1p", "factors": 64, "reg": 0.01}     cohort=0.22260 test=0.23367 rw=0.828 t=0.82s
+  [A] ALS x air                {"alpha": 40, "conf": "log1p", "factors": 64, "reg": 0.01}     cohort=0.27287 test=0.29248 rw=0.784 t=0.83s
+  [A] ALS                      {"alpha": 0.1, "conf": "log1p", "factors": 64, "reg": 0.1}     cohort=0.30930 test=0.34825 rw=0.825 t=0.79s
+  [A] ALS x air                {"alpha": 0.1, "conf": "log1p", "factors": 64, "reg": 0.1}     cohort=0.28402 test=0.31070 rw=0.824 t=0.79s
+  [A] ALS                      {"alpha": 0.3, "conf": "log1p", "factors": 64, "reg": 0.1}     cohort=0.26678 test=0.29342 rw=0.827 t=0.80s
+  [A] ALS x air                {"alpha": 0.3, "conf": "log1p", "factors": 64, "reg": 0.1}     cohort=0.27432 test=0.29956 rw=0.826 t=0.80s
+  [A] ALS                      {"alpha": 1, "conf": "log1p", "factors": 64, "reg": 0.1}       cohort=0.21057 test=0.22091 rw=0.832 t=0.79s
+  [A] ALS x air                {"alpha": 1, "conf": "log1p", "factors": 64, "reg": 0.1}       cohort=0.28161 test=0.30810 rw=0.830 t=0.80s
+  [A] ALS                      {"alpha": 10, "conf": "log1p", "factors": 64, "reg": 0.1}      cohort=0.23375 test=0.24972 rw=0.851 t=0.79s
+  [A] ALS x air                {"alpha": 10, "conf": "log1p", "factors": 64, "reg": 0.1}      cohort=0.28702 test=0.31188 rw=0.819 t=0.79s
+  [A] ALS                      {"alpha": 40, "conf": "log1p", "factors": 64, "reg": 0.1}      cohort=0.22033 test=0.23237 rw=0.834 t=0.81s
+  [A] ALS x air                {"alpha": 40, "conf": "log1p", "factors": 64, "reg": 0.1}      cohort=0.27501 test=0.29450 rw=0.791 t=0.82s
+  [A] ALS                      {"alpha": 0.1, "conf": "log1p", "factors": 128, "reg": 0.01}   cohort=0.26032 test=0.28615 rw=0.848 t=1.53s
+  [A] ALS x air                {"alpha": 0.1, "conf": "log1p", "factors": 128, "reg": 0.01}   cohort=0.27231 test=0.29480 rw=0.844 t=1.54s
+  [A] ALS                      {"alpha": 0.3, "conf": "log1p", "factors": 128, "reg": 0.01}   cohort=0.24609 test=0.26899 rw=0.849 t=1.50s
+  [A] ALS x air                {"alpha": 0.3, "conf": "log1p", "factors": 128, "reg": 0.01}   cohort=0.26982 test=0.29388 rw=0.846 t=1.51s
+  [A] ALS                      {"alpha": 1, "conf": "log1p", "factors": 128, "reg": 0.01}     cohort=0.22205 test=0.23510 rw=0.851 t=1.51s
+  [A] ALS x air                {"alpha": 1, "conf": "log1p", "factors": 128, "reg": 0.01}     cohort=0.27095 test=0.29400 rw=0.847 t=1.53s
+  [A] ALS                      {"alpha": 10, "conf": "log1p", "factors": 128, "reg": 0.01}    cohort=0.23519 test=0.25395 rw=0.870 t=1.53s
+  [A] ALS x air                {"alpha": 10, "conf": "log1p", "factors": 128, "reg": 0.01}    cohort=0.27844 test=0.30179 rw=0.852 t=1.54s
+  [A] ALS                      {"alpha": 40, "conf": "log1p", "factors": 128, "reg": 0.01}    cohort=0.23847 test=0.25797 rw=0.875 t=1.49s
+  [A] ALS x air                {"alpha": 40, "conf": "log1p", "factors": 128, "reg": 0.01}    cohort=0.27437 test=0.29625 rw=0.850 t=1.49s
+  [A] ALS                      {"alpha": 0.1, "conf": "log1p", "factors": 128, "reg": 0.1}    cohort=0.31649 test=0.35658 rw=0.848 t=1.53s
+  [A] ALS x air                {"alpha": 0.1, "conf": "log1p", "factors": 128, "reg": 0.1}    cohort=0.28357 test=0.30724 rw=0.845 t=1.54s
+  [A] ALS                      {"alpha": 0.3, "conf": "log1p", "factors": 128, "reg": 0.1}    cohort=0.30038 test=0.33622 rw=0.848 t=1.50s
+  [A] ALS x air                {"alpha": 0.3, "conf": "log1p", "factors": 128, "reg": 0.1}    cohort=0.27094 test=0.29461 rw=0.846 t=1.52s
+  [A] ALS                      {"alpha": 1, "conf": "log1p", "factors": 128, "reg": 0.1}      cohort=0.21694 test=0.22961 rw=0.851 t=1.54s
+  [A] ALS x air                {"alpha": 1, "conf": "log1p", "factors": 128, "reg": 0.1}      cohort=0.27008 test=0.29379 rw=0.847 t=1.54s
+  [A] ALS                      {"alpha": 10, "conf": "log1p", "factors": 128, "reg": 0.1}     cohort=0.22423 test=0.24029 rw=0.870 t=1.50s
+  [A] ALS x air                {"alpha": 10, "conf": "log1p", "factors": 128, "reg": 0.1}     cohort=0.27793 test=0.30075 rw=0.852 t=1.51s
+  [A] ALS                      {"alpha": 40, "conf": "log1p", "factors": 128, "reg": 0.1}     cohort=0.22423 test=0.24003 rw=0.875 t=1.51s
+  [A] ALS x air                {"alpha": 40, "conf": "log1p", "factors": 128, "reg": 0.1}     cohort=0.27453 test=0.29681 rw=0.852 t=1.51s
+  [A] ALS                      {"alpha": 0.1, "conf": "bm25", "factors": 8, "reg": 0.01}      cohort=0.25762 test=0.27748 rw=0.522 t=0.31s
+  [A] ALS x air                {"alpha": 0.1, "conf": "bm25", "factors": 8, "reg": 0.01}      cohort=0.26511 test=0.28673 rw=0.511 t=0.33s
+  [A] ALS                      {"alpha": 0.3, "conf": "bm25", "factors": 8, "reg": 0.01}      cohort=0.25973 test=0.27899 rw=0.508 t=0.32s
+  [A] ALS x air                {"alpha": 0.3, "conf": "bm25", "factors": 8, "reg": 0.01}      cohort=0.26364 test=0.28409 rw=0.484 t=0.33s
+  [A] ALS                      {"alpha": 1, "conf": "bm25", "factors": 8, "reg": 0.01}        cohort=0.23241 test=0.25109 rw=0.474 t=0.33s
+  [A] ALS x air                {"alpha": 1, "conf": "bm25", "factors": 8, "reg": 0.01}        cohort=0.24297 test=0.26210 rw=0.448 t=0.33s
+  [A] ALS                      {"alpha": 10, "conf": "bm25", "factors": 8, "reg": 0.01}       cohort=0.12382 test=0.12004 rw=0.309 t=0.33s
+  [A] ALS x air                {"alpha": 10, "conf": "bm25", "factors": 8, "reg": 0.01}       cohort=0.18628 test=0.20121 rw=0.358 t=0.33s
+  [A] ALS                      {"alpha": 40, "conf": "bm25", "factors": 8, "reg": 0.01}       cohort=0.07673 test=0.06846 rw=0.204 t=0.33s
+  [A] ALS x air                {"alpha": 40, "conf": "bm25", "factors": 8, "reg": 0.01}       cohort=0.13075 test=0.13857 rw=0.278 t=0.36s
+  [A] ALS                      {"alpha": 0.1, "conf": "bm25", "factors": 8, "reg": 0.1}       cohort=0.25690 test=0.27707 rw=0.522 t=0.31s
+  [A] ALS x air                {"alpha": 0.1, "conf": "bm25", "factors": 8, "reg": 0.1}       cohort=0.26514 test=0.28658 rw=0.511 t=0.32s
+  [A] ALS                      {"alpha": 0.3, "conf": "bm25", "factors": 8, "reg": 0.1}       cohort=0.25929 test=0.27824 rw=0.507 t=0.33s
+  [A] ALS x air                {"alpha": 0.3, "conf": "bm25", "factors": 8, "reg": 0.1}       cohort=0.26321 test=0.28324 rw=0.482 t=0.34s
+  [A] ALS                      {"alpha": 1, "conf": "bm25", "factors": 8, "reg": 0.1}         cohort=0.23178 test=0.25001 rw=0.474 t=0.33s
+  [A] ALS x air                {"alpha": 1, "conf": "bm25", "factors": 8, "reg": 0.1}         cohort=0.24234 test=0.26130 rw=0.447 t=0.33s
+  [A] ALS                      {"alpha": 10, "conf": "bm25", "factors": 8, "reg": 0.1}        cohort=0.12257 test=0.11836 rw=0.308 t=0.33s
+  [A] ALS x air                {"alpha": 10, "conf": "bm25", "factors": 8, "reg": 0.1}        cohort=0.18536 test=0.19889 rw=0.357 t=0.33s
+  [A] ALS                      {"alpha": 40, "conf": "bm25", "factors": 8, "reg": 0.1}        cohort=0.07670 test=0.06657 rw=0.205 t=0.33s
+  [A] ALS x air                {"alpha": 40, "conf": "bm25", "factors": 8, "reg": 0.1}        cohort=0.12156 test=0.12828 rw=0.261 t=0.33s
+  [A] ALS                      {"alpha": 0.1, "conf": "bm25", "factors": 16, "reg": 0.01}     cohort=0.26972 test=0.29863 rw=0.596 t=0.42s
+  [A] ALS x air                {"alpha": 0.1, "conf": "bm25", "factors": 16, "reg": 0.01}     cohort=0.28060 test=0.31038 rw=0.585 t=0.41s
+  [A] ALS                      {"alpha": 0.3, "conf": "bm25", "factors": 16, "reg": 0.01}     cohort=0.25447 test=0.27639 rw=0.553 t=0.40s
+  [A] ALS x air                {"alpha": 0.3, "conf": "bm25", "factors": 16, "reg": 0.01}     cohort=0.27118 test=0.29303 rw=0.520 t=0.41s
+  [A] ALS                      {"alpha": 1, "conf": "bm25", "factors": 16, "reg": 0.01}       cohort=0.21974 test=0.23704 rw=0.527 t=0.41s
+  [A] ALS x air                {"alpha": 1, "conf": "bm25", "factors": 16, "reg": 0.01}       cohort=0.25122 test=0.27218 rw=0.482 t=0.42s
+  [A] ALS                      {"alpha": 10, "conf": "bm25", "factors": 16, "reg": 0.01}      cohort=0.12159 test=0.12155 rw=0.385 t=0.41s
+  [A] ALS x air                {"alpha": 10, "conf": "bm25", "factors": 16, "reg": 0.01}      cohort=0.20269 test=0.21544 rw=0.413 t=0.41s
+  [A] ALS                      {"alpha": 40, "conf": "bm25", "factors": 16, "reg": 0.01}      cohort=0.08157 test=0.07159 rw=0.263 t=0.41s
+  [A] ALS x air                {"alpha": 40, "conf": "bm25", "factors": 16, "reg": 0.01}      cohort=0.17284 test=0.17723 rw=0.367 t=0.41s
+  [A] ALS                      {"alpha": 0.1, "conf": "bm25", "factors": 16, "reg": 0.1}      cohort=0.27049 test=0.30010 rw=0.591 t=0.40s
+  [A] ALS x air                {"alpha": 0.1, "conf": "bm25", "factors": 16, "reg": 0.1}      cohort=0.28016 test=0.30907 rw=0.583 t=0.47s
+  [A] ALS                      {"alpha": 0.3, "conf": "bm25", "factors": 16, "reg": 0.1}      cohort=0.25382 test=0.27532 rw=0.552 t=0.40s
+  [A] ALS x air                {"alpha": 0.3, "conf": "bm25", "factors": 16, "reg": 0.1}      cohort=0.27100 test=0.29303 rw=0.520 t=0.41s
+  [A] ALS                      {"alpha": 1, "conf": "bm25", "factors": 16, "reg": 0.1}        cohort=0.21939 test=0.23701 rw=0.526 t=0.40s
+  [A] ALS x air                {"alpha": 1, "conf": "bm25", "factors": 16, "reg": 0.1}        cohort=0.25121 test=0.27248 rw=0.482 t=0.40s
+  [A] ALS                      {"alpha": 10, "conf": "bm25", "factors": 16, "reg": 0.1}       cohort=0.12046 test=0.11808 rw=0.386 t=0.40s
+  [A] ALS x air                {"alpha": 10, "conf": "bm25", "factors": 16, "reg": 0.1}       cohort=0.20258 test=0.21651 rw=0.415 t=0.40s
+  [A] ALS                      {"alpha": 40, "conf": "bm25", "factors": 16, "reg": 0.1}       cohort=0.08289 test=0.07295 rw=0.275 t=0.40s
+  [A] ALS x air                {"alpha": 40, "conf": "bm25", "factors": 16, "reg": 0.1}       cohort=0.17400 test=0.17838 rw=0.364 t=0.42s
+  [A] ALS                      {"alpha": 0.1, "conf": "bm25", "factors": 32, "reg": 0.01}     cohort=0.26594 test=0.29622 rw=0.639 t=0.63s
+  [A] ALS x air                {"alpha": 0.1, "conf": "bm25", "factors": 32, "reg": 0.01}     cohort=0.28228 test=0.31224 rw=0.622 t=0.64s
+  [A] ALS                      {"alpha": 0.3, "conf": "bm25", "factors": 32, "reg": 0.01}     cohort=0.25106 test=0.27521 rw=0.628 t=0.65s
+  [A] ALS x air                {"alpha": 0.3, "conf": "bm25", "factors": 32, "reg": 0.01}     cohort=0.27884 test=0.30243 rw=0.573 t=0.64s
+  [A] ALS                      {"alpha": 1, "conf": "bm25", "factors": 32, "reg": 0.01}       cohort=0.21446 test=0.23239 rw=0.620 t=0.63s
+  [A] ALS x air                {"alpha": 1, "conf": "bm25", "factors": 32, "reg": 0.01}       cohort=0.26362 test=0.28792 rw=0.547 t=0.62s
+  [A] ALS                      {"alpha": 10, "conf": "bm25", "factors": 32, "reg": 0.01}      cohort=0.14454 test=0.15022 rw=0.559 t=0.65s
+  [A] ALS x air                {"alpha": 10, "conf": "bm25", "factors": 32, "reg": 0.01}      cohort=0.23332 test=0.24980 rw=0.520 t=0.65s
+  [A] ALS                      {"alpha": 40, "conf": "bm25", "factors": 32, "reg": 0.01}      cohort=0.11246 test=0.10733 rw=0.448 t=0.64s
+  [A] ALS x air                {"alpha": 40, "conf": "bm25", "factors": 32, "reg": 0.01}      cohort=0.21463 test=0.22217 rw=0.486 t=0.64s
+  [A] ALS                      {"alpha": 0.1, "conf": "bm25", "factors": 32, "reg": 0.1}      cohort=0.26678 test=0.29584 rw=0.634 t=0.65s
+  [A] ALS x air                {"alpha": 0.1, "conf": "bm25", "factors": 32, "reg": 0.1}      cohort=0.28255 test=0.31153 rw=0.615 t=0.65s
+  [A] ALS                      {"alpha": 0.3, "conf": "bm25", "factors": 32, "reg": 0.1}      cohort=0.25050 test=0.27352 rw=0.627 t=0.64s
+  [A] ALS x air                {"alpha": 0.3, "conf": "bm25", "factors": 32, "reg": 0.1}      cohort=0.27793 test=0.30212 rw=0.572 t=0.65s
+  [A] ALS                      {"alpha": 1, "conf": "bm25", "factors": 32, "reg": 0.1}        cohort=0.21380 test=0.23140 rw=0.618 t=0.64s
+  [A] ALS x air                {"alpha": 1, "conf": "bm25", "factors": 32, "reg": 0.1}        cohort=0.26256 test=0.28571 rw=0.547 t=0.64s
+  [A] ALS                      {"alpha": 10, "conf": "bm25", "factors": 32, "reg": 0.1}       cohort=0.14463 test=0.15023 rw=0.560 t=0.63s
+  [A] ALS x air                {"alpha": 10, "conf": "bm25", "factors": 32, "reg": 0.1}       cohort=0.23349 test=0.24965 rw=0.520 t=0.64s
+  [A] ALS                      {"alpha": 40, "conf": "bm25", "factors": 32, "reg": 0.1}       cohort=0.11103 test=0.10622 rw=0.461 t=0.63s
+  [A] ALS x air                {"alpha": 40, "conf": "bm25", "factors": 32, "reg": 0.1}       cohort=0.21301 test=0.22155 rw=0.486 t=0.64s
+  [A] ALS                      {"alpha": 0.1, "conf": "bm25", "factors": 64, "reg": 0.01}     cohort=0.25984 test=0.29112 rw=0.731 t=0.83s
+  [A] ALS x air                {"alpha": 0.1, "conf": "bm25", "factors": 64, "reg": 0.01}     cohort=0.29015 test=0.32210 rw=0.699 t=0.83s
+  [A] ALS                      {"alpha": 0.3, "conf": "bm25", "factors": 64, "reg": 0.01}     cohort=0.24401 test=0.26735 rw=0.719 t=0.82s
+  [A] ALS x air                {"alpha": 0.3, "conf": "bm25", "factors": 64, "reg": 0.01}     cohort=0.28526 test=0.31167 rw=0.658 t=0.83s
+  [A] ALS                      {"alpha": 1, "conf": "bm25", "factors": 64, "reg": 0.01}       cohort=0.21222 test=0.23295 rw=0.741 t=0.80s
+  [A] ALS x air                {"alpha": 1, "conf": "bm25", "factors": 64, "reg": 0.01}       cohort=0.27569 test=0.30054 rw=0.661 t=0.80s
+  [A] ALS                      {"alpha": 10, "conf": "bm25", "factors": 64, "reg": 0.01}      cohort=0.17747 test=0.19093 rw=0.765 t=0.85s
+  [A] ALS x air                {"alpha": 10, "conf": "bm25", "factors": 64, "reg": 0.01}      cohort=0.26595 test=0.29056 rw=0.685 t=0.85s
+  [A] ALS                      {"alpha": 40, "conf": "bm25", "factors": 64, "reg": 0.01}      cohort=0.15928 test=0.16641 rw=0.706 t=0.83s
+  [A] ALS x air                {"alpha": 40, "conf": "bm25", "factors": 64, "reg": 0.01}      cohort=0.25544 test=0.27255 rw=0.648 t=0.83s
+  [A] ALS                      {"alpha": 0.1, "conf": "bm25", "factors": 64, "reg": 0.1}      cohort=0.25483 test=0.28433 rw=0.721 t=0.80s
+  [A] ALS x air                {"alpha": 0.1, "conf": "bm25", "factors": 64, "reg": 0.1}      cohort=0.28756 test=0.31825 rw=0.690 t=0.80s
+  [A] ALS                      {"alpha": 0.3, "conf": "bm25", "factors": 64, "reg": 0.1}      cohort=0.24382 test=0.26773 rw=0.718 t=0.78s
+  [A] ALS x air                {"alpha": 0.3, "conf": "bm25", "factors": 64, "reg": 0.1}      cohort=0.28499 test=0.31168 rw=0.657 t=0.79s
+  [A] ALS                      {"alpha": 1, "conf": "bm25", "factors": 64, "reg": 0.1}        cohort=0.21202 test=0.23263 rw=0.741 t=0.82s
+  [A] ALS x air                {"alpha": 1, "conf": "bm25", "factors": 64, "reg": 0.1}        cohort=0.27553 test=0.30070 rw=0.661 t=0.82s
+  [A] ALS                      {"alpha": 10, "conf": "bm25", "factors": 64, "reg": 0.1}       cohort=0.17324 test=0.18628 rw=0.763 t=0.82s
+  [A] ALS x air                {"alpha": 10, "conf": "bm25", "factors": 64, "reg": 0.1}       cohort=0.26460 test=0.28938 rw=0.679 t=0.82s
+  [A] ALS                      {"alpha": 40, "conf": "bm25", "factors": 64, "reg": 0.1}       cohort=0.15443 test=0.15767 rw=0.698 t=0.84s
+  [A] ALS x air                {"alpha": 40, "conf": "bm25", "factors": 64, "reg": 0.1}       cohort=0.25361 test=0.27024 rw=0.641 t=0.84s
+  [A] ALS                      {"alpha": 0.1, "conf": "bm25", "factors": 128, "reg": 0.01}    cohort=0.22647 test=0.25069 rw=0.781 t=1.55s
+  [A] ALS x air                {"alpha": 0.1, "conf": "bm25", "factors": 128, "reg": 0.01}    cohort=0.27409 test=0.30606 rw=0.765 t=1.55s
+  [A] ALS                      {"alpha": 0.3, "conf": "bm25", "factors": 128, "reg": 0.01}    cohort=0.21627 test=0.23945 rw=0.814 t=1.54s
+  [A] ALS x air                {"alpha": 0.3, "conf": "bm25", "factors": 128, "reg": 0.01}    cohort=0.28040 test=0.31013 rw=0.785 t=1.55s
+  [A] ALS                      {"alpha": 1, "conf": "bm25", "factors": 128, "reg": 0.01}      cohort=0.19385 test=0.21707 rw=0.836 t=1.54s
+  [A] ALS x air                {"alpha": 1, "conf": "bm25", "factors": 128, "reg": 0.01}      cohort=0.27552 test=0.30427 rw=0.800 t=1.54s
+  [A] ALS                      {"alpha": 10, "conf": "bm25", "factors": 128, "reg": 0.01}     cohort=0.20048 test=0.22258 rw=0.866 t=1.58s
+  [A] ALS x air                {"alpha": 10, "conf": "bm25", "factors": 128, "reg": 0.01}     cohort=0.28014 test=0.30342 rw=0.824 t=1.59s
+  [A] ALS                      {"alpha": 40, "conf": "bm25", "factors": 128, "reg": 0.01}     cohort=0.19946 test=0.21782 rw=0.860 t=1.52s
+  [A] ALS x air                {"alpha": 40, "conf": "bm25", "factors": 128, "reg": 0.01}     cohort=0.27658 test=0.29680 rw=0.801 t=1.51s
+  [A] ALS                      {"alpha": 0.1, "conf": "bm25", "factors": 128, "reg": 0.1}     cohort=0.22192 test=0.24435 rw=0.777 t=1.53s
+  [A] ALS x air                {"alpha": 0.1, "conf": "bm25", "factors": 128, "reg": 0.1}     cohort=0.27143 test=0.30012 rw=0.760 t=1.54s
+  [A] ALS                      {"alpha": 0.3, "conf": "bm25", "factors": 128, "reg": 0.1}     cohort=0.21615 test=0.23889 rw=0.815 t=1.54s
+  [A] ALS x air                {"alpha": 0.3, "conf": "bm25", "factors": 128, "reg": 0.1}     cohort=0.28084 test=0.31049 rw=0.788 t=1.54s
+  [A] ALS                      {"alpha": 1, "conf": "bm25", "factors": 128, "reg": 0.1}       cohort=0.19458 test=0.21954 rw=0.837 t=1.57s
+  [A] ALS x air                {"alpha": 1, "conf": "bm25", "factors": 128, "reg": 0.1}       cohort=0.27615 test=0.30535 rw=0.803 t=1.58s
+  [A] ALS                      {"alpha": 10, "conf": "bm25", "factors": 128, "reg": 0.1}      cohort=0.19522 test=0.21545 rw=0.865 t=1.55s
+  [A] ALS x air                {"alpha": 10, "conf": "bm25", "factors": 128, "reg": 0.1}      cohort=0.27865 test=0.30178 rw=0.820 t=1.56s
+  [A] ALS                      {"alpha": 40, "conf": "bm25", "factors": 128, "reg": 0.1}      cohort=0.19851 test=0.21779 rw=0.859 t=1.49s
+  [A] ALS x air                {"alpha": 40, "conf": "bm25", "factors": 128, "reg": 0.1}      cohort=0.27664 test=0.29778 rw=0.797 t=1.50s
+  mass check [A]: real graph 1 update max|colsum-1|=2.44e-15, dangling nodes=0; synthetic dangling graph colsum=1.000000000000 (would be 0.7200 if dangling mass dropped)
+  [A] PPR                      {"alpha": 0.3}                                                 cohort=0.33413 test=0.37660 rw=0.876 t=8.10s {'mean_iter': 13.0, 'max_iter': 13, 'max_residual': 3.189e-07, 'non_converged': 0}
+  [A] PPR x air                {"alpha": 0.3}                                                 cohort=0.33839 test=0.37831 rw=0.875 t=8.11s {'mean_iter': 13.0, 'max_iter': 13, 'max_residual': 3.189e-07, 'non_converged': 0}
+  [A] PPR                      {"alpha": 0.5}                                                 cohort=0.33571 test=0.37833 rw=0.874 t=12.78s {'mean_iter': 21.0, 'max_iter': 21, 'max_residual': 9.537e-07, 'non_converged': 0}
+  [A] PPR x air                {"alpha": 0.5}                                                 cohort=0.34111 test=0.38181 rw=0.856 t=12.79s {'mean_iter': 21.0, 'max_iter': 21, 'max_residual': 9.537e-07, 'non_converged': 0}
+  [A] PPR                      {"alpha": 0.7}                                                 cohort=0.33879 test=0.38095 rw=0.832 t=24.53s {'mean_iter': 41.0, 'max_iter': 41, 'max_residual': 8.914e-07, 'non_converged': 0}
+  [A] PPR x air                {"alpha": 0.7}                                                 cohort=0.33505 test=0.37329 rw=0.750 t=24.56s {'mean_iter': 41.0, 'max_iter': 41, 'max_residual': 8.914e-07, 'non_converged': 0}
+  [A] PPR                      {"alpha": 0.85}                                                cohort=0.32164 test=0.35954 rw=0.696 t=55.84s {'mean_iter': 90.0, 'max_iter': 90, 'max_residual': 8.887e-07, 'non_converged': 0}
+  [A] PPR x air                {"alpha": 0.85}                                                cohort=0.31005 test=0.34408 rw=0.641 t=55.86s {'mean_iter': 90.0, 'max_iter': 90, 'max_residual': 8.887e-07, 'non_converged': 0}
+  content: items=4903 vocab=10575 pool items without tokens=0
+  [A] CBF                      {}                                                             cohort=0.23688 test=0.26276 rw=0.541 t=1.80s
+  [A] CBF x air                {}                                                             cohort=0.31320 test=0.34897 rw=0.626 t=1.75s
+[B] train rows=1825255 positives=317043 warm users=4738 train programmes(pos)=2501 | eval users=4643 (warm 4540, cold 103) | pool=6363 pool airings=121505 | train airings(labelled)=115613 | test subset=1238
+  [B] popularity               {}                                                             cohort=0.23684 test=0.26799 rw=0.543 t=0.00s
+  [B] history count            {}                                                             cohort=0.30671 test=0.35027 rw=0.945 t=0.06s
+  [B] history recency          {"half_life_w": 2}                                             cohort=0.28248 test=0.32271 rw=0.945 t=0.11s
+  [B] history recency          {"half_life_w": 4}                                             cohort=0.30008 test=0.34509 rw=0.945 t=0.11s
+  [B] history expected         {}                                                             cohort=0.29559 test=0.33877 rw=0.945 t=0.06s
+  [B] ALS                      {"alpha": 0.1, "conf": "count", "factors": 8, "reg": 0.01}     cohort=0.24965 test=0.27440 rw=0.757 t=0.68s
+  [B] ALS x air                {"alpha": 0.1, "conf": "count", "factors": 8, "reg": 0.01}     cohort=0.28565 test=0.31511 rw=0.748 t=0.74s
+  [B] ALS                      {"alpha": 0.3, "conf": "count", "factors": 8, "reg": 0.01}     cohort=0.26148 test=0.28881 rw=0.751 t=0.69s
+  [B] ALS x air                {"alpha": 0.3, "conf": "count", "factors": 8, "reg": 0.01}     cohort=0.29234 test=0.32182 rw=0.735 t=0.73s
+  [B] ALS                      {"alpha": 1, "conf": "count", "factors": 8, "reg": 0.01}       cohort=0.24922 test=0.27572 rw=0.713 t=0.74s
+  [B] ALS x air                {"alpha": 1, "conf": "count", "factors": 8, "reg": 0.01}       cohort=0.28241 test=0.31097 rw=0.689 t=0.78s
+  [B] ALS                      {"alpha": 10, "conf": "count", "factors": 8, "reg": 0.01}      cohort=0.19021 test=0.20333 rw=0.592 t=0.70s
+  [B] ALS x air                {"alpha": 10, "conf": "count", "factors": 8, "reg": 0.01}      cohort=0.20392 test=0.22256 rw=0.550 t=0.75s
+  [B] ALS                      {"alpha": 40, "conf": "count", "factors": 8, "reg": 0.01}      cohort=0.14519 test=0.15226 rw=0.467 t=0.71s
+  [B] ALS x air                {"alpha": 40, "conf": "count", "factors": 8, "reg": 0.01}      cohort=0.13158 test=0.14186 rw=0.389 t=0.75s
+  [B] ALS                      {"alpha": 0.1, "conf": "count", "factors": 8, "reg": 0.1}      cohort=0.25122 test=0.28034 rw=0.753 t=0.68s
+  [B] ALS x air                {"alpha": 0.1, "conf": "count", "factors": 8, "reg": 0.1}      cohort=0.28662 test=0.31768 rw=0.743 t=0.72s
+  [B] ALS                      {"alpha": 0.3, "conf": "count", "factors": 8, "reg": 0.1}      cohort=0.26142 test=0.28896 rw=0.749 t=0.69s
+  [B] ALS x air                {"alpha": 0.3, "conf": "count", "factors": 8, "reg": 0.1}      cohort=0.29088 test=0.32333 rw=0.724 t=0.73s
+  [B] ALS                      {"alpha": 1, "conf": "count", "factors": 8, "reg": 0.1}        cohort=0.24997 test=0.27679 rw=0.711 t=0.74s
+  [B] ALS x air                {"alpha": 1, "conf": "count", "factors": 8, "reg": 0.1}        cohort=0.28215 test=0.31049 rw=0.688 t=0.79s
+  [B] ALS                      {"alpha": 10, "conf": "count", "factors": 8, "reg": 0.1}       cohort=0.18197 test=0.19650 rw=0.588 t=0.71s
+  [B] ALS x air                {"alpha": 10, "conf": "count", "factors": 8, "reg": 0.1}       cohort=0.18268 test=0.20166 rw=0.537 t=0.75s
+  [B] ALS                      {"alpha": 40, "conf": "count", "factors": 8, "reg": 0.1}       cohort=0.13867 test=0.14400 rw=0.470 t=0.71s
+  [B] ALS x air                {"alpha": 40, "conf": "count", "factors": 8, "reg": 0.1}       cohort=0.12149 test=0.13052 rw=0.358 t=0.75s
+  [B] ALS                      {"alpha": 0.1, "conf": "count", "factors": 16, "reg": 0.01}    cohort=0.21890 test=0.23727 rw=0.828 t=0.79s
+  [B] ALS x air                {"alpha": 0.1, "conf": "count", "factors": 16, "reg": 0.01}    cohort=0.28107 test=0.30717 rw=0.824 t=0.86s
+  [B] ALS                      {"alpha": 0.3, "conf": "count", "factors": 16, "reg": 0.01}    cohort=0.23747 test=0.26017 rw=0.828 t=0.80s
+  [B] ALS x air                {"alpha": 0.3, "conf": "count", "factors": 16, "reg": 0.01}    cohort=0.29106 test=0.31862 rw=0.812 t=0.84s
+  [B] ALS                      {"alpha": 1, "conf": "count", "factors": 16, "reg": 0.01}      cohort=0.24313 test=0.26699 rw=0.802 t=0.86s
+  [B] ALS x air                {"alpha": 1, "conf": "count", "factors": 16, "reg": 0.01}      cohort=0.29041 test=0.31775 rw=0.776 t=0.91s
+  [B] ALS                      {"alpha": 10, "conf": "count", "factors": 16, "reg": 0.01}     cohort=0.17153 test=0.17774 rw=0.618 t=0.81s
+  [B] ALS x air                {"alpha": 10, "conf": "count", "factors": 16, "reg": 0.01}     cohort=0.23947 test=0.26081 rw=0.624 t=0.84s
+  [B] ALS                      {"alpha": 40, "conf": "count", "factors": 16, "reg": 0.01}     cohort=0.11944 test=0.12008 rw=0.416 t=0.84s
+  [B] ALS x air                {"alpha": 40, "conf": "count", "factors": 16, "reg": 0.01}     cohort=0.15038 test=0.16057 rw=0.466 t=0.87s
+  [B] ALS                      {"alpha": 0.1, "conf": "count", "factors": 16, "reg": 0.1}     cohort=0.22553 test=0.24438 rw=0.826 t=0.78s
+  [B] ALS x air                {"alpha": 0.1, "conf": "count", "factors": 16, "reg": 0.1}     cohort=0.28246 test=0.31017 rw=0.820 t=0.85s
+  [B] ALS                      {"alpha": 0.3, "conf": "count", "factors": 16, "reg": 0.1}     cohort=0.23642 test=0.25463 rw=0.831 t=0.80s
+  [B] ALS x air                {"alpha": 0.3, "conf": "count", "factors": 16, "reg": 0.1}     cohort=0.29043 test=0.31585 rw=0.815 t=0.84s
+  [B] ALS                      {"alpha": 1, "conf": "count", "factors": 16, "reg": 0.1}       cohort=0.24289 test=0.26526 rw=0.804 t=0.86s
+  [B] ALS x air                {"alpha": 1, "conf": "count", "factors": 16, "reg": 0.1}       cohort=0.28958 test=0.31680 rw=0.781 t=0.90s
+  [B] ALS                      {"alpha": 10, "conf": "count", "factors": 16, "reg": 0.1}      cohort=0.17144 test=0.17540 rw=0.626 t=0.83s
+  [B] ALS x air                {"alpha": 10, "conf": "count", "factors": 16, "reg": 0.1}      cohort=0.22169 test=0.24436 rw=0.595 t=0.86s
+  [B] ALS                      {"alpha": 40, "conf": "count", "factors": 16, "reg": 0.1}      cohort=0.11624 test=0.11797 rw=0.423 t=0.83s
+  [B] ALS x air                {"alpha": 40, "conf": "count", "factors": 16, "reg": 0.1}      cohort=0.12954 test=0.13887 rw=0.400 t=0.88s
+  [B] ALS                      {"alpha": 0.1, "conf": "count", "factors": 32, "reg": 0.01}    cohort=0.19614 test=0.20802 rw=0.871 t=1.20s
+  [B] ALS x air                {"alpha": 0.1, "conf": "count", "factors": 32, "reg": 0.01}    cohort=0.27253 test=0.29470 rw=0.869 t=1.25s
+  [B] ALS                      {"alpha": 0.3, "conf": "count", "factors": 32, "reg": 0.01}    cohort=0.19104 test=0.20210 rw=0.873 t=1.19s
+  [B] ALS x air                {"alpha": 0.3, "conf": "count", "factors": 32, "reg": 0.01}    cohort=0.27968 test=0.30529 rw=0.868 t=1.23s
+  [B] ALS                      {"alpha": 1, "conf": "count", "factors": 32, "reg": 0.01}      cohort=0.20239 test=0.21518 rw=0.869 t=1.22s
+  [B] ALS x air                {"alpha": 1, "conf": "count", "factors": 32, "reg": 0.01}      cohort=0.28183 test=0.30615 rw=0.843 t=1.26s
+  [B] ALS                      {"alpha": 10, "conf": "count", "factors": 32, "reg": 0.01}     cohort=0.16669 test=0.17337 rw=0.673 t=1.16s
+  [B] ALS x air                {"alpha": 10, "conf": "count", "factors": 32, "reg": 0.01}     cohort=0.24388 test=0.26478 rw=0.674 t=1.20s
+  [B] ALS                      {"alpha": 40, "conf": "count", "factors": 32, "reg": 0.01}     cohort=0.10850 test=0.10214 rw=0.436 t=1.19s
+  [B] ALS x air                {"alpha": 40, "conf": "count", "factors": 32, "reg": 0.01}     cohort=0.19528 test=0.20654 rw=0.551 t=1.21s
+  [B] ALS                      {"alpha": 0.1, "conf": "count", "factors": 32, "reg": 0.1}     cohort=0.20073 test=0.21314 rw=0.871 t=1.19s
+  [B] ALS x air                {"alpha": 0.1, "conf": "count", "factors": 32, "reg": 0.1}     cohort=0.27093 test=0.29358 rw=0.869 t=1.22s
+  [B] ALS                      {"alpha": 0.3, "conf": "count", "factors": 32, "reg": 0.1}     cohort=0.19211 test=0.20085 rw=0.874 t=1.20s
+  [B] ALS x air                {"alpha": 0.3, "conf": "count", "factors": 32, "reg": 0.1}     cohort=0.28014 test=0.30623 rw=0.869 t=1.22s
+  [B] ALS                      {"alpha": 1, "conf": "count", "factors": 32, "reg": 0.1}       cohort=0.20073 test=0.21264 rw=0.870 t=1.24s
+  [B] ALS x air                {"alpha": 1, "conf": "count", "factors": 32, "reg": 0.1}       cohort=0.28206 test=0.30682 rw=0.845 t=1.29s
+  [B] ALS                      {"alpha": 10, "conf": "count", "factors": 32, "reg": 0.1}      cohort=0.16708 test=0.17485 rw=0.679 t=1.17s
+  [B] ALS x air                {"alpha": 10, "conf": "count", "factors": 32, "reg": 0.1}      cohort=0.24091 test=0.26169 rw=0.663 t=1.21s
+  [B] ALS                      {"alpha": 40, "conf": "count", "factors": 32, "reg": 0.1}      cohort=0.10471 test=0.10054 rw=0.454 t=1.18s
+  [B] ALS x air                {"alpha": 40, "conf": "count", "factors": 32, "reg": 0.1}      cohort=0.15999 test=0.17497 rw=0.520 t=1.22s
+  [B] ALS                      {"alpha": 0.1, "conf": "count", "factors": 64, "reg": 0.01}    cohort=0.20114 test=0.21441 rw=0.892 t=1.32s
+  [B] ALS x air                {"alpha": 0.1, "conf": "count", "factors": 64, "reg": 0.01}    cohort=0.25939 test=0.27970 rw=0.892 t=1.36s
+  [B] ALS                      {"alpha": 0.3, "conf": "count", "factors": 64, "reg": 0.01}    cohort=0.17744 test=0.18623 rw=0.895 t=1.34s
+  [B] ALS x air                {"alpha": 0.3, "conf": "count", "factors": 64, "reg": 0.01}    cohort=0.26119 test=0.28256 rw=0.893 t=1.37s
+  [B] ALS                      {"alpha": 1, "conf": "count", "factors": 64, "reg": 0.01}      cohort=0.17913 test=0.18273 rw=0.902 t=1.40s
+  [B] ALS x air                {"alpha": 1, "conf": "count", "factors": 64, "reg": 0.01}      cohort=0.27144 test=0.29428 rw=0.895 t=1.43s
+  [B] ALS                      {"alpha": 10, "conf": "count", "factors": 64, "reg": 0.01}     cohort=0.16816 test=0.17410 rw=0.776 t=1.35s
+  [B] ALS x air                {"alpha": 10, "conf": "count", "factors": 64, "reg": 0.01}     cohort=0.24961 test=0.26454 rw=0.741 t=1.38s
+  [B] ALS                      {"alpha": 40, "conf": "count", "factors": 64, "reg": 0.01}     cohort=0.11568 test=0.11315 rw=0.563 t=1.38s
+  [B] ALS x air                {"alpha": 40, "conf": "count", "factors": 64, "reg": 0.01}     cohort=0.21309 test=0.22663 rw=0.640 t=1.40s
+  [B] ALS                      {"alpha": 0.1, "conf": "count", "factors": 64, "reg": 0.1}     cohort=0.21098 test=0.22965 rw=0.892 t=1.37s
+  [B] ALS x air                {"alpha": 0.1, "conf": "count", "factors": 64, "reg": 0.1}     cohort=0.25647 test=0.27784 rw=0.892 t=1.41s
+  [B] ALS                      {"alpha": 0.3, "conf": "count", "factors": 64, "reg": 0.1}     cohort=0.17901 test=0.18898 rw=0.895 t=1.35s
+  [B] ALS x air                {"alpha": 0.3, "conf": "count", "factors": 64, "reg": 0.1}     cohort=0.26063 test=0.28273 rw=0.894 t=1.37s
+  [B] ALS                      {"alpha": 1, "conf": "count", "factors": 64, "reg": 0.1}       cohort=0.17757 test=0.18265 rw=0.899 t=1.47s
+  [B] ALS x air                {"alpha": 1, "conf": "count", "factors": 64, "reg": 0.1}       cohort=0.27008 test=0.29183 rw=0.888 t=1.49s
+  [B] ALS                      {"alpha": 10, "conf": "count", "factors": 64, "reg": 0.1}      cohort=0.17053 test=0.17609 rw=0.782 t=1.38s
+  [B] ALS x air                {"alpha": 10, "conf": "count", "factors": 64, "reg": 0.1}      cohort=0.24925 test=0.26670 rw=0.737 t=1.41s
+  [B] ALS                      {"alpha": 40, "conf": "count", "factors": 64, "reg": 0.1}      cohort=0.11611 test=0.11222 rw=0.589 t=1.37s
+  [B] ALS x air                {"alpha": 40, "conf": "count", "factors": 64, "reg": 0.1}      cohort=0.20651 test=0.22130 rw=0.619 t=1.41s
+  [B] ALS                      {"alpha": 0.1, "conf": "count", "factors": 128, "reg": 0.01}   cohort=0.21767 test=0.24124 rw=0.908 t=2.25s
+  [B] ALS x air                {"alpha": 0.1, "conf": "count", "factors": 128, "reg": 0.01}   cohort=0.26161 test=0.28444 rw=0.906 t=2.28s
+  [B] ALS                      {"alpha": 0.3, "conf": "count", "factors": 128, "reg": 0.01}   cohort=0.19921 test=0.21900 rw=0.913 t=2.24s
+  [B] ALS x air                {"alpha": 0.3, "conf": "count", "factors": 128, "reg": 0.01}   cohort=0.24756 test=0.26704 rw=0.909 t=2.28s
+  [B] ALS                      {"alpha": 1, "conf": "count", "factors": 128, "reg": 0.01}     cohort=0.17765 test=0.18481 rw=0.921 t=2.25s
+  [B] ALS x air                {"alpha": 1, "conf": "count", "factors": 128, "reg": 0.01}     cohort=0.25128 test=0.27142 rw=0.913 t=2.29s
+  [B] ALS                      {"alpha": 10, "conf": "count", "factors": 128, "reg": 0.01}    cohort=0.17505 test=0.18155 rw=0.912 t=2.42s
+  [B] ALS x air                {"alpha": 10, "conf": "count", "factors": 128, "reg": 0.01}    cohort=0.25255 test=0.26899 rw=0.868 t=2.45s
+  [B] ALS                      {"alpha": 40, "conf": "count", "factors": 128, "reg": 0.01}    cohort=0.15383 test=0.15431 rw=0.847 t=2.35s
+  [B] ALS x air                {"alpha": 40, "conf": "count", "factors": 128, "reg": 0.01}    cohort=0.23455 test=0.24841 rw=0.813 t=2.39s
+  [B] ALS                      {"alpha": 0.1, "conf": "count", "factors": 128, "reg": 0.1}    cohort=0.23448 test=0.26356 rw=0.909 t=2.29s
+  [B] ALS x air                {"alpha": 0.1, "conf": "count", "factors": 128, "reg": 0.1}    cohort=0.25816 test=0.28018 rw=0.907 t=2.33s
+  [B] ALS                      {"alpha": 0.3, "conf": "count", "factors": 128, "reg": 0.1}    cohort=0.19904 test=0.22088 rw=0.912 t=2.26s
+  [B] ALS x air                {"alpha": 0.3, "conf": "count", "factors": 128, "reg": 0.1}    cohort=0.24664 test=0.26550 rw=0.909 t=2.30s
+  [B] ALS                      {"alpha": 1, "conf": "count", "factors": 128, "reg": 0.1}      cohort=0.17918 test=0.18945 rw=0.921 t=2.27s
+  [B] ALS x air                {"alpha": 1, "conf": "count", "factors": 128, "reg": 0.1}      cohort=0.25221 test=0.27249 rw=0.913 t=2.30s
+  [B] ALS                      {"alpha": 10, "conf": "count", "factors": 128, "reg": 0.1}     cohort=0.17477 test=0.18249 rw=0.892 t=2.38s
+  [B] ALS x air                {"alpha": 10, "conf": "count", "factors": 128, "reg": 0.1}     cohort=0.25263 test=0.27145 rw=0.817 t=2.41s
+  [B] ALS                      {"alpha": 40, "conf": "count", "factors": 128, "reg": 0.1}     cohort=0.14876 test=0.15412 rw=0.835 t=2.36s
+  [B] ALS x air                {"alpha": 40, "conf": "count", "factors": 128, "reg": 0.1}     cohort=0.23183 test=0.24628 rw=0.769 t=2.40s
+  [B] ALS                      {"alpha": 0.1, "conf": "log1p", "factors": 8, "reg": 0.01}     cohort=0.23393 test=0.25484 rw=0.762 t=0.66s
+  [B] ALS x air                {"alpha": 0.1, "conf": "log1p", "factors": 8, "reg": 0.01}     cohort=0.27347 test=0.29985 rw=0.760 t=0.71s
+  [B] ALS                      {"alpha": 0.3, "conf": "log1p", "factors": 8, "reg": 0.01}     cohort=0.23588 test=0.25958 rw=0.774 t=0.67s
+  [B] ALS x air                {"alpha": 0.3, "conf": "log1p", "factors": 8, "reg": 0.01}     cohort=0.27927 test=0.30721 rw=0.765 t=0.71s
+  [B] ALS                      {"alpha": 1, "conf": "log1p", "factors": 8, "reg": 0.01}       cohort=0.25442 test=0.28344 rw=0.759 t=0.67s
+  [B] ALS x air                {"alpha": 1, "conf": "log1p", "factors": 8, "reg": 0.01}       cohort=0.28716 test=0.31672 rw=0.730 t=0.72s
+  [B] ALS                      {"alpha": 10, "conf": "log1p", "factors": 8, "reg": 0.01}      cohort=0.21413 test=0.23722 rw=0.639 t=0.69s
+  [B] ALS x air                {"alpha": 10, "conf": "log1p", "factors": 8, "reg": 0.01}      cohort=0.24937 test=0.27114 rw=0.617 t=0.73s
+  [B] ALS                      {"alpha": 40, "conf": "log1p", "factors": 8, "reg": 0.01}      cohort=0.17445 test=0.18784 rw=0.530 t=0.71s
+  [B] ALS x air                {"alpha": 40, "conf": "log1p", "factors": 8, "reg": 0.01}      cohort=0.17959 test=0.19327 rw=0.483 t=0.74s
+  [B] ALS                      {"alpha": 0.1, "conf": "log1p", "factors": 8, "reg": 0.1}      cohort=0.23719 test=0.26113 rw=0.762 t=0.69s
+  [B] ALS x air                {"alpha": 0.1, "conf": "log1p", "factors": 8, "reg": 0.1}      cohort=0.27512 test=0.30243 rw=0.760 t=0.73s
+  [B] ALS                      {"alpha": 0.3, "conf": "log1p", "factors": 8, "reg": 0.1}      cohort=0.23747 test=0.26199 rw=0.773 t=0.67s
+  [B] ALS x air                {"alpha": 0.3, "conf": "log1p", "factors": 8, "reg": 0.1}      cohort=0.27995 test=0.30906 rw=0.764 t=0.73s
+  [B] ALS                      {"alpha": 1, "conf": "log1p", "factors": 8, "reg": 0.1}        cohort=0.25482 test=0.28401 rw=0.759 t=0.69s
+  [B] ALS x air                {"alpha": 1, "conf": "log1p", "factors": 8, "reg": 0.1}        cohort=0.28720 test=0.31683 rw=0.731 t=0.72s
+  [B] ALS                      {"alpha": 10, "conf": "log1p", "factors": 8, "reg": 0.1}       cohort=0.21485 test=0.23768 rw=0.639 t=0.70s
+  [B] ALS x air                {"alpha": 10, "conf": "log1p", "factors": 8, "reg": 0.1}       cohort=0.24927 test=0.27073 rw=0.617 t=0.74s
+  [B] ALS                      {"alpha": 40, "conf": "log1p", "factors": 8, "reg": 0.1}       cohort=0.17603 test=0.18766 rw=0.534 t=0.69s
+  [B] ALS x air                {"alpha": 40, "conf": "log1p", "factors": 8, "reg": 0.1}       cohort=0.17312 test=0.18735 rw=0.486 t=0.73s
+  [B] ALS                      {"alpha": 0.1, "conf": "log1p", "factors": 16, "reg": 0.01}    cohort=0.20200 test=0.21653 rw=0.830 t=0.78s
+  [B] ALS x air                {"alpha": 0.1, "conf": "log1p", "factors": 16, "reg": 0.01}    cohort=0.26458 test=0.28977 rw=0.829 t=0.82s
+  [B] ALS                      {"alpha": 0.3, "conf": "log1p", "factors": 16, "reg": 0.01}    cohort=0.20160 test=0.21455 rw=0.830 t=0.79s
+  [B] ALS x air                {"alpha": 0.3, "conf": "log1p", "factors": 16, "reg": 0.01}    cohort=0.26338 test=0.28900 rw=0.828 t=0.86s
+  [B] ALS                      {"alpha": 1, "conf": "log1p", "factors": 16, "reg": 0.01}      cohort=0.22924 test=0.25145 rw=0.838 t=0.78s
+  [B] ALS x air                {"alpha": 1, "conf": "log1p", "factors": 16, "reg": 0.01}      cohort=0.28306 test=0.30817 rw=0.822 t=0.83s
+  [B] ALS                      {"alpha": 10, "conf": "log1p", "factors": 16, "reg": 0.01}     cohort=0.19609 test=0.20622 rw=0.681 t=0.80s
+  [B] ALS x air                {"alpha": 10, "conf": "log1p", "factors": 16, "reg": 0.01}     cohort=0.25322 test=0.27387 rw=0.669 t=0.83s
+  [B] ALS                      {"alpha": 40, "conf": "log1p", "factors": 16, "reg": 0.01}     cohort=0.15187 test=0.15229 rw=0.495 t=0.82s
+  [B] ALS x air                {"alpha": 40, "conf": "log1p", "factors": 16, "reg": 0.01}     cohort=0.20184 test=0.21468 rw=0.530 t=0.86s
+  [B] ALS                      {"alpha": 0.1, "conf": "log1p", "factors": 16, "reg": 0.1}     cohort=0.22908 test=0.25065 rw=0.830 t=0.82s
+  [B] ALS x air                {"alpha": 0.1, "conf": "log1p", "factors": 16, "reg": 0.1}     cohort=0.26696 test=0.29337 rw=0.829 t=0.85s
+  [B] ALS                      {"alpha": 0.3, "conf": "log1p", "factors": 16, "reg": 0.1}     cohort=0.20501 test=0.21814 rw=0.830 t=0.80s
+  [B] ALS x air                {"alpha": 0.3, "conf": "log1p", "factors": 16, "reg": 0.1}     cohort=0.26574 test=0.29184 rw=0.828 t=0.84s
+  [B] ALS                      {"alpha": 1, "conf": "log1p", "factors": 16, "reg": 0.1}       cohort=0.23026 test=0.25148 rw=0.838 t=0.80s
+  [B] ALS x air                {"alpha": 1, "conf": "log1p", "factors": 16, "reg": 0.1}       cohort=0.28343 test=0.30905 rw=0.822 t=0.85s
+  [B] ALS                      {"alpha": 10, "conf": "log1p", "factors": 16, "reg": 0.1}      cohort=0.19647 test=0.20759 rw=0.681 t=0.82s
+  [B] ALS x air                {"alpha": 10, "conf": "log1p", "factors": 16, "reg": 0.1}      cohort=0.25399 test=0.27538 rw=0.669 t=0.85s
+  [B] ALS                      {"alpha": 40, "conf": "log1p", "factors": 16, "reg": 0.1}      cohort=0.15303 test=0.15708 rw=0.504 t=0.83s
+  [B] ALS x air                {"alpha": 40, "conf": "log1p", "factors": 16, "reg": 0.1}      cohort=0.19816 test=0.21152 rw=0.523 t=0.86s
+  [B] ALS                      {"alpha": 0.1, "conf": "log1p", "factors": 32, "reg": 0.01}    cohort=0.17710 test=0.18559 rw=0.870 t=1.19s
+  [B] ALS x air                {"alpha": 0.1, "conf": "log1p", "factors": 32, "reg": 0.01}    cohort=0.25944 test=0.28293 rw=0.869 t=1.22s
+  [B] ALS                      {"alpha": 0.3, "conf": "log1p", "factors": 32, "reg": 0.01}    cohort=0.17508 test=0.18180 rw=0.871 t=1.20s
+  [B] ALS x air                {"alpha": 0.3, "conf": "log1p", "factors": 32, "reg": 0.01}    cohort=0.26499 test=0.28770 rw=0.869 t=1.23s
+  [B] ALS                      {"alpha": 1, "conf": "log1p", "factors": 32, "reg": 0.01}      cohort=0.18567 test=0.19471 rw=0.878 t=1.21s
+  [B] ALS x air                {"alpha": 1, "conf": "log1p", "factors": 32, "reg": 0.01}      cohort=0.27269 test=0.29478 rw=0.870 t=1.24s
+  [B] ALS                      {"alpha": 10, "conf": "log1p", "factors": 32, "reg": 0.01}     cohort=0.18788 test=0.19497 rw=0.739 t=1.16s
+  [B] ALS x air                {"alpha": 10, "conf": "log1p", "factors": 32, "reg": 0.01}     cohort=0.25466 test=0.27446 rw=0.715 t=1.19s
+  [B] ALS                      {"alpha": 40, "conf": "log1p", "factors": 32, "reg": 0.01}     cohort=0.13050 test=0.12610 rw=0.509 t=1.23s
+  [B] ALS x air                {"alpha": 40, "conf": "log1p", "factors": 32, "reg": 0.01}     cohort=0.21450 test=0.23116 rw=0.595 t=1.25s
+  [B] ALS                      {"alpha": 0.1, "conf": "log1p", "factors": 32, "reg": 0.1}     cohort=0.24643 test=0.27192 rw=0.869 t=1.19s
+  [B] ALS x air                {"alpha": 0.1, "conf": "log1p", "factors": 32, "reg": 0.1}     cohort=0.26679 test=0.29120 rw=0.868 t=1.23s
+  [B] ALS                      {"alpha": 0.3, "conf": "log1p", "factors": 32, "reg": 0.1}     cohort=0.18227 test=0.19031 rw=0.870 t=1.17s
+  [B] ALS x air                {"alpha": 0.3, "conf": "log1p", "factors": 32, "reg": 0.1}     cohort=0.26515 test=0.28709 rw=0.869 t=1.21s
+  [B] ALS                      {"alpha": 1, "conf": "log1p", "factors": 32, "reg": 0.1}       cohort=0.18538 test=0.19181 rw=0.877 t=1.22s
+  [B] ALS x air                {"alpha": 1, "conf": "log1p", "factors": 32, "reg": 0.1}       cohort=0.27323 test=0.29514 rw=0.869 t=1.23s
+  [B] ALS                      {"alpha": 10, "conf": "log1p", "factors": 32, "reg": 0.1}      cohort=0.18859 test=0.19686 rw=0.739 t=1.20s
+  [B] ALS x air                {"alpha": 10, "conf": "log1p", "factors": 32, "reg": 0.1}      cohort=0.25445 test=0.27345 rw=0.716 t=1.22s
+  [B] ALS                      {"alpha": 40, "conf": "log1p", "factors": 32, "reg": 0.1}      cohort=0.13365 test=0.13016 rw=0.521 t=1.18s
+  [B] ALS x air                {"alpha": 40, "conf": "log1p", "factors": 32, "reg": 0.1}      cohort=0.21571 test=0.23392 rw=0.598 t=1.21s
+  [B] ALS                      {"alpha": 0.1, "conf": "log1p", "factors": 64, "reg": 0.01}    cohort=0.17540 test=0.17812 rw=0.892 t=1.29s
+  [B] ALS x air                {"alpha": 0.1, "conf": "log1p", "factors": 64, "reg": 0.01}    cohort=0.24051 test=0.25838 rw=0.891 t=1.33s
+  [B] ALS                      {"alpha": 0.3, "conf": "log1p", "factors": 64, "reg": 0.01}    cohort=0.16373 test=0.16729 rw=0.894 t=1.38s
+  [B] ALS x air                {"alpha": 0.3, "conf": "log1p", "factors": 64, "reg": 0.01}    cohort=0.24500 test=0.26347 rw=0.893 t=1.41s
+  [B] ALS                      {"alpha": 1, "conf": "log1p", "factors": 64, "reg": 0.01}      cohort=0.16241 test=0.16095 rw=0.899 t=1.34s
+  [B] ALS x air                {"alpha": 1, "conf": "log1p", "factors": 64, "reg": 0.01}      cohort=0.25697 test=0.27684 rw=0.896 t=1.36s
+  [B] ALS                      {"alpha": 10, "conf": "log1p", "factors": 64, "reg": 0.01}     cohort=0.18929 test=0.19607 rw=0.849 t=1.39s
+  [B] ALS x air                {"alpha": 10, "conf": "log1p", "factors": 64, "reg": 0.01}     cohort=0.25745 test=0.27179 rw=0.807 t=1.43s
+  [B] ALS                      {"alpha": 40, "conf": "log1p", "factors": 64, "reg": 0.01}     cohort=0.14016 test=0.13754 rw=0.653 t=1.33s
+  [B] ALS x air                {"alpha": 40, "conf": "log1p", "factors": 64, "reg": 0.01}     cohort=0.22380 test=0.23697 rw=0.686 t=1.36s
+  [B] ALS                      {"alpha": 0.1, "conf": "log1p", "factors": 64, "reg": 0.1}     cohort=0.27064 test=0.30002 rw=0.893 t=1.32s
+  [B] ALS x air                {"alpha": 0.1, "conf": "log1p", "factors": 64, "reg": 0.1}     cohort=0.25871 test=0.28132 rw=0.892 t=1.35s
+  [B] ALS                      {"alpha": 0.3, "conf": "log1p", "factors": 64, "reg": 0.1}     cohort=0.19197 test=0.20461 rw=0.893 t=1.37s
+  [B] ALS x air                {"alpha": 0.3, "conf": "log1p", "factors": 64, "reg": 0.1}     cohort=0.24553 test=0.26445 rw=0.892 t=1.40s
+  [B] ALS                      {"alpha": 1, "conf": "log1p", "factors": 64, "reg": 0.1}       cohort=0.16265 test=0.16145 rw=0.899 t=1.36s
+  [B] ALS x air                {"alpha": 1, "conf": "log1p", "factors": 64, "reg": 0.1}       cohort=0.25632 test=0.27617 rw=0.896 t=1.40s
+  [B] ALS                      {"alpha": 10, "conf": "log1p", "factors": 64, "reg": 0.1}      cohort=0.18942 test=0.19423 rw=0.846 t=1.33s
+  [B] ALS x air                {"alpha": 10, "conf": "log1p", "factors": 64, "reg": 0.1}      cohort=0.25630 test=0.27135 rw=0.797 t=1.38s
+  [B] ALS                      {"alpha": 40, "conf": "log1p", "factors": 64, "reg": 0.1}      cohort=0.14250 test=0.13941 rw=0.670 t=1.37s
+  [B] ALS x air                {"alpha": 40, "conf": "log1p", "factors": 64, "reg": 0.1}      cohort=0.22467 test=0.23801 rw=0.684 t=1.38s
+  [B] ALS                      {"alpha": 0.1, "conf": "log1p", "factors": 128, "reg": 0.01}   cohort=0.18001 test=0.19232 rw=0.911 t=2.29s
+  [B] ALS x air                {"alpha": 0.1, "conf": "log1p", "factors": 128, "reg": 0.01}   cohort=0.23820 test=0.25475 rw=0.909 t=2.32s
+  [B] ALS                      {"alpha": 0.3, "conf": "log1p", "factors": 128, "reg": 0.01}   cohort=0.17569 test=0.17790 rw=0.912 t=2.31s
+  [B] ALS x air                {"alpha": 0.3, "conf": "log1p", "factors": 128, "reg": 0.01}   cohort=0.23219 test=0.24694 rw=0.910 t=2.34s
+  [B] ALS                      {"alpha": 1, "conf": "log1p", "factors": 128, "reg": 0.01}     cohort=0.16476 test=0.16640 rw=0.917 t=2.35s
+  [B] ALS x air                {"alpha": 1, "conf": "log1p", "factors": 128, "reg": 0.01}     cohort=0.23806 test=0.25334 rw=0.913 t=2.39s
+  [B] ALS                      {"alpha": 10, "conf": "log1p", "factors": 128, "reg": 0.01}    cohort=0.17849 test=0.17980 rw=0.935 t=2.36s
+  [B] ALS x air                {"alpha": 10, "conf": "log1p", "factors": 128, "reg": 0.01}    cohort=0.25244 test=0.26935 rw=0.910 t=2.38s
+  [B] ALS                      {"alpha": 40, "conf": "log1p", "factors": 128, "reg": 0.01}    cohort=0.16930 test=0.17189 rw=0.908 t=2.31s
+  [B] ALS x air                {"alpha": 40, "conf": "log1p", "factors": 128, "reg": 0.01}    cohort=0.24004 test=0.25480 rw=0.887 t=2.34s
+  [B] ALS                      {"alpha": 0.1, "conf": "log1p", "factors": 128, "reg": 0.1}    cohort=0.28542 test=0.31797 rw=0.912 t=2.36s
+  [B] ALS x air                {"alpha": 0.1, "conf": "log1p", "factors": 128, "reg": 0.1}    cohort=0.25299 test=0.27260 rw=0.909 t=2.41s
+  [B] ALS                      {"alpha": 0.3, "conf": "log1p", "factors": 128, "reg": 0.1}    cohort=0.22681 test=0.24149 rw=0.912 t=2.33s
+  [B] ALS x air                {"alpha": 0.3, "conf": "log1p", "factors": 128, "reg": 0.1}    cohort=0.23566 test=0.25252 rw=0.910 t=2.35s
+  [B] ALS                      {"alpha": 1, "conf": "log1p", "factors": 128, "reg": 0.1}      cohort=0.16496 test=0.16742 rw=0.918 t=2.28s
+  [B] ALS x air                {"alpha": 1, "conf": "log1p", "factors": 128, "reg": 0.1}      cohort=0.23789 test=0.25367 rw=0.913 t=2.33s
+  [B] ALS                      {"alpha": 10, "conf": "log1p", "factors": 128, "reg": 0.1}     cohort=0.17423 test=0.17307 rw=0.935 t=2.30s
+  [B] ALS x air                {"alpha": 10, "conf": "log1p", "factors": 128, "reg": 0.1}     cohort=0.25191 test=0.26988 rw=0.910 t=2.33s
+  [B] ALS                      {"alpha": 40, "conf": "log1p", "factors": 128, "reg": 0.1}     cohort=0.16584 test=0.16437 rw=0.907 t=2.33s
+  [B] ALS x air                {"alpha": 40, "conf": "log1p", "factors": 128, "reg": 0.1}     cohort=0.24096 test=0.25413 rw=0.882 t=2.37s
+  [B] ALS                      {"alpha": 0.1, "conf": "bm25", "factors": 8, "reg": 0.01}      cohort=0.25073 test=0.27966 rw=0.617 t=0.72s
+  [B] ALS x air                {"alpha": 0.1, "conf": "bm25", "factors": 8, "reg": 0.01}      cohort=0.26870 test=0.30069 rw=0.607 t=0.75s
+  [B] ALS                      {"alpha": 0.3, "conf": "bm25", "factors": 8, "reg": 0.01}      cohort=0.24450 test=0.26742 rw=0.602 t=0.72s
+  [B] ALS x air                {"alpha": 0.3, "conf": "bm25", "factors": 8, "reg": 0.01}      cohort=0.25884 test=0.28349 rw=0.583 t=0.75s
+  [B] ALS                      {"alpha": 1, "conf": "bm25", "factors": 8, "reg": 0.01}        cohort=0.22061 test=0.24369 rw=0.556 t=0.72s
+  [B] ALS x air                {"alpha": 1, "conf": "bm25", "factors": 8, "reg": 0.01}        cohort=0.24041 test=0.26035 rw=0.540 t=0.77s
+  [B] ALS                      {"alpha": 10, "conf": "bm25", "factors": 8, "reg": 0.01}       cohort=0.09466 test=0.10426 rw=0.304 t=0.73s
+  [B] ALS x air                {"alpha": 10, "conf": "bm25", "factors": 8, "reg": 0.01}       cohort=0.16601 test=0.18379 rw=0.395 t=0.77s
+  [B] ALS                      {"alpha": 40, "conf": "bm25", "factors": 8, "reg": 0.01}       cohort=0.04077 test=0.03904 rw=0.146 t=0.72s
+  [B] ALS x air                {"alpha": 40, "conf": "bm25", "factors": 8, "reg": 0.01}       cohort=0.10423 test=0.11500 rw=0.278 t=0.75s
+  [B] ALS                      {"alpha": 0.1, "conf": "bm25", "factors": 8, "reg": 0.1}       cohort=0.25031 test=0.27971 rw=0.615 t=0.72s
+  [B] ALS x air                {"alpha": 0.1, "conf": "bm25", "factors": 8, "reg": 0.1}       cohort=0.26877 test=0.30101 rw=0.607 t=0.74s
+  [B] ALS                      {"alpha": 0.3, "conf": "bm25", "factors": 8, "reg": 0.1}       cohort=0.24425 test=0.26698 rw=0.602 t=0.72s
+  [B] ALS x air                {"alpha": 0.3, "conf": "bm25", "factors": 8, "reg": 0.1}       cohort=0.25879 test=0.28361 rw=0.582 t=0.74s
+  [B] ALS                      {"alpha": 1, "conf": "bm25", "factors": 8, "reg": 0.1}         cohort=0.22024 test=0.24325 rw=0.556 t=0.74s
+  [B] ALS x air                {"alpha": 1, "conf": "bm25", "factors": 8, "reg": 0.1}         cohort=0.24020 test=0.25984 rw=0.540 t=0.76s
+  [B] ALS                      {"alpha": 10, "conf": "bm25", "factors": 8, "reg": 0.1}        cohort=0.09368 test=0.10444 rw=0.300 t=0.74s
+  [B] ALS x air                {"alpha": 10, "conf": "bm25", "factors": 8, "reg": 0.1}        cohort=0.16443 test=0.18414 rw=0.391 t=0.78s
+  [B] ALS                      {"alpha": 40, "conf": "bm25", "factors": 8, "reg": 0.1}        cohort=0.03949 test=0.03869 rw=0.142 t=0.73s
+  [B] ALS x air                {"alpha": 40, "conf": "bm25", "factors": 8, "reg": 0.1}        cohort=0.10432 test=0.11591 rw=0.278 t=0.77s
+  [B] ALS                      {"alpha": 0.1, "conf": "bm25", "factors": 16, "reg": 0.01}     cohort=0.25046 test=0.27883 rw=0.675 t=0.83s
+  [B] ALS x air                {"alpha": 0.1, "conf": "bm25", "factors": 16, "reg": 0.01}     cohort=0.27314 test=0.30350 rw=0.658 t=0.85s
+  [B] ALS                      {"alpha": 0.3, "conf": "bm25", "factors": 16, "reg": 0.01}     cohort=0.23736 test=0.26182 rw=0.630 t=0.84s
+  [B] ALS x air                {"alpha": 0.3, "conf": "bm25", "factors": 16, "reg": 0.01}     cohort=0.26087 test=0.28223 rw=0.605 t=0.88s
+  [B] ALS                      {"alpha": 1, "conf": "bm25", "factors": 16, "reg": 0.01}       cohort=0.20637 test=0.22846 rw=0.583 t=0.83s
+  [B] ALS x air                {"alpha": 1, "conf": "bm25", "factors": 16, "reg": 0.01}       cohort=0.24352 test=0.26560 rw=0.558 t=0.88s
+  [B] ALS                      {"alpha": 10, "conf": "bm25", "factors": 16, "reg": 0.01}      cohort=0.07144 test=0.07564 rw=0.299 t=0.84s
+  [B] ALS x air                {"alpha": 10, "conf": "bm25", "factors": 16, "reg": 0.01}      cohort=0.17864 test=0.19907 rw=0.438 t=0.86s
+  [B] ALS                      {"alpha": 40, "conf": "bm25", "factors": 16, "reg": 0.01}      cohort=0.03675 test=0.03374 rw=0.159 t=0.83s
+  [B] ALS x air                {"alpha": 40, "conf": "bm25", "factors": 16, "reg": 0.01}      cohort=0.12733 test=0.13868 rw=0.337 t=0.87s
+  [B] ALS                      {"alpha": 0.1, "conf": "bm25", "factors": 16, "reg": 0.1}      cohort=0.25037 test=0.27838 rw=0.674 t=0.84s
+  [B] ALS x air                {"alpha": 0.1, "conf": "bm25", "factors": 16, "reg": 0.1}      cohort=0.27200 test=0.30265 rw=0.656 t=0.87s
+  [B] ALS                      {"alpha": 0.3, "conf": "bm25", "factors": 16, "reg": 0.1}      cohort=0.23692 test=0.26118 rw=0.629 t=0.84s
+  [B] ALS x air                {"alpha": 0.3, "conf": "bm25", "factors": 16, "reg": 0.1}      cohort=0.26085 test=0.28214 rw=0.604 t=0.88s
+  [B] ALS                      {"alpha": 1, "conf": "bm25", "factors": 16, "reg": 0.1}        cohort=0.20569 test=0.22843 rw=0.582 t=0.84s
+  [B] ALS x air                {"alpha": 1, "conf": "bm25", "factors": 16, "reg": 0.1}        cohort=0.24346 test=0.26542 rw=0.558 t=0.87s
+  [B] ALS                      {"alpha": 10, "conf": "bm25", "factors": 16, "reg": 0.1}       cohort=0.07114 test=0.07470 rw=0.301 t=0.84s
+  [B] ALS x air                {"alpha": 10, "conf": "bm25", "factors": 16, "reg": 0.1}       cohort=0.17863 test=0.19718 rw=0.438 t=0.87s
+  [B] ALS                      {"alpha": 40, "conf": "bm25", "factors": 16, "reg": 0.1}       cohort=0.03723 test=0.03506 rw=0.163 t=0.83s
+  [B] ALS x air                {"alpha": 40, "conf": "bm25", "factors": 16, "reg": 0.1}       cohort=0.12700 test=0.13972 rw=0.337 t=0.87s
+  [B] ALS                      {"alpha": 0.1, "conf": "bm25", "factors": 32, "reg": 0.01}     cohort=0.24220 test=0.27376 rw=0.715 t=1.21s
+  [B] ALS x air                {"alpha": 0.1, "conf": "bm25", "factors": 32, "reg": 0.01}     cohort=0.26989 test=0.30008 rw=0.696 t=1.23s
+  [B] ALS                      {"alpha": 0.3, "conf": "bm25", "factors": 32, "reg": 0.01}     cohort=0.23112 test=0.25695 rw=0.690 t=1.23s
+  [B] ALS x air                {"alpha": 0.3, "conf": "bm25", "factors": 32, "reg": 0.01}     cohort=0.26620 test=0.29096 rw=0.638 t=1.27s
+  [B] ALS                      {"alpha": 1, "conf": "bm25", "factors": 32, "reg": 0.01}       cohort=0.18932 test=0.20846 rw=0.671 t=1.21s
+  [B] ALS x air                {"alpha": 1, "conf": "bm25", "factors": 32, "reg": 0.01}       cohort=0.24824 test=0.27221 rw=0.601 t=1.25s
+  [B] ALS                      {"alpha": 10, "conf": "bm25", "factors": 32, "reg": 0.01}      cohort=0.07991 test=0.08301 rw=0.442 t=1.27s
+  [B] ALS x air                {"alpha": 10, "conf": "bm25", "factors": 32, "reg": 0.01}      cohort=0.19677 test=0.21405 rw=0.514 t=1.27s
+  [B] ALS                      {"alpha": 40, "conf": "bm25", "factors": 32, "reg": 0.01}      cohort=0.05117 test=0.04744 rw=0.282 t=1.23s
+  [B] ALS x air                {"alpha": 40, "conf": "bm25", "factors": 32, "reg": 0.01}      cohort=0.15870 test=0.16353 rw=0.436 t=1.27s
+  [B] ALS                      {"alpha": 0.1, "conf": "bm25", "factors": 32, "reg": 0.1}      cohort=0.24155 test=0.27257 rw=0.712 t=1.20s
+  [B] ALS x air                {"alpha": 0.1, "conf": "bm25", "factors": 32, "reg": 0.1}      cohort=0.27041 test=0.29994 rw=0.692 t=1.23s
+  [B] ALS                      {"alpha": 0.3, "conf": "bm25", "factors": 32, "reg": 0.1}      cohort=0.23064 test=0.25696 rw=0.690 t=1.20s
+  [B] ALS x air                {"alpha": 0.3, "conf": "bm25", "factors": 32, "reg": 0.1}      cohort=0.26590 test=0.29013 rw=0.637 t=1.23s
+  [B] ALS                      {"alpha": 1, "conf": "bm25", "factors": 32, "reg": 0.1}        cohort=0.18899 test=0.20827 rw=0.671 t=1.25s
+  [B] ALS x air                {"alpha": 1, "conf": "bm25", "factors": 32, "reg": 0.1}        cohort=0.24802 test=0.27177 rw=0.601 t=1.28s
+  [B] ALS                      {"alpha": 10, "conf": "bm25", "factors": 32, "reg": 0.1}       cohort=0.07860 test=0.08089 rw=0.445 t=1.27s
+  [B] ALS x air                {"alpha": 10, "conf": "bm25", "factors": 32, "reg": 0.1}       cohort=0.19652 test=0.21246 rw=0.514 t=1.28s
+  [B] ALS                      {"alpha": 40, "conf": "bm25", "factors": 32, "reg": 0.1}       cohort=0.05059 test=0.04762 rw=0.294 t=1.20s
+  [B] ALS x air                {"alpha": 40, "conf": "bm25", "factors": 32, "reg": 0.1}       cohort=0.15867 test=0.16680 rw=0.433 t=1.23s
+  [B] ALS                      {"alpha": 0.1, "conf": "bm25", "factors": 64, "reg": 0.01}     cohort=0.24466 test=0.27370 rw=0.789 t=1.34s
+  [B] ALS x air                {"alpha": 0.1, "conf": "bm25", "factors": 64, "reg": 0.01}     cohort=0.27720 test=0.30596 rw=0.752 t=1.38s
+  [B] ALS                      {"alpha": 0.3, "conf": "bm25", "factors": 64, "reg": 0.01}     cohort=0.21716 test=0.24605 rw=0.793 t=1.31s
+  [B] ALS x air                {"alpha": 0.3, "conf": "bm25", "factors": 64, "reg": 0.01}     cohort=0.26968 test=0.29781 rw=0.706 t=1.35s
+  [B] ALS                      {"alpha": 1, "conf": "bm25", "factors": 64, "reg": 0.01}       cohort=0.17145 test=0.19369 rw=0.801 t=1.27s
+  [B] ALS x air                {"alpha": 1, "conf": "bm25", "factors": 64, "reg": 0.01}       cohort=0.25323 test=0.28062 rw=0.687 t=1.30s
+  [B] ALS                      {"alpha": 10, "conf": "bm25", "factors": 64, "reg": 0.01}      cohort=0.10055 test=0.10965 rw=0.672 t=1.32s
+  [B] ALS x air                {"alpha": 10, "conf": "bm25", "factors": 64, "reg": 0.01}      cohort=0.21959 test=0.23805 rw=0.641 t=1.36s
+  [B] ALS                      {"alpha": 40, "conf": "bm25", "factors": 64, "reg": 0.01}      cohort=0.07405 test=0.07616 rw=0.516 t=1.34s
+  [B] ALS x air                {"alpha": 40, "conf": "bm25", "factors": 64, "reg": 0.01}      cohort=0.19745 test=0.21109 rw=0.588 t=1.37s
+  [B] ALS                      {"alpha": 0.1, "conf": "bm25", "factors": 64, "reg": 0.1}      cohort=0.24261 test=0.27334 rw=0.785 t=1.40s
+  [B] ALS x air                {"alpha": 0.1, "conf": "bm25", "factors": 64, "reg": 0.1}      cohort=0.27628 test=0.30510 rw=0.745 t=1.44s
+  [B] ALS                      {"alpha": 0.3, "conf": "bm25", "factors": 64, "reg": 0.1}      cohort=0.21618 test=0.24550 rw=0.792 t=1.32s
+  [B] ALS x air                {"alpha": 0.3, "conf": "bm25", "factors": 64, "reg": 0.1}      cohort=0.26956 test=0.29816 rw=0.705 t=1.36s
+  [B] ALS                      {"alpha": 1, "conf": "bm25", "factors": 64, "reg": 0.1}        cohort=0.17016 test=0.19225 rw=0.802 t=1.40s
+  [B] ALS x air                {"alpha": 1, "conf": "bm25", "factors": 64, "reg": 0.1}        cohort=0.25268 test=0.27965 rw=0.688 t=1.44s
+  [B] ALS                      {"alpha": 10, "conf": "bm25", "factors": 64, "reg": 0.1}       cohort=0.09999 test=0.10816 rw=0.679 t=1.39s
+  [B] ALS x air                {"alpha": 10, "conf": "bm25", "factors": 64, "reg": 0.1}       cohort=0.21948 test=0.23903 rw=0.642 t=1.42s
+  [B] ALS                      {"alpha": 40, "conf": "bm25", "factors": 64, "reg": 0.1}       cohort=0.07317 test=0.07436 rw=0.527 t=1.38s
+  [B] ALS x air                {"alpha": 40, "conf": "bm25", "factors": 64, "reg": 0.1}       cohort=0.19724 test=0.21098 rw=0.587 t=1.41s
+  [B] ALS                      {"alpha": 0.1, "conf": "bm25", "factors": 128, "reg": 0.01}    cohort=0.22290 test=0.25097 rw=0.866 t=2.36s
+  [B] ALS x air                {"alpha": 0.1, "conf": "bm25", "factors": 128, "reg": 0.01}    cohort=0.27344 test=0.30615 rw=0.825 t=2.39s
+  [B] ALS                      {"alpha": 0.3, "conf": "bm25", "factors": 128, "reg": 0.01}    cohort=0.19540 test=0.22392 rw=0.866 t=2.33s
+  [B] ALS x air                {"alpha": 0.3, "conf": "bm25", "factors": 128, "reg": 0.01}    cohort=0.26531 test=0.29512 rw=0.800 t=2.36s
+  [B] ALS                      {"alpha": 1, "conf": "bm25", "factors": 128, "reg": 0.01}      cohort=0.15810 test=0.18160 rw=0.882 t=2.25s
+  [B] ALS x air                {"alpha": 1, "conf": "bm25", "factors": 128, "reg": 0.01}      cohort=0.25025 test=0.27640 rw=0.805 t=2.29s
+  [B] ALS                      {"alpha": 10, "conf": "bm25", "factors": 128, "reg": 0.01}     cohort=0.13406 test=0.15218 rw=0.880 t=2.28s
+  [B] ALS x air                {"alpha": 10, "conf": "bm25", "factors": 128, "reg": 0.01}     cohort=0.24069 test=0.26253 rw=0.818 t=2.33s
+  [B] ALS                      {"alpha": 40, "conf": "bm25", "factors": 128, "reg": 0.01}     cohort=0.11670 test=0.12371 rw=0.781 t=2.49s
+  [B] ALS x air                {"alpha": 40, "conf": "bm25", "factors": 128, "reg": 0.01}     cohort=0.22594 test=0.24329 rw=0.758 t=2.53s
+  [B] ALS                      {"alpha": 0.1, "conf": "bm25", "factors": 128, "reg": 0.1}     cohort=0.22476 test=0.25475 rw=0.862 t=2.35s
+  [B] ALS x air                {"alpha": 0.1, "conf": "bm25", "factors": 128, "reg": 0.1}     cohort=0.27503 test=0.30767 rw=0.821 t=2.40s
+  [B] ALS                      {"alpha": 0.3, "conf": "bm25", "factors": 128, "reg": 0.1}     cohort=0.19707 test=0.22729 rw=0.866 t=2.35s
+  [B] ALS x air                {"alpha": 0.3, "conf": "bm25", "factors": 128, "reg": 0.1}     cohort=0.26669 test=0.29672 rw=0.802 t=2.37s
+  [B] ALS                      {"alpha": 1, "conf": "bm25", "factors": 128, "reg": 0.1}       cohort=0.15760 test=0.17917 rw=0.881 t=2.31s
+  [B] ALS x air                {"alpha": 1, "conf": "bm25", "factors": 128, "reg": 0.1}       cohort=0.25085 test=0.28013 rw=0.807 t=2.34s
+  [B] ALS                      {"alpha": 10, "conf": "bm25", "factors": 128, "reg": 0.1}      cohort=0.12938 test=0.14717 rw=0.876 t=2.28s
+  [B] ALS x air                {"alpha": 10, "conf": "bm25", "factors": 128, "reg": 0.1}      cohort=0.24020 test=0.26227 rw=0.812 t=2.36s
+  [B] ALS                      {"alpha": 40, "conf": "bm25", "factors": 128, "reg": 0.1}      cohort=0.11502 test=0.12480 rw=0.795 t=2.30s
+  [B] ALS x air                {"alpha": 40, "conf": "bm25", "factors": 128, "reg": 0.1}      cohort=0.22812 test=0.24546 rw=0.763 t=2.33s
+  mass check [B]: real graph 1 update max|colsum-1|=2.89e-15, dangling nodes=0; synthetic dangling graph colsum=1.000000000000 (would be 0.7200 if dangling mass dropped)
+  [B] PPR                      {"alpha": 0.3}                                                 cohort=0.31456 test=0.35733 rw=0.945 t=15.14s {'mean_iter': 13.0, 'max_iter': 13, 'max_residual': 3.189e-07, 'non_converged': 0}
+  [B] PPR x air                {"alpha": 0.3}                                                 cohort=0.32293 test=0.36567 rw=0.944 t=15.16s {'mean_iter': 13.0, 'max_iter': 13, 'max_residual': 3.189e-07, 'non_converged': 0}
+  [B] PPR                      {"alpha": 0.5}                                                 cohort=0.31816 test=0.36017 rw=0.941 t=24.40s {'mean_iter': 21.0, 'max_iter': 21, 'max_residual': 9.537e-07, 'non_converged': 0}
+  [B] PPR x air                {"alpha": 0.5}                                                 cohort=0.32559 test=0.36866 rw=0.923 t=24.43s {'mean_iter': 21.0, 'max_iter': 21, 'max_residual': 9.537e-07, 'non_converged': 0}
+  [B] PPR                      {"alpha": 0.7}                                                 cohort=0.31944 test=0.36125 rw=0.885 t=43.54s {'mean_iter': 41.0, 'max_iter': 41, 'max_residual': 8.914e-07, 'non_converged': 0}
+  [B] PPR x air                {"alpha": 0.7}                                                 cohort=0.31792 test=0.35598 rw=0.801 t=43.59s {'mean_iter': 41.0, 'max_iter': 41, 'max_residual': 8.914e-07, 'non_converged': 0}
+  [B] PPR                      {"alpha": 0.85}                                                cohort=0.29859 test=0.33621 rw=0.737 t=100.15s {'mean_iter': 90.0, 'max_iter': 90, 'max_residual': 8.887e-07, 'non_converged': 0}
+  [B] PPR x air                {"alpha": 0.85}                                                cohort=0.29221 test=0.32664 rw=0.704 t=100.23s {'mean_iter': 90.0, 'max_iter': 90, 'max_residual': 8.887e-07, 'non_converged': 0}
+  content: items=6989 vocab=13791 pool items without tokens=0
+  [B] CBF                      {}                                                             cohort=0.22467 test=0.24891 rw=0.598 t=2.98s
+  [B] CBF x air                {}                                                             cohort=0.29870 test=0.33400 rw=0.712 t=2.94s
+
+== SELECTION (params chosen on fold A, reported on fold B)
+          method                                        params (chosen on A)  n grid  A cohort  A test  B cohort  B test  B rewatch  B runtime_s  B oracle cohort                                             B oracle params
+      popularity                                                          {}       1   0.24370 0.27584   0.23684 0.26799    0.54331      0.00040          0.23684                                                          {}
+   history count                                                          {}       1   0.32386 0.36449   0.30671 0.35027    0.94460      0.05589          0.30671                                                          {}
+ history recency                                          {"half_life_w": 4}       2   0.31811 0.35874   0.30008 0.34509    0.94460      0.10944          0.30008                                          {"half_life_w": 4}
+history expected                                                          {}       1   0.32312 0.36118   0.29559 0.33877    0.94460      0.05949          0.29559                                                          {}
+             ALS {"alpha": 0.1, "conf": "log1p", "factors": 128, "reg": 0.1}     150   0.31649 0.35658   0.28542 0.31797    0.91170      2.36191          0.28542 {"alpha": 0.1, "conf": "log1p", "factors": 128, "reg": 0.1}
+       ALS x air   {"alpha": 1, "conf": "count", "factors": 16, "reg": 0.01}     150   0.31385 0.34472   0.29041 0.31775    0.77588      0.90779          0.29234  {"alpha": 0.3, "conf": "count", "factors": 8, "reg": 0.01}
+             PPR                                              {"alpha": 0.7}       4   0.33879 0.38095   0.31944 0.36125    0.88538     43.54477          0.31944                                              {"alpha": 0.7}
+       PPR x air                                              {"alpha": 0.5}       4   0.34111 0.38181   0.32559 0.36866    0.92259     24.43423          0.32559                                              {"alpha": 0.5}
+             CBF                                                          {}       1   0.23688 0.26276   0.22467 0.24891    0.59849      2.98165          0.22467                                                          {}
+       CBF x air                                                          {}       1   0.31320 0.34897   0.29870 0.33400    0.71247      2.93988          0.29870                                                          {}
+[final] train rows=3014129 positives=611760 warm users=4841 train programmes(pos)=3866 | eval users=1260 (warm 1256, cold 4) | pool=6636 pool airings=144774 | train airings(labelled)=237118
+[final] history count: 0.10s
+[submission check] header == template header: True
+[submission check] 1260 rows + header: True
+[submission check] user order == template: True
+[submission check] 5 unique ids per row: True
+[submission check] all ids integers in 31-42 pool: True
+wrote submissions/s2_history.csv; distinct lists: 1235; first rows:
+            user_id                                   tv_show_id
+8377619604347126107        2400480 240081 2400508 12002955 20088
+8381667675275833309        2400480 240081 200344 12001682 500346
+8387147770138767246 12001682 12002856 12001732 12002955 12002355
+[final] PPR x air alpha=0.5: 9.93s {'mean_iter': 21.0, 'max_iter': 21, 'max_residual': 9.537e-07, 'non_converged': 0}; mass check [final]: real graph 1 update max|colsum-1|=1.02e-14, dangling nodes=0; synthetic dangling graph colsum=1.000000000000 (would be 0.7200 if dangling mass dropped)
+[submission check] header == template header: True
+[submission check] 1260 rows + header: True
+[submission check] user order == template: True
+[submission check] 5 unique ids per row: True
+[submission check] all ids integers in 31-42 pool: True
+wrote submissions/s3_ppr_air.csv; distinct lists: 1183; first rows:
+            user_id                                   tv_show_id
+8377619604347126107        2400480 240081 2400508 12002955 20088
+8381667675275833309       2400480 240081 12001682 200344 2400467
+8387147770138767246 12001682 12002856 12002955 12001732 12001734
+real 747,65
+user 737,66
+sys 6,83
+exit 0

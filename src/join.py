@@ -3,7 +3,7 @@
 Outputs (artifacts/):
   airings.parquet       all schedule rows (3 files concatenated), airing_id = global row id
   interactions.parquet  one row per (user, labelled airing): overlap_s, duration, screen_time
-  unlab_seconds.parquet per (user, channel, period) seconds watched on tv_show_id == 0 airtime
+  unlab_seconds.parquet per (user, channel, period, week) seconds watched on tv_show_id == 0 airtime
 Run: .venv/bin/python src/join.py
 """
 import sys
@@ -88,6 +88,8 @@ def main():
     pairs["user_id"] = load_log().user_id.values[pairs.view_row.values]
     meta = a.set_index("airing_id")[["tv_show_id", "channel_id", "period", "start_time", "duration"]]
     pairs = pairs.join(meta, on="airing_id")
+    # ISO week of the airing start (DESIGN D29): used to cut folds inside a schedule file
+    pairs["week"] = pairs.start_time.dt.isocalendar().week.astype(np.int16).values
     pairs.to_parquet(ART / "view_airing_pairs.parquet", index=False)
 
     covered = pairs.groupby("view_row").overlap_s.sum()
@@ -100,7 +102,7 @@ def main():
              .agg(overlap_sum_s=("overlap_s", "sum"), n_pieces=("overlap_s", "size"),
                   tv_show_id=("tv_show_id", "first"), channel_id=("channel_id", "first"),
                   period=("period", "first"), airing_start=("start_time", "first"),
-                  duration=("duration", "first"))
+                  duration=("duration", "first"), week=("week", "first"))
              .reset_index())
     uni = union_seconds(lab.user_id.values, lab.airing_id.values, lab.ov_start.values, lab.ov_end.values)
     inter = inter.merge(uni, on=["user_id", "airing_id"], how="left", validate="1:1")
@@ -113,10 +115,10 @@ def main():
     inter.to_parquet(ART / "interactions.parquet", index=False)
 
     unlab = (pairs[pairs.tv_show_id == 0]
-             .groupby(["user_id", "channel_id", "period"]).overlap_s.sum()
+             .groupby(["user_id", "channel_id", "period", "week"]).overlap_s.sum()
              .rename("seconds").reset_index())
     unlab.to_parquet(ART / "unlab_seconds.parquet", index=False)
-    print(f"interactions (user, labelled airing): {len(inter)}; unlabelled (user, channel, period) rows: {len(unlab)}")
+    print(f"interactions (user, labelled airing): {len(inter)}; unlabelled (user, channel, period, week) rows: {len(unlab)}")
 
 
 if __name__ == "__main__":

@@ -1,0 +1,28 @@
+{
+ "popularity": {},
+ "history count": {},
+ "history recency": {
+  "half_life_w": 4
+ },
+ "history expected": {},
+ "ALS": {
+  "alpha": 0.1,
+  "conf": "log1p",
+  "factors": 128,
+  "reg": 0.1
+ },
+ "ALS x air": {
+  "alpha": 1,
+  "conf": "count",
+  "factors": 16,
+  "reg": 0.01
+ },
+ "PPR": {
+  "alpha": 0.7
+ },
+ "PPR x air": {
+  "alpha": 0.5
+ },
+ "CBF": {},
+ "CBF x air": {}
+}

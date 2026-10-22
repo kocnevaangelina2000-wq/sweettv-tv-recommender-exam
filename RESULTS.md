@@ -201,3 +201,36 @@ PPR (cohort / test; convergence):
 PPR checks: after one update from one-hot restarts on the real graph (500 users, α = 0.85), max |column sum − 1| = 2.89e-15 and min entry = 0. The real graph has 0 dangling nodes, so a synthetic graph with a dangling item holding 0.4 mass is used too: column sum after the update = 1.000000000000 with the dangling return, 0.7200 if that mass were dropped.
 
 Graph / matrix sizes: 4,738 train users × 2,501 train programmes, 115,325 edges; 1,875 train programmes are in the pool, so ALS and PPR can only rank those, and the rest come from fallback. Content: 6,989 items, vocabulary 13,791 tokens (cat 8, genres 66, channels 190, directors 3,808, actors 9,719); 0 pool items without tokens.
+
+## Step 4A — second fold, extended ALS grid, single-method submissions
+
+Command: `.venv/bin/python src/s4a_folds.py` → logs/s4a_folds.log (747 s wall), logs/s4a_grid.csv (all evaluated rows: 315 per fold = popularity 1 + history 4 + ALS 300 + PPR 8 + CBF 2), logs/s4a_selected.json.
+Folds (D30): **A** train file 11-20 weeks ≤ 15 → truth weeks 16-20: cohort 4,574 (4,409 warm, 165 cold), test subset 1,212, pool 4,402, 1,376 train programmes. **B** = step-3 split: cohort 4,643, test subset 1,238, pool 6,363.
+**Params are chosen on fold A only** (argmax A cohort MAP@5), then reported on B. This table **replaces the step-3 best-of-grid numbers**. "B oracle" = best grid point on B, shown only for reference.
+
+| method | params chosen on A | grid | MAP@5 A cohort | MAP@5 A test | **MAP@5 B cohort** | **MAP@5 B test** | B re-watch | B runtime (s) | B oracle cohort |
+|---|---|---|---|---|---|---|---|---|---|
+| popularity | — | 1 | 0.24370 | 0.27584 | 0.23684 | 0.26799 | 0.543 | 0.00 | 0.23684 |
+| history count (ties: seconds) | — | 1 | 0.32386 | 0.36449 | 0.30671 | 0.35027 | 0.945 | 0.06 | 0.30671 |
+| history recency | half-life 4 w | 2 | 0.31811 | 0.35874 | 0.30008 | 0.34509 | 0.945 | 0.11 | 0.30008 |
+| history expected count | — | 1 | 0.32312 | 0.36118 | 0.29559 | 0.33877 | 0.945 | 0.06 | 0.29559 |
+| ALS | log1p, f = 128, reg = 0.1, alpha = 0.1 | 150 | 0.31649 | 0.35658 | 0.28542 | 0.31797 | 0.912 | 2.36 | 0.28542 |
+| ALS × log1p(airings) | count, f = 16, reg = 0.01, alpha = 1 | 150 | 0.31385 | 0.34472 | 0.29041 | 0.31775 | 0.776 | 0.91 | 0.29234 |
+| PPR | alpha = 0.7 | 4 | 0.33879 | 0.38095 | 0.31944 | 0.36125 | 0.885 | 43.54 | 0.31944 |
+| **PPR × log1p(airings)** | alpha = 0.5 | 4 | **0.34111** | **0.38181** | **0.32559** | **0.36866** | 0.923 | 24.43 | 0.32559 |
+| CBF | — | 1 | 0.23688 | 0.26276 | 0.22467 | 0.24891 | 0.598 | 2.98 | 0.22467 |
+| CBF × log1p(airings) | — | 1 | 0.31320 | 0.34897 | 0.29870 | 0.33400 | 0.712 | 2.94 | 0.29870 |
+
+- Fold-A selection matches the fold-B oracle for every method except ALS × air (A pick 0.29041 vs B oracle 0.29234 at count, f = 8, reg = 0.01, alpha = 0.3).
+- **Extending the ALS grid downward to alpha 0.1/0.3 fixes plain ALS**: 0.2024 at the step-3 corner → 0.2854 at alpha = 0.1, f = 128. The BM25 variant is not selected for either ALS row (full grid in logs/s4a_grid.csv).
+- Regression vs step 3 on fold B (same params): ALS (count, 32, 0.01, 1) 0.20239/0.21518, ALS × air (count, 32, 0.1, 1) 0.28206/0.30682, ALS (log1p, 64, 0.1, 10) 0.18942, PPR α 0.7 0.31944/0.36125, CBF × air 0.29870/0.33400, history recency 4 w 0.30008: **all identical** to step 3. History count and expected changed only through the tie-break (D31).
+- **Tie-break cost** (`.venv/bin/python src/check_history_ties.py` → logs/check_history_ties.log): history count with ties by seconds vs ties by popularity: A 0.32386 vs **0.33372**, B 0.30671 vs **0.31362** (test subset B 0.35027 vs 0.35617). The seconds tie-break was requested and is used in `s2_history.csv`.
+- PPR mass / dangling / convergence checks repeated on A, B and final: max |colsum − 1| = 2.44e-15 / 2.89e-15 / 1.02e-14, synthetic dangling graph 1.000000000000 (0.7200 if dropped), non-converged 0.
+
+### Final single-method files (train 11-30 → 31-42, fold-A params)
+Final split: 4,841 warm train users, 3,866 train programmes, pool 6,636; test users 1,260 (1,256 warm, 4 cold → shared fallback).
+
+| file | method | distinct lists | checks |
+|---|---|---|---|
+| submissions/s2_history.csv | history count, ties by total seconds → popularity | 1,235 | header, 1,260 rows + header, template order, 5 unique ids per row, all ids in 31-42 pool: all True |
+| submissions/s3_ppr_air.csv | PPR × log1p(airings), α = 0.5 (21 iterations, 0 non-converged) | 1,183 | all True |
