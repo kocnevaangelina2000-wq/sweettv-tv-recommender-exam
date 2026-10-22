@@ -1,0 +1,9 @@
+   [A] PPR alpha=0.5: {'mean_iter': 21.0, 'max_iter': 21, 'max_residual': 9.537e-07, 'non_converged': 0}
+early_stopping=auto do_early_stopping_=True n_iter_=10 scoring=loss validation_fraction=0.1
+train_score_ (neg poisson deviance-like loss): [-0.752279, -198672.134929, -179765.93692, -162658.912087, -147179.840485, -133173.800376, -120500.613601, -109033.441807, -98657.515738, -89268.990089, -80773.902071]
+validation_score_: [-0.767698, -535656.832693, -484682.286158, -438558.618531, -396824.201887, -359061.344659, -324892.101425, -293974.493224, -265999.081103, -240685.881115, -217781.553465]
+label mean=0.3864 var=6.2039 max=200.0; pred std=9951067.5322
+lr=0.1: n_iter_=10 val loss it0=0.7677 it1=535656.8327 best=0.7677 at it 0 last=217781.5535; max val loss=5.357e+05; pred max=1050043750.22 | A OOF MAP@5 cohort=0.35973
+lr=0.05: n_iter_=10 val loss it0=0.7677 it1=6.8674 best=0.7677 at it 0 last=4.2410; max val loss=6.867; pred max=20139.16 | A OOF MAP@5 cohort=0.36384
+lr=0.02: n_iter_=568 val loss it0=0.7677 it1=0.5510 best=-0.0514 at it 558 last=-0.0514; max val loss=0.7677; pred max=114.22 | A OOF MAP@5 cohort=0.37320
+lr=0.01: n_iter_=786 val loss it0=0.7677 it1=0.6556 best=-0.0565 at it 776 last=-0.0565; max val loss=0.7677; pred max=107.37 | A OOF MAP@5 cohort=0.37321

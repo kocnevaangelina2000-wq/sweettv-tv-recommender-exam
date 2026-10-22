@@ -3,38 +3,43 @@
    [A] PPR alpha=0.5: {'mean_iter': 21.0, 'max_iter': 21, 'max_residual': 9.537e-07, 'non_converged': 0}
    [A] PPR alpha=0.7: {'mean_iter': 41.0, 'max_iter': 41, 'max_residual': 8.914e-07, 'non_converged': 0}
    [A] PPR alpha=0.85: {'mean_iter': 90.0, 'max_iter': 90, 'max_residual': 8.887e-07, 'non_converged': 0}
-   [A] components built in 106.7s: {'history': 0.11, 'PPR a=0.3': 8.25, 'PPR a=0.5': 12.62, 'PPR a=0.7': 25.68, 'PPR a=0.85': 57.47, 'ALS': 0.3, 'CBF': 0.44}
+   [A] components built in 108.0s: {'history': 0.11, 'PPR a=0.3': 8.44, 'PPR a=0.5': 13.58, 'PPR a=0.7': 26.4, 'PPR a=0.85': 56.9, 'ALS': 0.32, 'CBF': 0.44}
 [B] train rows=1825255 positives=317043 warm users=4738 train programmes(pos)=2501 | eval users=4643 (warm 4540, cold 103) | pool=6363 pool airings=121505 | train airings(labelled)=115613
    [B] PPR alpha=0.5: {'mean_iter': 21.0, 'max_iter': 21, 'max_residual': 9.537e-07, 'non_converged': 0}
-   [B] components built in 30.9s: {'history': 0.2, 'PPR a=0.5': 26.15, 'ALS': 0.42, 'CBF': 0.86}
+   [B] components built in 30.5s: {'history': 0.2, 'PPR a=0.5': 25.65, 'ALS': 0.41, 'CBF': 0.85}
 H1 [A] alpha=0.3: {'cohort': 0.3340359155613856, 'test': 0.37635611477814446, 'cand_recall': 0.6268186805323666, 'mean_cands': 29.4903804110188}
 H1 [A] alpha=0.5: {'cohort': 0.333765303891561, 'test': 0.37610973597359737, 'cand_recall': 0.6258169155178172, 'mean_cands': 29.686707477044163}
 H1 [A] alpha=0.7: {'cohort': 0.3337973084584365, 'test': 0.3755367620095343, 'cand_recall': 0.6250059628869914, 'mean_cands': 30.240926978574553}
 H1 [A] alpha=0.85: {'cohort': 0.33362240684059663, 'test': 0.37563095892922627, 'cand_recall': 0.6241473071602347, 'mean_cands': 31.29405334499344}
 H2 grid (162 points) best on A: (np.float64(1.0), np.float64(1.0), np.float64(1.0), np.float64(1.0), 10) A cohort=0.34440
-H3 frames: A rows=289475 users=4572 label>0=0.1102; B rows=321858 users=4738 label>0=0.1310; B frame built in 6.7s
-H3 [A] 5-fold grouped-by-user out-of-fold: {'cohort': 0.35972817373560706, 'test': 0.40079803813714704, 'cand_recall': 0.6925058436292515, 'mean_cands': 61.128334062090076}
-H3 [A] in-sample (fit on all A) for reference: {'cohort': 0.36448786620026236, 'test': 0.4071676751008434, 'cand_recall': 0.6925058436292515, 'mean_cands': 61.128334062090076}; n_iter_=10
+H3 frames: A rows=289475 users=4572 label>0=0.1102; B rows=321858 users=4738 label>0=0.1310; B frame built in 6.8s
+   H3 [A] fold 0: n_iter_=779
+   H3 [A] fold 1: n_iter_=611
+   H3 [A] fold 2: n_iter_=833
+   H3 [A] fold 3: n_iter_=866
+   H3 [A] fold 4: n_iter_=1000
+H3 [A] 5-fold grouped-by-user out-of-fold: {'cohort': 0.37321132730894424, 'test': 0.41569925742574254, 'cand_recall': 0.6925058436292515, 'mean_cands': 61.128334062090076}
+H3 [A] in-sample (fit on all A) for reference: {'cohort': 0.3825907909439829, 'test': 0.42674298679867995, 'cand_recall': 0.6925058436292515, 'mean_cands': 61.128334062090076}; n_iter_=786
 
 == HYBRIDS (tuned on A, reported on B)
 | hybrid | params (from A) | A cohort | A test | B cohort | B test | cand. recall A | cand. recall B | mean cands B | runtime B: hybrid step (s) | runtime B: components (s) |
 |---|---|---|---|---|---|---|---|---|---|---|
-| H1 history-first | {"ppr_alpha": 0.3} | 0.33404 | 0.37636 | 0.31407 | 0.35699 | 0.6268 | 0.6092 | 33.4 | 0.67 | 16.01 |
-| H2 weighted RRF | {"w_hist": 1.0, "w_ppr": 1.0, "w_cbf": 1.0, "w_als": 1.0, "k": 10.0} | 0.34440 | 0.38458 | 0.32921 | 0.36997 | 0.6885 | 0.6827 | 59.9 | 0.18 | 27.63 |
-| H3 HGB poisson re-ranker | {"fit": "A (oof 5-fold for A score)", "n_iter": 10} | 0.35973 | 0.40080 | 0.33493 | 0.37482 | 0.6925 | 0.6939 | 66.6 | 7.31 | 27.63 |
+| H1 history-first | {"ppr_alpha": 0.3} | 0.33404 | 0.37636 | 0.31407 | 0.35699 | 0.6268 | 0.6092 | 33.4 | 0.68 | 15.84 |
+| H2 weighted RRF | {"w_hist": 1.0, "w_ppr": 1.0, "w_cbf": 1.0, "w_als": 1.0, "k": 10.0} | 0.34440 | 0.38458 | 0.32921 | 0.36997 | 0.6885 | 0.6827 | 59.9 | 0.18 | 27.11 |
+| H3 HGB poisson re-ranker | {"fit": "A (oof 5-fold for A score)", "n_iter": 786} | 0.37321 | 0.41570 | 0.34311 | 0.38605 | 0.6925 | 0.6939 | 66.6 | 23.95 | 27.11 |
 
 best of H2/H3 by fold-A cohort MAP@5: H3 HGB poisson re-ranker
 [final] train rows=3014129 positives=611760 warm users=4841 train programmes(pos)=3866 | eval users=1260 (warm 1256, cold 4) | pool=6636 pool airings=144774 | train airings(labelled)=237118
    [final] PPR alpha=0.3: {'mean_iter': 13.0, 'max_iter': 13, 'max_residual': 3.189e-07, 'non_converged': 0}
    [final] PPR alpha=0.5: {'mean_iter': 21.0, 'max_iter': 21, 'max_residual': 9.537e-07, 'non_converged': 0}
-H3 final: fit on B rows=321858 (n_iter_=10); final frame rows=89571 users=1256
+H3 final: fit on B rows=321858 (n_iter_=842); final frame rows=89571 users=1256
 
 == SLOT SOURCES, final predictions for the 1260 test users (6300 slots; first matching source in priority order history > PPR > CBF > ALS > popularity, else fallback)
 | hybrid | history | PPR | CBF | ALS | popularity | fallback |
 |---|---|---|---|---|---|---|
 | H1 | 6226 | 54 | 0 | 0 | 0 | 20 |
 | H2 | 6111 | 162 | 5 | 2 | 0 | 20 |
-| H3 | 5568 | 596 | 69 | 45 | 2 | 20 |
+| H3 | 5400 | 633 | 101 | 117 | 29 | 20 |
 s4_h1.csv <- H1
 [submission check] header == template header: True
 [submission check] 1260 rows + header: True
@@ -52,12 +57,12 @@ s5_best_hybrid.csv <- H3
 [submission check] user order == template: True
 [submission check] 5 unique ids per row: True
 [submission check] all ids integers in 31-42 pool: True
-wrote submissions/s5_best_hybrid.csv; distinct lists: 1151; first rows:
+wrote submissions/s5_best_hybrid.csv; distinct lists: 1169; first rows:
             user_id                                   tv_show_id
-8377619604347126107        2400480 240081 2400508 12002896 20088
+8377619604347126107        2400480 2400508 240081 20088 12002896
 8381667675275833309     2400480 240081 12001682 6700482 12002856
-8387147770138767246 12001682 12002856 12001732 12002896 12001734
-real 243,60
-user 251,87
-sys 28,83
+8387147770138767246 12001682 12002856 12001734 12001732 12002955
+real 352,21
+user 856,15
+sys 732,74
 exit 0

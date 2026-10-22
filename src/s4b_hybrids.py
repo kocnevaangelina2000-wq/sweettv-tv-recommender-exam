@@ -184,7 +184,9 @@ def h3_frame(C):
 
 
 def hgb_for(feats):
-    return HistGradientBoostingRegressor(loss="poisson", random_state=SEED,
+    # learning_rate 0.1 (default) diverges on these labels (max 200 vs mean 0.39): the poisson Newton step
+    # overshoots and early stopping halts at iteration 10 on a diverged model. 0.01 chosen on fold A (BUGLOG B28).
+    return HistGradientBoostingRegressor(loss="poisson", random_state=SEED, learning_rate=0.01, max_iter=1000,
                                          categorical_features=[feats.index("category")])
 
 
@@ -274,6 +276,7 @@ def main():
     oof = np.zeros(len(FA))
     for k_, (i_tr, i_te) in enumerate(GroupKFold(n_splits=5).split(FA, groups=FA.user_id)):
         m = hgb().fit(FA.iloc[i_tr][FEATURES], FA.iloc[i_tr].label)
+        print(f"   H3 [A] fold {k_}: n_iter_={m.n_iter_}", flush=True)
         oof[i_te] = m.predict(FA.iloc[i_te][FEATURES])
     mA = fold_metrics(S["A"], score_lists(S["A"], h3_lists(FA, oof), S["A"].cohort), h3_cand(C["A"]), test)
     print(f"H3 [A] 5-fold grouped-by-user out-of-fold: {mA}", flush=True)
