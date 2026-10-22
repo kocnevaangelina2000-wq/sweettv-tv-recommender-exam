@@ -1,0 +1,41 @@
+   [A] PPR alpha=0.5: {'mean_iter': 21.0, 'max_iter': 21, 'max_residual': 9.537e-07, 'non_converged': 0}
+   [A] H3+ features in 1.7s; exposure: train pieces=2597315 hour slots=3045325 P rows=1614267 keys=34892; exp_all>0 share=0.400
+   [B] PPR alpha=0.5: {'mean_iter': 21.0, 'max_iter': 21, 'max_residual': 9.537e-07, 'non_converged': 0}
+   [B] H3+ features in 3.3s; exposure: train pieces=4923917 hour slots=5864303 P rows=2778632 keys=37991; exp_all>0 share=0.501
+H3: A(oof)={'cohort': 0.37321132730894424, 'test': 0.41569925742574254, 'cand_recall': 0.6925058436292515, 'mean_cands': 61.128334062090076} B={'cohort': 0.3431099384976189, 'test': 0.3860503051516783, 'cand_recall': 0.6939321283659167, 'mean_cands': 66.63708808959724}
+H3+: A(oof)={'cohort': 0.37585094495457416, 'test': 0.417339796479648, 'cand_recall': 0.6925058436292515, 'mean_cands': 61.128334062090076} B={'cohort': 0.35379095173139974, 'test': 0.3949921468318076, 'cand_recall': 0.6939321283659167, 'mean_cands': 66.63708808959724}
+
+== H3 vs H3+ (A: 5-fold grouped out-of-fold; B: fit on all of A)
+| model | #features | A cohort | A test | B cohort | B test | cand. recall A | cand. recall B | fit+predict time (s) |
+|---|---|---|---|---|---|---|---|---|
+| H3 | 15 | 0.37321 | 0.41570 | 0.34311 | 0.38605 | 0.6925 | 0.6939 | 90.5 |
+| H3+ | 19 | 0.37585 | 0.41734 | 0.35379 | 0.39499 | 0.6925 | 0.6939 | 87.3 |
+
+== ABLATION on fold B (H3+, fit on A without the group, evaluated on B)
+| dropped group | features dropped | B cohort | drop vs H3+ | B test | drop vs H3+ |
+|---|---|---|---|---|---|
+| history | n_pos, overlap_s, last_week_ago, share_pos | 0.35139 | +0.00241 | 0.39197 | +0.00302 |
+| graph/ALS/content scores | ppr, ppr_rank, als, als_rank, cbf, cbf_rank | 0.34979 | +0.00400 | 0.39084 | +0.00415 |
+| exposure | exp_all, exp_top3, chan_share | 0.34384 | +0.00996 | 0.38653 | +0.00846 |
+| popularity/airings | pop, air_t, air_tr | 0.35496 | -0.00117 | 0.39679 | -0.00180 |
+| length | med_dur, pos_rate | 0.35352 | +0.00027 | 0.39455 | +0.00045 |
+| title | — (not added: < 1% of truth items, logs/check_title_transfer.log) | — | — | — | — |
+   [final] PPR alpha=0.5: {'mean_iter': 21.0, 'max_iter': 21, 'max_residual': 9.537e-07, 'non_converged': 0}
+   [final] H3+ features in 4.1s; exposure: train pieces=7752415 hour slots=9487403 P rows=1415998 keys=37515; exp_all>0 share=0.640
+
+H3+ beats H3 on fold B cohort -> final: fit on B (rows=321858, n_iter_=892), final frame rows=89571
+slot sources (final, 1260 test users): history=5178, PPR=764, CBF=143, ALS=152, popularity=43, fallback=20
+[submission check] header == template header: True
+[submission check] 1260 rows + header: True
+[submission check] user order == template: True
+[submission check] 5 unique ids per row: True
+[submission check] all ids integers in 31-42 pool: True
+wrote submissions/s6_h3plus.csv; distinct lists: 1155; first rows:
+            user_id                                   tv_show_id
+8377619604347126107        2400480 240081 2400508 20088 12002896
+8381667675275833309    2400480 240081 12001734 12001682 12002856
+8387147770138767246 12002856 12001682 12001732 12002955 12002355
+real 366,56
+user 1664,82
+sys 1716,56
+exit 0

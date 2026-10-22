@@ -268,3 +268,51 @@ First source in the order history > PPR > CBF > ALS > popularity whose input con
 |---|---|---|---|
 | submissions/s4_h1.csv | H1, α 0.3, train 11-30 → 31-42 | 1,220 | header, 1,260 rows + header, template order, 5 unique ids, all ids in 31-42 pool: all True |
 | submissions/s5_best_hybrid.csv | H3 (lr 0.01) fit on fold B (321,858 rows, 842 iterations), applied to 11-30 features (89,571 candidate rows, 1,256 warm test users); **regenerated** after B28 | 1,169 | all True |
+
+## Step 4C — H3+ (exposure, length; title transfer checked)
+
+Commands: `.venv/bin/python src/check_title_transfer.py` → logs/check_title_transfer.log; `.venv/bin/python src/s4c_h3plus.py` → logs/s4c_h3plus.log (367 s wall). Definitions: DESIGN D43–D49. Model as fixed in B28 (poisson, lr 0.01, max_iter 1000, seed 42).
+
+### Title-transfer check (item 2)
+| fold | truth items | id never in user's train | exact title seen in train under another labelled id | … on id=0 airtime | either |
+|---|---|---|---|---|---|
+| A | 20,963 | 7,340 (35.01%) | 2 (0.01%) | 16 (0.08%) | 18 (0.09%) |
+| B | 21,688 | 7,263 (33.49%) | 6 (0.03%) | 32 (0.15%) | 38 (0.18%) |
+
+Below the 1% bar, so **no title features** were added.
+
+### Exposure inputs
+| split | train pieces (labelled + id=0) | hour slots | P(u, channel, hour-of-week) rows | share of candidates with exp_all > 0 |
+|---|---|---|---|---|
+| A | 2,597,315 | 3,045,325 | 1,614,267 | 0.400 |
+| B | 4,923,917 | 5,864,303 | 2,778,632 | 0.501 |
+| final (test users) | 7,752,415 | 9,487,403 | 1,415,998 | 0.640 |
+
+Hour-of-week mapping unit-checked (Mon 00:00 → 0, Sun 23:30 → 167, Monday-based week ids).
+
+### H3 vs H3+ (A: 5-fold grouped-by-user out-of-fold; B: fit on all of A)
+| model | features | MAP@5 A cohort | MAP@5 A test | **MAP@5 B cohort** | **MAP@5 B test** | cand. recall A | cand. recall B | fit + predict (s) |
+|---|---|---|---|---|---|---|---|---|
+| H3 | 15 | 0.37321 | 0.41570 | 0.34311 | 0.38605 | 0.6925 | 0.6939 | 90.5 |
+| **H3+** | 19 | **0.37585** | **0.41734** | **0.35379** | **0.39499** | 0.6925 | 0.6939 | 87.3 |
+
+Candidates are identical, so recall is identical. Gain: A +0.0026, B **+0.0107** (test subset +0.0089).
+
+### Ablation on fold B (H3+ refit on A without the group → B; drop = H3+ − ablated, positive = the group helps)
+| dropped group | features | B cohort | drop | B test | drop |
+|---|---|---|---|---|---|
+| exposure | exp_all, exp_top3, chan_share | 0.34384 | **+0.00996** | 0.38653 | +0.00846 |
+| graph/ALS/content scores | ppr, ppr_rank, als, als_rank, cbf, cbf_rank | 0.34979 | +0.00400 | 0.39084 | +0.00415 |
+| history | n_pos, overlap_s, last_week_ago, share_pos | 0.35139 | +0.00241 | 0.39197 | +0.00302 |
+| length | med_dur, pos_rate | 0.35352 | +0.00027 | 0.39455 | +0.00045 |
+| popularity/airings | pop, air_t, air_tr | 0.35496 | **−0.00117** | 0.39679 | −0.00180 |
+| title | not added (< 1% of truth items) | — | — | — | — |
+
+Each row is a single fit with no variance estimate, so drops below ~0.003 should not be read as real (see BUGLOG B30).
+
+### Final file
+| file | content | distinct lists | checks |
+|---|---|---|---|
+| submissions/s6_h3plus.csv | H3+ fit on fold B (321,858 rows, 892 iterations), applied to 11-30 features (89,571 candidate rows, 1,256 warm test users; 4 cold → fallback) | 1,155 | header, 1,260 rows + header, template order, 5 unique ids, all ids in 31-42 pool: all True |
+
+Slot sources (final, 6,300 slots, D41 priority): history 5,178 · PPR 764 · CBF 143 · ALS 152 · popularity 43 · fallback 20.
