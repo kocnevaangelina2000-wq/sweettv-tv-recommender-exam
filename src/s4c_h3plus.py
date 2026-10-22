@@ -55,9 +55,9 @@ def watch_prob(sd, pairs):
     return out, len(p), int(n.sum())
 
 
-def exposure(sd, users, cand, pairs):
-    """Σ over the candidate's target airings of P(u, channel, how of airing start); also restricted to u's
-    top-3 channels by train seconds."""
+def exposure_matrices(sd, users, pairs):
+    """E (users x pool) = Σ over each programme's target-window airings of P(u, channel, how of airing start);
+    E3 = the same with P restricted to u's top-3 channels by train seconds. Rows = users, cols = sd.pool."""
     P, n_pieces, n_slots = watch_prob(sd, pairs)
     P = P[P.user_id.isin(set(users))]
     s = sd.pool_sched
@@ -74,9 +74,20 @@ def exposure(sd, users, cand, pairs):
     P3 = P.merge(top3[["user_id", "channel_id"]].rename(columns={"channel_id": "ch"}), on="user_id")
     P3 = P3[P3.key // HOW == P3.ch]
     P3m = sp.csr_matrix((P3.p.values, (ui.get_indexer(P3.user_id), keys.get_indexer(P3.key))), shape=Pm.shape)
-    r, c = ui.get_indexer(cand.user_id), ii.get_indexer(cand.tv_show_id)
-    E, E3 = (Pm @ Nm.T).tocsr(), (P3m @ Nm.T).tocsr()
     info = f"train pieces={n_pieces} hour slots={n_slots} P rows={len(P)} keys={len(keys)}"
+    return (Pm @ Nm.T).tocsr(), (P3m @ Nm.T).tocsr(), ui, ii, info
+
+
+_EXP_CACHE = {}
+
+
+def exposure(sd, users, cand, pairs):
+    key = (sd.name, len(users))
+    if key not in _EXP_CACHE:
+        _EXP_CACHE[key] = exposure_matrices(sd, users, pairs)
+    E, E3, ui, ii, info = _EXP_CACHE[key]
+    r, c = ui.get_indexer(cand.user_id), ii.get_indexer(cand.tv_show_id)
+    assert (r >= 0).all() and (c >= 0).all()
     return np.asarray(E[r, c]).ravel(), np.asarray(E3[r, c]).ravel(), info
 
 

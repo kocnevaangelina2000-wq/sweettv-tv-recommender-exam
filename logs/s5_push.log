@@ -1,0 +1,75 @@
+   [A] PPR alpha=0.5: {'mean_iter': 21.0, 'max_iter': 21, 'max_residual': 9.537e-07, 'non_converged': 0}
+[A] [A] train rows=925164 positives=154462 warm users=4572 train programmes(pos)=1376 | eval users=4574 (warm 4409, cold 165) | pool=4402 pool airings=58345 | train airings(labelled)=56985 | components+exposure built in 120.8s; exposure: train pieces=2597315 hour slots=3045325 P rows=1614267 keys=34892; active train weeks per user: median=5.0 min=1 max=6
+   [B] PPR alpha=0.5: {'mean_iter': 21.0, 'max_iter': 21, 'max_residual': 9.537e-07, 'non_converged': 0}
+[B] [B] train rows=1825255 positives=317043 warm users=4738 train programmes(pos)=2501 | eval users=4643 (warm 4540, cold 103) | pool=6363 pool airings=121505 | train airings(labelled)=115613 | components+exposure built in 124.0s; exposure: train pieces=4923917 hour slots=5864303 P rows=2778632 keys=37991; active train weeks per user: median=10.0 min=1 max=12
+
+== 1. candidate sources (H3+ HGB, raw features)
+   [A] H3+ features in 0.1s; exposure: train pieces=2597315 hour slots=3045325 P rows=1614267 keys=34892; exp_all>0 share=0.400
+   [B] H3+ features in 0.3s; exposure: train pieces=4923917 hour slots=5864303 P rows=2778632 keys=37991; exp_all>0 share=0.501
+  name=cands: current (5 sources, top-30) variant=current (5 sources, top-30) features=raw model=["hgb"] seeds=1 A_cohort=0.37585 A_test=0.41734 A_recall=0.69251 A_mean_cands=61.12833 B_cohort=0.35379 B_test=0.39499 B_recall=0.69393 B_mean_cands=66.63709 runtime_B_s=21.02969
+   [A] H3+ features in 0.2s; exposure: train pieces=2597315 hour slots=3045325 P rows=1614267 keys=34892; exp_all>0 share=0.615
+   [B] H3+ features in 0.4s; exposure: train pieces=4923917 hour slots=5864303 P rows=2778632 keys=37991; exp_all>0 share=0.665
+  name=cands: + exposure source (top-60), others top-30 variant=+ exposure source (top-60), others top-30 features=raw model=["hgb"] seeds=1 A_cohort=0.37738 A_test=0.41848 A_recall=0.77522 A_mean_cands=95.34128 B_cohort=0.35256 B_test=0.39353 B_recall=0.76397 B_mean_cands=98.72173 runtime_B_s=29.24956
+   [A] H3+ features in 0.2s; exposure: train pieces=2597315 hour slots=3045325 P rows=1614267 keys=34892; exp_all>0 share=0.438
+   [B] H3+ features in 0.5s; exposure: train pieces=4923917 hour slots=5864303 P rows=2778632 keys=37991; exp_all>0 share=0.517
+  name=cands: + exposure source, top-60 everywhere variant=+ exposure source, top-60 everywhere features=raw model=["hgb"] seeds=1 A_cohort=0.37614 A_test=0.41570 A_recall=0.79554 A_mean_cands=139.11281 B_cohort=0.35168 B_test=0.39300 B_recall=0.79159 B_mean_cands=141.92376 runtime_B_s=33.84593
+-> candidate variant kept (max A recall with A MAP >= current 0.37585): + exposure source, top-60 everywhere
+
+== 2. per-week features (current candidates, HGB)
+  name=features: per-week variant=current (5 sources, top-30) features=per-week model=["hgb"] seeds=1 A_cohort=0.37600 A_test=0.41755 A_recall=0.69251 A_mean_cands=61.12833 B_cohort=0.35214 B_test=0.39363 B_recall=0.69393 B_mean_cands=66.63709 runtime_B_s=21.17553
+  name=features: raw+per-week variant=current (5 sources, top-30) features=raw+per-week model=["hgb"] seeds=1 A_cohort=0.37577 A_test=0.41786 A_recall=0.69251 A_mean_cands=61.12833 B_cohort=0.35224 B_test=0.39150 B_recall=0.69393 B_mean_cands=66.63709 runtime_B_s=25.11904
+-> feature set kept (argmax A): per-week
+
+== 4. CatBoostRanker YetiRank grid on A (current candidates, raw features)
+  name=catboost lr=0.03 depth=4 variant=current (5 sources, top-30) features=raw model=["cb", 0.03, 4] seeds=1 A_cohort=0.37415 A_test=0.41479 A_recall=0.69251 A_mean_cands=61.12833
+  name=catboost lr=0.03 depth=6 variant=current (5 sources, top-30) features=raw model=["cb", 0.03, 6] seeds=1 A_cohort=0.37651 A_test=0.41718 A_recall=0.69251 A_mean_cands=61.12833
+  name=catboost lr=0.03 depth=8 variant=current (5 sources, top-30) features=raw model=["cb", 0.03, 8] seeds=1 A_cohort=0.37718 A_test=0.41785 A_recall=0.69251 A_mean_cands=61.12833
+  name=catboost lr=0.1 depth=4 variant=current (5 sources, top-30) features=raw model=["cb", 0.1, 4] seeds=1 A_cohort=0.37636 A_test=0.41710 A_recall=0.69251 A_mean_cands=61.12833
+  name=catboost lr=0.1 depth=6 variant=current (5 sources, top-30) features=raw model=["cb", 0.1, 6] seeds=1 A_cohort=0.37601 A_test=0.41781 A_recall=0.69251 A_mean_cands=61.12833
+  name=catboost lr=0.1 depth=8 variant=current (5 sources, top-30) features=raw model=["cb", 0.1, 8] seeds=1 A_cohort=0.37587 A_test=0.41848 A_recall=0.69251 A_mean_cands=61.12833
+  name=catboost lr=0.03 depth=8 (selected) variant=current (5 sources, top-30) features=raw model=["cb", 0.03, 8] seeds=1 A_cohort=0.37718 A_test=0.41785 A_recall=0.69251 A_mean_cands=61.12833 B_cohort=0.35332 B_test=0.39598 B_recall=0.69393 B_mean_cands=66.63709 runtime_B_s=30.53437
+-> model kept (argmax A of HGB vs selected CatBoost): ('cb', 0.03, 8)
+
+== 5. seed bagging (5 seeds) of the best model on A
+  name=bagging 5 seeds: ('cb', 0.03, 8) variant=current (5 sources, top-30) features=raw model=["cb", 0.03, 8] seeds=5 A_cohort=0.37739 A_test=0.41852 A_recall=0.69251 A_mean_cands=61.12833 B_cohort=0.35415 B_test=0.39646 B_recall=0.69393 B_mean_cands=66.63709 runtime_B_s=124.62948
+
+== 6. all kept changes together
+  name=all kept changes variant=+ exposure source, top-60 everywhere features=per-week model=["cb", 0.03, 8] seeds=5 A_cohort=0.37649 A_test=0.41741 A_recall=0.79554 A_mean_cands=139.11281 B_cohort=0.35411 B_test=0.39432 B_recall=0.79159 B_mean_cands=141.92376 runtime_B_s=311.62700
+
+== FINAL TABLE (A: OOF 5-fold by user; B: fit on all of A)
+| config | A cohort | A test | B cohort | B test | cand. recall A | cand. recall B | runtime B (s) |
+|---|---|---|---|---|---|---|---|
+| H3+ (current) | 0.37585 | 0.41734 | 0.35379 | 0.39499 | 0.6925 | 0.6939 | 21.0 |
+| candidates: + exposure source (top-60), others top-30 | 0.37738 | 0.41848 | 0.35256 | 0.39353 | 0.7752 | 0.7640 | 29.2 |
+| candidates: + exposure source, top-60 everywhere | 0.37614 | 0.41570 | 0.35168 | 0.39300 | 0.7955 | 0.7916 | 33.8 |
+| features: per-week | 0.37600 | 0.41755 | 0.35214 | 0.39363 | 0.6925 | 0.6939 | 21.2 |
+| features: raw+per-week | 0.37577 | 0.41786 | 0.35224 | 0.39150 | 0.6925 | 0.6939 | 25.1 |
+| model: CatBoost YetiRank lr=0.03 depth=8 | 0.37718 | 0.41785 | 0.35332 | 0.39598 | 0.6925 | 0.6939 | 30.5 |
+| seed bagging x5 (cb) | 0.37739 | 0.41852 | 0.35415 | 0.39646 | 0.6925 | 0.6939 | 124.6 |
+| all kept changes together (+ exposure source, top-60 everywhere; per-week; cb; seeds=5) | 0.37649 | 0.41741 | 0.35411 | 0.39432 | 0.7955 | 0.7916 | 311.6 |
+CatBoost grid (A OOF cohort): lr=0.03 d=4: 0.37415, lr=0.03 d=6: 0.37651, lr=0.03 d=8: 0.37718, lr=0.1 d=4: 0.37636, lr=0.1 d=6: 0.37601, lr=0.1 d=8: 0.37587
+
+best fold-A config: seed bagging x5 (cb): variant=current (5 sources, top-30) features=raw model=["cb", 0.03, 8] seeds=5
+   [final] PPR alpha=0.5: {'mean_iter': 21.0, 'max_iter': 21, 'max_residual': 9.537e-07, 'non_converged': 0}
+[final] [final] train rows=3014129 positives=611760 warm users=4841 train programmes(pos)=3866 | eval users=1260 (warm 1256, cold 4) | pool=6636 pool airings=144774 | train airings(labelled)=237118 | components+exposure built in 22.5s; exposure: train pieces=7752415 hour slots=9487403 P rows=1415998 keys=37515; active train weeks per user: median=20.0 min=2 max=21
+   [final] H3+ features in 0.3s; exposure: train pieces=7752415 hour slots=9487403 P rows=1415998 keys=37515; exp_all>0 share=0.640
+[final] fit on A+B stacked: rows=611333 (A 289475, B 321858), label = positives per target week; final frame rows=89571 users=1256
+
+== s7 SLOT SOURCES (1260 test users, 6300 slots; priority history > PPR > CBF > ALS > exposure > popularity, else fallback)
+| history | PPR | CBF | ALS | exposure | popularity | fallback |
+|---|---|---|---|---|---|---|
+| 5606 | 595 | 34 | 36 | 0 | 9 | 20 |
+[submission check] header == template header: True
+[submission check] 1260 rows + header: True
+[submission check] user order == template: True
+[submission check] 5 unique ids per row: True
+[submission check] all ids integers in 31-42 pool: True
+wrote submissions/s7_best.csv; distinct lists: 1126; first rows:
+            user_id                                   tv_show_id
+8377619604347126107        2400480 240081 2400508 12002955 20088
+8381667675275833309    2400480 240081 12001682 12002856 12001734
+8387147770138767246 12001682 12002856 12002955 12001734 12001732
+real 3931,33
+user 32474,73
+sys 4513,55
+exit 0

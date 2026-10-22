@@ -1,0 +1,1 @@
+rows=60000 groups=2000; seed 42 vs seed 42: max |diff|=0.000e+00, identical=True; seed 42 vs 43: max |diff|=6.894e-01

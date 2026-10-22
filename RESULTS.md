@@ -316,3 +316,102 @@ Each row is a single fit with no variance estimate, so drops below ~0.003 should
 | submissions/s6_h3plus.csv | H3+ fit on fold B (321,858 rows, 892 iterations), applied to 11-30 features (89,571 candidate rows, 1,256 warm test users; 4 cold → fallback) | 1,155 | header, 1,260 rows + header, template order, 5 unique ids, all ids in 31-42 pool: all True |
 
 Slot sources (final, 6,300 slots, D41 priority): history 5,178 · PPR 764 · CBF 143 · ALS 152 · popularity 43 · fallback 20.
+
+## Step 5 (part D): push MAP@5 — selected on fold A, reported on fold B
+Command: `.venv/bin/python src/s5_push.py > logs/s5_push.log` (all rows also in `logs/s5_rows.csv`; total wall time 3,931 s). Fold A = 5-fold GroupKFold-by-user out-of-fold; fold B = fit on all of A. MAP@5 is over the cohort / the test-user subset of the cohort. Seed 42 unless noted.
+Reproduction: the "current" row reproduces step 4C exactly (A 0.37585 / 0.41734, B 0.35379 / 0.39499, recall 0.6925 / 0.6939).
+
+### 1. Candidate sources (H3+ poisson HGB, raw features)
+| candidates | mean cands/user A | recall A | recall B | A cohort | A test | B cohort | B test |
+|---|---|---|---|---|---|---|---|
+| current (history, PPR, CBF, ALS, popularity; top-30) | 61.1 | 0.6925 | 0.6939 | 0.37585 | 0.41734 | **0.35379** | 0.39499 |
+| + exposure source top-60, others top-30 | 95.3 | 0.7752 | 0.7640 | **0.37738** | 0.41848 | 0.35256 | 0.39353 |
+| + exposure source, top-60 everywhere | 139.1 | **0.7955** | **0.7916** | 0.37614 | 0.41570 | 0.35168 | 0.39300 |
+
+Rule (D51): the highest A recall with A MAP ≥ current → **kept: + exposure source, top-60 everywhere**. Recall +0.10 on both folds, but MAP@5 on B goes *down* for both larger sets (BUGLOG B32).
+
+### 2. Per-week features (current candidates, HGB)
+| features | A cohort | A test | B cohort | B test |
+|---|---|---|---|---|
+| raw (= H3+) | 0.37585 | 0.41734 | **0.35379** | **0.39499** |
+| per-week | **0.37600** | 0.41755 | 0.35214 | 0.39363 |
+| raw + per-week | 0.37577 | 0.41786 | 0.35224 | 0.39150 |
+
+Kept by argmax A: **per-week**. The A margin is +0.00015, which is noise, and B is −0.00165.
+
+### 4. CatBoostRanker YetiRank (500 iterations, current candidates, raw features), grid on A OOF cohort MAP@5
+| lr \ depth | 4 | 6 | 8 |
+|---|---|---|---|
+| 0.03 | 0.37415 | 0.37651 | **0.37718** |
+| 0.1 | 0.37636 | 0.37601 | 0.37587 |
+
+| model | A cohort | A test | B cohort | B test | runtime B (s) |
+|---|---|---|---|---|---|
+| poisson HGB (H3+) | 0.37585 | 0.41734 | 0.35379 | 0.39499 | 21.0 |
+| CatBoost YetiRank lr 0.03 depth 8 | **0.37718** | 0.41785 | 0.35332 | **0.39598** | 30.5 |
+
+Kept: CatBoost (argmax A). The selected point is on the grid edge (depth 8 is the largest value tried). Determinism: two fits with seed 42 give byte-identical predictions, and seed 43 differs (max |Δ| 0.69) (`src/check_cb_determinism.py` → `logs/check_cb_determinism.log`).
+
+### 5. Seed bagging (seeds 42–46, mean of predicted scores)
+| model | A cohort | A test | B cohort | B test | runtime B (s) |
+|---|---|---|---|---|---|
+| CatBoost, 1 seed | 0.37718 | 0.41785 | 0.35332 | 0.39598 | 30.5 |
+| CatBoost, 5 seeds | **0.37739** | **0.41852** | **0.35415** | **0.39646** | 124.6 |
+
+### 6. Final table (A: OOF; B: fit on A)
+| config | A cohort | A test | B cohort | B test | cand. recall A | cand. recall B | runtime B (s) |
+|---|---|---|---|---|---|---|---|
+| H3+ (current) | 0.37585 | 0.41734 | 0.35379 | 0.39499 | 0.6925 | 0.6939 | 21.0 |
+| candidates: + exposure source (top-60), others top-30 | 0.37738 | 0.41848 | 0.35256 | 0.39353 | 0.7752 | 0.7640 | 29.2 |
+| candidates: + exposure source, top-60 everywhere | 0.37614 | 0.41570 | 0.35168 | 0.39300 | 0.7955 | 0.7916 | 33.8 |
+| features: per-week | 0.37600 | 0.41755 | 0.35214 | 0.39363 | 0.6925 | 0.6939 | 21.2 |
+| features: raw+per-week | 0.37577 | 0.41786 | 0.35224 | 0.39150 | 0.6925 | 0.6939 | 25.1 |
+| model: CatBoost YetiRank lr=0.03 depth=8 | 0.37718 | 0.41785 | 0.35332 | 0.39598 | 0.6925 | 0.6939 | 30.5 |
+| **seed bagging ×5 (CatBoost)** | **0.37739** | **0.41852** | **0.35415** | **0.39646** | 0.6925 | 0.6939 | 124.6 |
+| all kept changes together (top-60 everywhere + exposure; per-week; CatBoost; 5 seeds) | 0.37649 | 0.41741 | 0.35411 | 0.39432 | 0.7955 | 0.7916 | 311.6 |
+
+The best fold-A row is **seed bagging ×5 of CatBoost on current candidates with raw features** (A 0.37739). It beats the runner-up ("+ exposure source, others top-30", 0.37738) by 0.00001, which is a tie in practice (B32). On B it is also the best row: +0.00036 over H3+ on the cohort, +0.00147 on test users. Combining all the kept changes is worse on A than bagging alone.
+
+### s7_best.csv
+| file | content | distinct lists | checks |
+|---|---|---|---|
+| submissions/s7_best.csv | CatBoost YetiRank lr 0.03 depth 8, seeds 42–46, current candidates, raw features; fit on A+B stacked (611,333 rows: A 289,475 + B 321,858; label = positives per target week, D50), applied to 11-30 → 31-42 (89,571 candidate rows, 1,256 warm test users; 4 cold → fallback) | 1,126 | header, 1,260 rows + header, template order, 5 unique ids, all ids in 31-42 pool: all True |
+
+s7 slot sources (6,300 slots, priority history > PPR > CBF > ALS > exposure > popularity, else fallback): history 5,606 · PPR 595 · CBF 34 · ALS 36 · exposure 0 (not a source in the current candidates) · popularity 9 · fallback 20.
+
+### 7. Blend: weighted rank fusion (D56–D58)
+Command: `.venv/bin/python src/s5_blend.py > logs/s5_blend.log` (grid: `logs/s5_blend_grid.csv`; wall time 843 s). (a) poisson HGB and (b) CatBoost YetiRank lr 0.03 depth 8 (seed 42), both on the candidates and features kept on A: **+ exposure source, top-60 everywhere; per-week**. (c) H2 RRF with step-4B fold-A weights (all 1, k = 10) on its top-30 lists.
+
+Sanity line (current H3+: current candidates, raw features, HGB): A 0.37585 / 0.41734, B 0.35379 / 0.39499. This reproduces step 4C exactly.
+
+| ranking | A cohort | A test | B cohort | B test |
+|---|---|---|---|---|
+| (a) HGB, kept cands + per-week | 0.37550 | 0.41645 | 0.35127 | 0.39242 |
+| (b) CatBoost, kept cands + per-week | 0.37697 | 0.41812 | 0.35293 | 0.39361 |
+| (c) H2 RRF | 0.34440 | 0.38458 | 0.32921 | 0.36997 |
+| **blend** w(hgb, cb, h2) = (0.5, 0.5, 0), k = 5 | **0.37830** | **0.41873** | 0.35316 | 0.39339 |
+
+The top of the A grid is H2 weight 0 with equal HGB/CB weights. (0.5, 0.5), (1, 1) and (2, 2) are the same blend, because the score only scales. k = 5 beats k = 20 by 0.00005. The blend beats the best single model on A (+0.00133 over CatBoost), so `s8_blend.csv` was written. On B it beats (a) and (b) but is **below** s7's bagging row (0.35415) and below H3+ (0.35379) (B37).
+
+Pairwise top-5 overlap on fold B (4,540 warm cohort users; each model's own top-5 before fallback):
+| pair | mean shared ids (of 5) | users with 0/1/2/3/4/5 shared | identical ordered list |
+|---|---|---|---|
+| HGB vs CatBoost | 4.469 | 0 / 0 / 10 / 204 / 1,975 / 2,351 | 0.185 |
+| HGB vs H2 | 3.642 | 38 / 95 / 369 / 1,216 / 2,055 / 767 | 0.031 |
+| CatBoost vs H2 | 3.739 | 28 / 95 / 290 / 1,094 / 2,146 / 887 | 0.048 |
+
+HGB and CatBoost mostly agree on *which* five, but rarely on the order. Fusion therefore mainly reorders the five.
+
+| file | content | distinct lists | checks |
+|---|---|---|---|
+| submissions/s8_blend.csv | rank fusion (0.5, 0.5, 0), k = 5 of HGB + CatBoost (seed 42 each), fit on A+B stacked (1,350,769 rows, label per target week, D50), kept candidates + per-week features on 11-30 → 31-42 (187,340 ranked rows, 1,256 warm test users; 4 cold → fallback) | 1,055 | header, 1,260 rows + header, template order, 5 unique ids, all ids in 31-42 pool: all True |
+
+s8 slot sources (6,300 slots): history 5,558 · PPR 669 · CBF 29 · ALS 6 · exposure 15 · popularity 3 · fallback 20.
+
+### Final table including the blend
+| config | A cohort | A test | B cohort | B test | cand. recall A | cand. recall B | runtime B (s) |
+|---|---|---|---|---|---|---|---|
+| H3+ (current) | 0.37585 | 0.41734 | 0.35379 | 0.39499 | 0.6925 | 0.6939 | 21.0 |
+| seed bagging ×5 (CatBoost) → **s7** | 0.37739 | 0.41852 | **0.35415** | **0.39646** | 0.6925 | 0.6939 | 124.6 |
+| all kept changes together | 0.37649 | 0.41741 | 0.35411 | 0.39432 | 0.7955 | 0.7916 | 311.6 |
+| blend HGB + CB (kept cands, per-week) → **s8** | **0.37830** | **0.41873** | 0.35316 | 0.39339 | 0.7955 | 0.7916 | 0.1 (fusion step only; the two fits are on top) |

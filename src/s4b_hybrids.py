@@ -25,7 +25,7 @@ TOPN = 30
 SEL = json.loads((ROOT / "logs" / "s4a_selected.json").read_text())
 PPR_ALPHAS = [0.3, 0.5, 0.7, 0.85]
 H2_GRID = list(itertools.product([1, 2, 4], [0, 0.5, 1], [0, 0.5, 1], [0, 0.5, 1], [10, 60]))
-SLOT_SOURCES = ["history", "PPR", "CBF", "ALS", "popularity", "fallback"]
+SLOT_SOURCES = ["history", "PPR", "CBF", "ALS", "exposure", "popularity", "fallback"]
 CATS = sorted(set().union(*[set(load_sched(p).tv_show_category) for p in SCHED_FILES]))
 FEATURES = ["n_pos", "overlap_s", "last_week_ago", "share_pos", "ppr", "ppr_rank", "als", "als_rank", "cbf",
             "cbf_rank", "pop", "air_t", "air_tr", "chan_share", "category"]
@@ -39,13 +39,13 @@ def to_long(lists, source):
 class Components:
     """Method outputs on one split for `users` (all warm users of the split, or the warm test users)."""
 
-    def __init__(self, sd, users, ppr_alphas):
-        self.sd, self.users = sd, list(users)
+    def __init__(self, sd, users, ppr_alphas, topn=TOPN):
+        self.sd, self.users, self.topn = sd, list(users), topn
         self.times = {}
         t = time.perf_counter()
         h = M.history_scores(sd, "count")
         self.hist = h[h.user_id.isin(set(self.users))]
-        hl = M.history_lists(sd, "count", topn=TOPN)
+        hl = M.history_lists(sd, "count", topn=topn)
         self.hist_lists = {u: hl[u] for u in self.users if u in hl}  # only component users (BUGLOG B25)
         self.hist_all = {u: set(g) for u, g in self.hist.groupby("user_id").tv_show_id}
         self.times["history"] = time.perf_counter() - t
@@ -66,13 +66,13 @@ class Components:
         a = SEL["PPR x air"]["alpha"]
         self.lists = {"history": self.hist_lists}
         for name, (items, S), pos_only in [("PPR", self.ppr[a], True), ("CBF", self.cbf, True), ("ALS", self.als, False)]:
-            self.lists[name] = M.rank_lists(sd, self.users, items, S * M.air_weight(sd, items), pos_only, TOPN)
-        glob = sd.pop.tv_show_id.head(TOPN).tolist()
+            self.lists[name] = M.rank_lists(sd, self.users, items, S * M.air_weight(sd, items), pos_only, topn)
+        glob = sd.pop.tv_show_id.head(topn).tolist()
         self.lists["popularity"] = {u: glob for u in self.users}
 
     def ppr_air_list(self, a):
         items, S = self.ppr[a]
-        return M.rank_lists(self.sd, self.users, items, S * M.air_weight(self.sd, items), True, TOPN)
+        return M.rank_lists(self.sd, self.users, items, S * M.air_weight(self.sd, items), True, self.topn)
 
 
 # ---------------------------------------------------------------- shared evaluation helpers
@@ -147,9 +147,11 @@ def h2(C, wide, wh, wp, wc, wa, k):
 
 
 # ---------------------------------------------------------------- H3
-def h3_frame(C):
+def h3_frame(C, lists=None):
+    """Candidate frame over every source in `lists` (default: the component's 5 top-n lists)."""
     sd = C.sd
-    cand = pd.concat([to_long(C.lists[s], s) for s in ["history", "PPR", "CBF", "ALS", "popularity"]])
+    lists = C.lists if lists is None else lists
+    cand = pd.concat([to_long(l, s) for s, l in lists.items()])
     f = cand[["user_id", "tv_show_id"]].drop_duplicates().reset_index(drop=True)
     f = f.merge(sd.up_all[["user_id", "tv_show_id", "n_pos", "overlap_s", "last_week"]], how="left",
                 on=["user_id", "tv_show_id"])
@@ -199,14 +201,14 @@ def h3_lists(f, pred):
     return {u: g.tolist() for u, g in d.groupby("user_id").head(K).groupby("user_id").tv_show_id}
 
 
-def h3_members(C):
-    return {"history": C.hist_all, **{n: {u: set(l) for u, l in C.lists[n].items()}
-                                      for n in ["PPR", "CBF", "ALS", "popularity"]}}
+def h3_members(C, lists=None):
+    lists = C.lists if lists is None else lists
+    return {"history": C.hist_all, **{n: {u: set(l) for u, l in lists[n].items()} for n in lists if n != "history"}}
 
 
-def h3_cand(C):
-    return {u: set().union(*[set(C.lists[n].get(u, [])) for n in ["history", "PPR", "CBF", "ALS", "popularity"]])
-            for u in C.users}
+def h3_cand(C, lists=None):
+    lists = C.lists if lists is None else lists
+    return {u: set().union(*[set(l.get(u, [])) for l in lists.values()]) for u in C.users}
 
 
 # ---------------------------------------------------------------- main

@@ -4,3 +4,4 @@ __pycache__/
 *.pyc
 artifacts/
 .DS_Store
+catboost_info/

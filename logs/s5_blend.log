@@ -1,0 +1,49 @@
+CatBoost config from logs/s5_rows.csv: ('cb', 0.03, 8); H2 params from logs/s4b_h2_grid.csv: ({'history': np.float64(1.0), 'PPR': np.float64(1.0), 'CBF': np.float64(1.0), 'ALS': np.float64(1.0)}, 10.0); (a)/(b) on kept candidates '+ exposure source, top-60 everywhere' and features 'per-week' (from logs/s5_push.log)
+   [A] PPR alpha=0.5: {'mean_iter': 21.0, 'max_iter': 21, 'max_residual': 9.537e-07, 'non_converged': 0}
+[A] [A] train rows=925164 positives=154462 warm users=4572 train programmes(pos)=1376 | eval users=4574 (warm 4409, cold 165) | pool=4402 pool airings=58345 | train airings(labelled)=56985 | components+exposure built in 21.5s; exposure: train pieces=2597315 hour slots=3045325 P rows=1614267 keys=34892; active train weeks per user: median=5.0 min=1 max=6
+   [B] PPR alpha=0.5: {'mean_iter': 21.0, 'max_iter': 21, 'max_residual': 9.537e-07, 'non_converged': 0}
+[B] [B] train rows=1825255 positives=317043 warm users=4738 train programmes(pos)=2501 | eval users=4643 (warm 4540, cold 103) | pool=6363 pool airings=121505 | train airings(labelled)=115613 | components+exposure built in 35.4s; exposure: train pieces=4923917 hour slots=5864303 P rows=2778632 keys=37991; active train weeks per user: median=10.0 min=1 max=12
+   [A] H3+ features in 0.1s; exposure: train pieces=2597315 hour slots=3045325 P rows=1614267 keys=34892; exp_all>0 share=0.400
+   [B] H3+ features in 0.3s; exposure: train pieces=4923917 hour slots=5864303 P rows=2778632 keys=37991; exp_all>0 share=0.501
+SANITY current H3+: A cohort=0.37585 test=0.41734 | B cohort=0.35379 test=0.39499 (step 4C: 0.37585 / 0.41734 | 0.35379 / 0.39499)
+   [A] H3+ features in 0.2s; exposure: train pieces=2597315 hour slots=3045325 P rows=1614267 keys=34892; exp_all>0 share=0.438
+   [B] H3+ features in 0.5s; exposure: train pieces=4923917 hour slots=5864303 P rows=2778632 keys=37991; exp_all>0 share=0.517
+rankings built in 428.2s; A rows=660856 B rows=689913
+single hgb: A cohort=0.37550 test=0.41645 | B cohort=0.35127 test=0.39242
+single cb: A cohort=0.37697 test=0.41812 | B cohort=0.35293 test=0.39361
+single h2: A cohort=0.34440 test=0.38458 | B cohort=0.32921 test=0.36997
+
+== pairwise top-5 overlap on fold B (warm cohort users, model output before fallback fill)
+| hgb vs cb | mean shared ids of 5: 4.469 | distribution 0..5: [0, 0, 10, 204, 1975, 2351] | identical ordered lists: 0.185 |
+| hgb vs h2 | mean shared ids of 5: 3.642 | distribution 0..5: [38, 95, 369, 1216, 2055, 767] | identical ordered lists: 0.031 |
+| cb vs h2 | mean shared ids of 5: 3.739 | distribution 0..5: [28, 95, 290, 1094, 2146, 887] | identical ordered lists: 0.048 |
+
+blend grid: 126 points; top 5 on A:
+ w_hgb  w_cb  w_h2  k  A_cohort   A_test
+   0.5   0.5   0.0  5  0.378302 0.418733
+   2.0   2.0   0.0  5  0.378302 0.418733
+   1.0   1.0   0.0  5  0.378302 0.418733
+   2.0   2.0   0.0 20  0.378256 0.418671
+   1.0   1.0   0.0 20  0.378256 0.418671
+
+| blend w(hgb, cb, h2)=(np.float64(0.5), np.float64(0.5), np.float64(0.0)) k=5 | A cohort=0.37830 test=0.41873 | B cohort=0.35316 test=0.39339 | blend step on B 0.11s |
+best single model on A: cb (A cohort 0.37697)
+   [final] PPR alpha=0.5: {'mean_iter': 21.0, 'max_iter': 21, 'max_residual': 9.537e-07, 'non_converged': 0}
+[final] [final] train rows=3014129 positives=611760 warm users=4841 train programmes(pos)=3866 | eval users=1260 (warm 1256, cold 4) | pool=6636 pool airings=144774 | train airings(labelled)=237118 | components+exposure built in 22.5s; exposure: train pieces=7752415 hour slots=9487403 P rows=1415998 keys=37515; active train weeks per user: median=20.0 min=2 max=21
+   [final] H3+ features in 0.4s; exposure: train pieces=7752415 hour slots=9487403 P rows=1415998 keys=37515; exp_all>0 share=0.615
+[final] stacked rows=1350769; final rankings rows=187340 users=1256
+s8 slot sources (1260 test users): history=5558, PPR=669, CBF=29, ALS=6, exposure=15, popularity=3, fallback=20
+[submission check] header == template header: True
+[submission check] 1260 rows + header: True
+[submission check] user order == template: True
+[submission check] 5 unique ids per row: True
+[submission check] all ids integers in 31-42 pool: True
+wrote submissions/s8_blend.csv; distinct lists: 1055; first rows:
+            user_id                                   tv_show_id
+8377619604347126107        2400480 240081 2400508 20088 12002896
+8381667675275833309       2400480 12001682 240081 6700482 200344
+8387147770138767246 12001682 12002856 12002955 12001732 12001734
+real 842,56
+user 6620,39
+sys 1551,03
+exit 0
