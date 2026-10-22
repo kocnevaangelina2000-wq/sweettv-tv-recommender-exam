@@ -234,3 +234,34 @@ Final split: 4,841 warm train users, 3,866 train programmes, pool 6,636; test us
 |---|---|---|---|
 | submissions/s2_history.csv | history count, ties by total seconds → popularity | 1,235 | header, 1,260 rows + header, template order, 5 unique ids per row, all ids in 31-42 pool: all True |
 | submissions/s3_ppr_air.csv | PPR × log1p(airings), α = 0.5 (21 iterations, 0 non-converged) | 1,183 | all True |
+
+## Step 4B — hybrids (tuned on fold A, reported on fold B)
+
+Command: `.venv/bin/python src/s4b_hybrids.py` → logs/s4b_hybrids.log (≈ 240 s wall), logs/s4b_h2_grid.csv (162 H2 points on A). Components use the fold-A params from logs/s4a_selected.json (PPR × air α 0.5; ALS × air count/16/0.01/1). Definitions: DESIGN D36–D42.
+
+| hybrid | params (chosen on A) | MAP@5 A cohort | MAP@5 A test | **MAP@5 B cohort** | **MAP@5 B test** | cand. recall A | cand. recall B | mean cands B | runtime B: hybrid step (s) | runtime B: its components (s) |
+|---|---|---|---|---|---|---|---|---|---|---|
+| H1 history-first | PPR α = 0.3 | 0.33404 | 0.37636 | 0.31407 | 0.35699 | 0.6268 | 0.6092 | 33.4 | 0.67 | 16.01 |
+| H2 weighted RRF | w_hist 1, w_ppr 1, w_cbf 1, w_als 1, k 10 | 0.34440 | 0.38458 | 0.32921 | 0.36997 | 0.6885 | 0.6827 | 59.9 | 0.18 | 27.63 |
+| **H3 HGB poisson re-ranker** | defaults, seed 42 (10 boosting iterations, early stopping) | **0.35973** (5-fold OOF) | **0.40080** | **0.33493** | **0.37482** | 0.6925 | 0.6939 | 66.6 | 7.31 (B features + fit on A + predict) | 27.63 |
+| *reference: PPR × air (step 4A)* | α 0.5 | 0.34111 | 0.38181 | 0.32559 | 0.36866 | | | | | 24.43 |
+
+- H1 on A by α: 0.33404 / 0.33377 / 0.33380 / 0.33362 (0.3 / 0.5 / 0.7 / 0.85). H1 sits **below** plain PPR × air on both folds (B 0.31407 vs 0.32559): history-first fixes the slot order on the history count.
+- H2: the best A point is all weights 1 with k = 10, i.e. **on the edge of the k grid**. Best with k = 60: 0.34269; history only (other weights 0): 0.32386 (= history count). The top 5 A points lie within 0.0005.
+- H3: A out-of-fold 0.35973; A in-sample (fit on all of A) 0.36448, for reference only. Training frames: A 289,475 rows (4,572 users, 11.0% label > 0), B 321,858 rows (4,738 users, 13.1% label > 0). Early stopping stopped at 10 iterations on A and on B.
+- Fold-A choice of best H2/H3 (D42): **H3** (0.35973 vs 0.34440). B agrees (0.33493 vs 0.32921).
+
+### Slot sources — final predictions, 1,260 test users (6,300 slots)
+First source in the order history > PPR > CBF > ALS > popularity whose input contains the item, else fallback (D41). The 20 fallback slots are the 4 cold test users.
+
+| hybrid | history | PPR | CBF | ALS | popularity | fallback |
+|---|---|---|---|---|---|---|
+| H1 | 6,226 | 54 | 0 | 0 | 0 | 20 |
+| H2 | 6,111 | 162 | 5 | 2 | 0 | 20 |
+| H3 | 5,568 | 596 | 69 | 45 | 2 | 20 |
+
+### Files
+| file | content | distinct lists | checks |
+|---|---|---|---|
+| submissions/s4_h1.csv | H1, α 0.3, train 11-30 → 31-42 | 1,220 | header, 1,260 rows + header, template order, 5 unique ids, all ids in 31-42 pool: all True |
+| submissions/s5_best_hybrid.csv | H3 fit on fold B (321,858 rows), applied to 11-30 features (89,571 candidate rows, 1,256 warm test users) | 1,151 | all True |
