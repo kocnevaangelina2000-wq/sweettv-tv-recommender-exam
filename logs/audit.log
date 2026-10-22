@@ -1,0 +1,37 @@
+== LOG dataset11-30.csv
+rows=5821987 users=4914 channels=202 user_id max=18443832178892490378 (> int64 max: 2918899 rows)
+start_time 2020-03-09 00:00:02 (Monday) .. 2020-07-26 23:58:42; stop_time 2020-03-09 00:01:26 .. 2020-07-26 23:59:58 (Sunday); ISO weeks 11..30 (20 distinct)
+duraton == stop-start: 5821870 / 5821987; mismatches=117, diff (duraton - (stop-start)) values: {-3600.0: 117}
+duraton min=61 p50=396.0 p99=14079.139999999665 max=342145; > 24h: 52; < 60s: 0
+exact duplicate rows: 17
+views overlapping the same user's previous view (any channel): 379398 (6.5166%)
+rows per ISO week: {np.uint32(11): 407493, np.uint32(12): 452314, np.uint32(13): 465318, np.uint32(14): 428820, np.uint32(15): 412698, np.uint32(16): 406317, np.uint32(17): 417854, np.uint32(18): 385637, np.uint32(19): 336042, np.uint32(20): 232680, np.uint32(21): 182044, np.uint32(22): 192998, np.uint32(23): 162882, np.uint32(24): 156928, np.uint32(25): 138807, np.uint32(26): 126940, np.uint32(27): 105223, np.uint32(28): 271172, np.uint32(29): 261698, np.uint32(30): 278122}
+log channels absent from all schedules: [149, 1174, 1508, 1509, 1510], rows on them: 113579
+== SCHEDULE 11-20 (export_arh_11-20-final.csv)
+rows=1074235 channels=400 start 2020-03-08 23:00:00 (Sunday) .. 2020-05-18 11:45:00; max end 2020-05-18 12:00:00; ISO weeks 10..21 (12 distinct)
+rows per ISO week: {np.uint32(10): 86, np.uint32(11): 106036, np.uint32(12): 108177, np.uint32(13): 107363, np.uint32(14): 106527, np.uint32(15): 108126, np.uint32(16): 107697, np.uint32(17): 107721, np.uint32(18): 107505, np.uint32(19): 105473, np.uint32(20): 107093, np.uint32(21): 2431}
+duration: min=0 p50=1500.0 max=86400 all multiples of 60: True; duration == seconds to next airing on channel: 99.9629%
+tv_show_id != 0: rows 10.7624%, airtime 15.9663%, distinct labelled ids 5847
+duplicate (channel,start): 1; exact dup rows: 0; duration==0: 1; overlapping consecutive airings: 2; gaps: 396
+channel_id with >1 channel_title: 3
+== SCHEDULE 21-30 (export_arh_21-30-final.csv)
+rows=1074394 channels=403 start 2020-05-18 00:00:00 (Monday) .. 2020-07-27 11:55:00; max end 2020-07-27 12:00:00; ISO weeks 21..31 (11 distinct)
+rows per ISO week: {np.uint32(21): 104798, np.uint32(22): 107274, np.uint32(23): 107657, np.uint32(24): 107449, np.uint32(25): 107104, np.uint32(26): 107544, np.uint32(27): 106878, np.uint32(28): 107528, np.uint32(29): 107640, np.uint32(30): 108093, np.uint32(31): 2429}
+duration: min=60 p50=1500.0 max=86400 all multiples of 60: True; duration == seconds to next airing on channel: 99.9995%
+tv_show_id != 0: rows 11.3092%, airtime 16.9000%, distinct labelled ids 6363
+duplicate (channel,start): 0; exact dup rows: 0; duration==0: 0; overlapping consecutive airings: 2; gaps: 3
+channel_id with >1 channel_title: 3
+== SCHEDULE 31-42 (export_arh_31-42-final.csv)
+rows=1295378 channels=404 start 2020-07-27 00:00:00 (Monday) .. 2020-10-19 11:55:00; max end 2020-10-19 12:00:00; ISO weeks 31..43 (13 distinct)
+rows per ISO week: {np.uint32(31): 105719, np.uint32(32): 108256, np.uint32(33): 107039, np.uint32(34): 106862, np.uint32(35): 107028, np.uint32(36): 107492, np.uint32(37): 107558, np.uint32(38): 108258, np.uint32(39): 108512, np.uint32(40): 108763, np.uint32(41): 108843, np.uint32(42): 108649, np.uint32(43): 2399}
+duration: min=60 p50=1500.0 max=43200 all multiples of 60: True; duration == seconds to next airing on channel: 99.9991%
+tv_show_id != 0: rows 11.1762%, airtime 16.6721%, distinct labelled ids 6636
+duplicate (channel,start): 0; exact dup rows: 0; duration==0: 0; overlapping consecutive airings: 8; gaps: 4
+channel_id with >1 channel_title: 3
+tiling 11-20->21-30: shared channels=399, last end of 11-20 == first start of 21-30: 398; mismatched: {487: {'end_a': Timestamp('2020-05-18 01:00:00'), 'start_b': Timestamp('2020-05-18 00:20:00')}}
+tiling 21-30->31-42: shared channels=403, last end of 21-30 == first start of 31-42: 402; mismatched: {1528: {'end_a': Timestamp('2020-07-27 07:00:00'), 'start_b': Timestamp('2020-07-27 07:30:00')}}
+== CLOCK ALIGNMENT (log vs schedule, same channel)
+view start vs airing start: best shift=1 min (rate 0.0196); rate at 0=0.0193; at -5..+5 min=[0.0168, 0.0168, 0.0164, 0.0165, 0.0165, 0.0193, 0.0196, 0.0191, 0.0187, 0.0184, 0.0184]; at ±60=0.0170/0.0176; ±120=0.0167/0.0179; ±180=0.0164/0.0180; median over shifts=0.0169
+view stop vs airing end: best shift=1 min (rate 0.0256); rate at 0=0.0213; at -5..+5 min=[0.0171, 0.0181, 0.019, 0.019, 0.0199, 0.0213, 0.0256, 0.0217, 0.0199, 0.0183, 0.0174]; at ±60=0.0158/0.0166; ±120=0.0158/0.0168; ±180=0.0157/0.0171; median over shifts=0.0168
+before DST 2020-03-29: view-start rate by whole-hour shift {-3: 0.0162, -2: 0.017, -1: 0.0171, 0: 0.02, 1: 0.0175, 2: 0.0179, 3: 0.0177}
+after DST: view-start rate by whole-hour shift {-3: 0.0166, -2: 0.0167, -1: 0.017, 0: 0.0192, 1: 0.0176, 2: 0.0179, 3: 0.0181}
