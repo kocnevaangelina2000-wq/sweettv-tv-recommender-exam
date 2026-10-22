@@ -48,14 +48,29 @@ def overlap_pairs(log, a):
     n = np.clip(hi - lo, 0, None)
     vi = np.repeat(np.arange(len(log)), n)
     ai = np.repeat(lo, n) + (np.arange(n.sum()) - np.repeat(np.cumsum(n) - n, n))
-    ov = (np.minimum(v_stop[vi], a_ch[ai] + a.end_s.values[ai])
-          - np.maximum(v_start[vi], a_start[ai]))
+    ov_end = np.minimum(v_stop[vi], a_ch[ai] + a.end_s.values[ai])
+    ov_start = np.maximum(v_start[vi], a_start[ai])
+    ov = ov_end - ov_start
     keep = ov > 0
     return pd.DataFrame({
         "view_row": vi[keep],
         "airing_id": a.airing_id.values[ai[keep]],
         "overlap_s": ov[keep],
+        "ov_start": ov_start[keep] % K,  # clipped piece [ov_start, ov_end) in epoch seconds
+        "ov_end": ov_end[keep] % K,
     })
+
+
+def union_seconds(user, airing, st, en):
+    """Per (user, airing): length of the union of pieces [st, en). Returns (keys frame, union_s)."""
+    d = pd.DataFrame({"u": user, "a": airing, "st": st, "en": en}).sort_values(["u", "a", "st"], kind="stable")
+    new = (d.u.ne(d.u.shift()) | d.a.ne(d.a.shift())).values
+    g = np.cumsum(new)
+    # running max of earlier ends inside the group (reset at group start)
+    prev = d.en.groupby(g).cummax().groupby(g).shift().fillna(-1).astype(np.int64).values
+    contrib = np.maximum(0, d.en.values - np.maximum(d.st.values, prev))
+    return pd.DataFrame({"user_id": d.u.values[new], "airing_id": d.a.values[new],
+                         "union_s": np.bincount(g - 1, weights=contrib).astype(np.int64)})
 
 
 def main():
@@ -81,13 +96,20 @@ def main():
           f"view seconds covered by any airing: {covered.sum() / vdur[log.view_row.values].sum():.4%}")
 
     lab = pairs[pairs.tv_show_id != 0]
-    inter = (lab.groupby(["user_id", "airing_id"], sort=False)
-             .agg(overlap_s=("overlap_s", "sum"), n_pieces=("overlap_s", "size"),
+    inter = (lab.groupby(["user_id", "airing_id"])
+             .agg(overlap_sum_s=("overlap_s", "sum"), n_pieces=("overlap_s", "size"),
                   tv_show_id=("tv_show_id", "first"), channel_id=("channel_id", "first"),
                   period=("period", "first"), airing_start=("start_time", "first"),
                   duration=("duration", "first"))
              .reset_index())
-    inter["screen_time"] = inter.overlap_s / inter.duration
+    uni = union_seconds(lab.user_id.values, lab.airing_id.values, lab.ov_start.values, lab.ov_end.values)
+    inter = inter.merge(uni, on=["user_id", "airing_id"], how="left", validate="1:1")
+    # DESIGN D11 (revised): screen time = union of the user's pieces / duration, clipped to 1
+    inter["overlap_s"] = inter.union_s
+    inter["screen_time"] = np.minimum(1.0, inter.overlap_s / inter.duration)
+    inter["screen_time_sum"] = inter.overlap_sum_s / inter.duration
+    print(f"union > duration (clip active): {(inter.overlap_s > inter.duration).sum()}; "
+          f"union != sum: {(inter.overlap_s != inter.overlap_sum_s).sum()}")
     inter.to_parquet(ART / "interactions.parquet", index=False)
 
     unlab = (pairs[pairs.tv_show_id == 0]

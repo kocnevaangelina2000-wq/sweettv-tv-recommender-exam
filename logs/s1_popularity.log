@@ -1,0 +1,43 @@
+== VALIDATION COHORT (train 11-20 -> truth 21-30)
+evaluable users (>=1 positive in 21-30): 4643; users with labelled interactions in 11-30 but no truth: 252; evaluable users with no positives in 11-20: 103
+test users: 1260; evaluable: 1238; no truth: 22; evaluable with no positives in 11-20: 14
+truth length distribution (all cohort): {1: 158, 2: 152, 3: 136, 4: 167, 5: 4030}
+[val] truth programme slots outside the 21-30 pool: 0 of 21688; distinct truth programmes: 1453
+[val 21-30] pool size=6363 programmes; airings per programme: median=4.0 mean=19.10 p90=18.0 max=6132; programmes airing once: 1162
+      12001682  airings=6132  [Детям]  М/с 'Губка Боб Квадратные Штаны'.
+      12002793  airings=4333  [Детям]  М/с 'Фиксики'.
+      12001863  airings=3579  [Детям]  М/с 'Смешарики'.
+      12002378  airings=2861  [Детям]  М/с 'Удивительный мир Гамбола'.
+      12002856  airings=1877  [Детям]  М/с 'Элвин и бурундуки'.
+      12002805  airings=1751  [Детям]  М/с 'Моланг'.
+      12001712  airings=1689  [Детям]  М/с 'Симпсоны'.
+        700156  airings=1540  [Развлечения]  Пойми меня.
+      12002955  airings=1504  [Детям]  М/с 'Свинка Пеппа'.
+      12001734  airings=1440  [Детям]  М/с 'Волшебные покровители', 128 с. 'Я мечтаю о Космо / Динкл-скауты'.
+[val] global popularity top-5 (n_pos in 11-20): [{'tv_show_id': 2400480, 'n_pos': 39944}, {'tv_show_id': 240081, 'n_pos': 27032}, {'tv_show_id': 12001682, 'n_pos': 26220}, {'tv_show_id': 20088, 'n_pos': 12796}, {'tv_show_id': 2400508, 'n_pos': 10831}]
+[val] pool programmes with 0 positives in train: 4488 of 6363
+[val] popularity WITHOUT channel fallback: MAP@5 cohort=0.23728 (n=4643) test-subset=0.26775 (n=1238) | cold-only cohort=0.16465 (n=103) cold-only test=0.11095 (n=14)
+[val] popularity WITH channel fallback: MAP@5 cohort=0.23684 (n=4643) test-subset=0.26799 (n=1238) | cold-only cohort=0.14487 (n=103) cold-only test=0.13214 (n=14)
+[final 31-42] pool size=6636 programmes; airings per programme: median=4.0 mean=21.82 p90=20.0 max=6691; programmes airing once: 1144
+      12001682  airings=6691  [Детям]  М/с 'Губка Боб Квадратные Штаны'.
+      12002793  airings=6621  [Детям]  М/с 'Фиксики'.
+      12001863  airings=4686  [Детям]  М/с 'Смешарики'.
+      12002378  airings=2986  [Детям]  М/с 'Удивительный мир Гамбола'.
+      12002856  airings=2088  [Детям]  М/с 'Элвин и бурундуки'.
+      12001712  airings=2032  [Детям]  М/с 'Симпсоны'.
+        700156  airings=2016  [Развлечения]  Пойми меня.
+      12002805  airings=1912  [Детям]  М/с 'Моланг', 1 сезон, 8 с.
+      12002955  airings=1826  [Детям]  М/с 'Свинка Пеппа'.
+       1000376  airings=1651  [Сериалы]  Т/с 'Друзья', 4 сезон, 11 с.
+[final] global popularity top-5 (n_pos in 11-30): [{'tv_show_id': 2400480, 'n_pos': 62451}, {'tv_show_id': 12001682, 'n_pos': 45232}, {'tv_show_id': 240081, 'n_pos': 45071}, {'tv_show_id': 20088, 'n_pos': 21380}, {'tv_show_id': 2400508, 'n_pos': 19264}]
+[final] test users with positives in 11-30: 1256; fallback users: 4
+[submission check] header == template header: True
+[submission check] 1260 rows + header: True
+[submission check] user order == template: True
+[submission check] 5 unique ids per row: True
+[submission check] all ids integers in 31-42 pool: True
+wrote submissions/s1_popularity.csv; distinct lists: 4; first rows:
+            user_id                            tv_show_id
+8377619604347126107 2400480 12001682 240081 20088 2400508
+8381667675275833309 2400480 12001682 240081 20088 2400508
+8387147770138767246 2400480 12001682 240081 20088 2400508

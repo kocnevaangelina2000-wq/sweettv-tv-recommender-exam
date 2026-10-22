@@ -5,16 +5,22 @@ test users=1260 unique=1260
 with any view in 11-30: 1260; with a labelled view (overlap>0 with tv_show_id!=0 airing): 1258; with >=1 airing at screen_time>=0.8: 1256
    in period 11-20: any view 1255, labelled 1250, >=0.8 1242
    in period 21-30: any view 1246, labelled 1246, >=0.8 1238
-== SCREEN TIME (one row per user x labelled airing)
+== SCREEN TIME UNION, clipped to 1 (used) (one row per user x labelled airing)
+percentiles: {0.01: 0.0047, 0.05: 0.0106, 0.1: 0.0155, 0.25: 0.0437, 0.5: 0.195, 0.75: 0.6567, 0.9: 1.0, 0.95: 1.0, 0.99: 1.0} max: 1.0
+share >= 0.8: 20.2964% (611760 rows); share > 1: 0.0000% (0 rows; of those with n_pieces>1: 0); rows with n_pieces>1: 465732
+   11-20: rows=1825255 p50=0.1727 share>=0.8=17.3698% (317043)
+   21-30: rows=1188874 p50=0.2385 share>=0.8=24.7896% (294717)
+== SCREEN TIME SUM (comparison only) (one row per user x labelled airing)
 percentiles: {0.01: 0.0047, 0.05: 0.0106, 0.1: 0.0155, 0.25: 0.0437, 0.5: 0.1953, 0.75: 0.6595, 0.9: 1.0, 0.95: 1.0, 0.99: 1.0} max: 31.13
-share >= 0.8: 20.4363%; share > 1: 0.7964% (24005 rows; of those with n_pieces>1: 24005); rows with n_pieces>1: 465732
-   11-20: rows=1825255 p50=0.1730 share>=0.8=17.5362%
-   21-30: rows=1188874 p50=0.2388 share>=0.8=24.8888%
+share >= 0.8: 20.4363% (615977 rows); share > 1: 0.7964% (24005 rows; of those with n_pieces>1: 24005); rows with n_pieces>1: 465732
+   11-20: rows=1825255 p50=0.1730 share>=0.8=17.5362% (320081)
+   21-30: rows=1188874 p50=0.2388 share>=0.8=24.8888% (295896)
+positive under sum but not union: 4217; union != sum rows: 42087
 == (user, programme) PAIRS WITH >=1 AIRING AT >= 0.8
-   11-20: pairs=116394 users=4738 programmes=2502 airings-per-pair mean=2.750
-   21-30: pairs=140919 users=4643 programmes=2850 airings-per-pair mean=2.100
+   11-20: pairs=115325 users=4738 programmes=2501 airings-per-pair mean=2.749
+   21-30: pairs=140298 users=4643 programmes=2848 airings-per-pair mean=2.101
 test users by #programmes>=0.8 in 21-30: >=5: 1150, 1-4: 88, 0: 22
-test users with >=5 programmes whose 5th and 6th counts tie in 21-30: 750
+test users with >=5 programmes whose 5th and 6th counts tie in 21-30: 751
 == ACCOUNTING
 | raw rows dataset11-30.csv | 5821987 |
 | raw rows schedule 11-20 | 1074235 |
@@ -29,48 +35,62 @@ test users with >=5 programmes whose 5th and 6th counts tie in 21-30: 750
 | log rows after exact-dup drop | 5821970 |
 | (view, airing) pairs overlap>0, any airing | 7752415 |
 | joined interactions (user, labelled airing) 11-20 | 1825255 |
-| interactions screen_time>=0.8 11-20 | 320081 |
+| interactions screen_time>=0.8 11-20 | 317043 |
 | users with interactions 11-20 | 4841 |
 | users with >=0.8 interaction 11-20 | 4738 |
 | programmes with interactions 11-20 | 2976 |
-| programmes with >=0.8 interaction 11-20 | 2502 |
+| programmes with >=0.8 interaction 11-20 | 2501 |
 | joined interactions (user, labelled airing) 21-30 | 1188874 |
-| interactions screen_time>=0.8 21-30 | 295896 |
+| interactions screen_time>=0.8 21-30 | 294717 |
 | users with interactions 21-30 | 4806 |
 | users with >=0.8 interaction 21-30 | 4643 |
 | programmes with interactions 21-30 | 3222 |
-| programmes with >=0.8 interaction 21-30 | 2850 |
+| programmes with >=0.8 interaction 21-30 | 2848 |
 | users in log | 4914 |
 | test users | 1260 |
 | cold test users: no view in 11-30 | 0 |
 | cold test users: no labelled interaction in 11-30 | 2 |
 | cold test users: no >=0.8 interaction in 11-30 | 4 |
 | cold test users: no >=0.8 interaction in 21-30 | 22 |
-== 3 RANDOM JOINED ROWS (seed 42)
+== 3 RANDOM JOINED ROWS + 1 RANDOM ROW WITH union != sum (seed 42)
 
---- interaction: user_id=6630914644918865477 airing_id=2145235 tv_show_id=9004236 period=21-30 overlap_s=8207 n_pieces=1 duration=8400 screen_time=0.9770
-schedule export_arh_21-30-final.csv line 1071002:
+--- interaction: user_id=11971046114677874454 airing_id=1103613 tv_show_id=2500415 period=21-30 union_s=197 sum_s=197 n_pieces=1 duration=5400 screen_time=0.0365
+schedule export_arh_21-30-final.csv line 29380:
   [raw data row omitted from the public repo; rerun src/stats.py with the Kaggle data]
-  airing interval [2020-05-26 13:15:00, 2020-05-26 15:35:00)
-log dataset11-30.csv line 4161460:
+  airing interval [2020-07-17 09:55:00, 2020-07-17 11:25:00)
+log dataset11-30.csv line 5433521:
   [raw data row omitted from the public repo; rerun src/stats.py with the Kaggle data]
-  -> overlap_s=8207
+  -> overlap_s=197
 
---- interaction: user_id=3903971208799228106 airing_id=655021 tv_show_id=90069882 period=11-20 overlap_s=2769 n_pieces=1 duration=6600 screen_time=0.4195
-schedule export_arh_11-20-final.csv line 655023:
+--- interaction: user_id=1792151577962019890 airing_id=1370 tv_show_id=6500479 period=11-20 union_s=1022 sum_s=1022 n_pieces=3 duration=22800 screen_time=0.0448
+schedule export_arh_11-20-final.csv line 1372:
   [raw data row omitted from the public repo; rerun src/stats.py with the Kaggle data]
-  airing interval [2020-03-20 09:30:00, 2020-03-20 11:20:00)
-log dataset11-30.csv line 650607:
+  airing interval [2020-05-10 09:25:00, 2020-05-10 15:45:00)
+log dataset11-30.csv line 3680688:
   [raw data row omitted from the public repo; rerun src/stats.py with the Kaggle data]
-  -> overlap_s=2769
+  -> overlap_s=300
+log dataset11-30.csv line 3683065:
+  [raw data row omitted from the public repo; rerun src/stats.py with the Kaggle data]
+  -> overlap_s=134
+log dataset11-30.csv line 3687006:
+  [raw data row omitted from the public repo; rerun src/stats.py with the Kaggle data]
+  -> overlap_s=588
 
---- interaction: user_id=15187498791851720078 airing_id=1074896 tv_show_id=6000483 period=21-30 overlap_s=402 n_pieces=2 duration=6600 screen_time=0.0609
-schedule export_arh_21-30-final.csv line 663:
+--- interaction: user_id=14287208251067546691 airing_id=1077116 tv_show_id=90049592 period=21-30 union_s=1500 sum_s=1500 n_pieces=1 duration=1500 screen_time=1.0000
+schedule export_arh_21-30-final.csv line 2883:
   [raw data row omitted from the public repo; rerun src/stats.py with the Kaggle data]
-  airing interval [2020-06-19 13:45:00, 2020-06-19 15:35:00)
-log dataset11-30.csv line 4720693:
+  airing interval [2020-05-20 13:25:00, 2020-05-20 13:50:00)
+log dataset11-30.csv line 4002033:
   [raw data row omitted from the public repo; rerun src/stats.py with the Kaggle data]
-  -> overlap_s=124
-log dataset11-30.csv line 4722321:
+  -> overlap_s=1500
+
+--- interaction: user_id=15116560307644600082 airing_id=1459 tv_show_id=200344 period=11-20 union_s=600 sum_s=1200 n_pieces=2 duration=600 screen_time=1.0000
+schedule export_arh_11-20-final.csv line 1461:
   [raw data row omitted from the public repo; rerun src/stats.py with the Kaggle data]
-  -> overlap_s=278
+  airing interval [2020-05-14 20:35:00, 2020-05-14 20:45:00)
+log dataset11-30.csv line 3839836:
+  [raw data row omitted from the public repo; rerun src/stats.py with the Kaggle data]
+  -> overlap_s=600
+log dataset11-30.csv line 3844685:
+  [raw data row omitted from the public repo; rerun src/stats.py with the Kaggle data]
+  -> overlap_s=600

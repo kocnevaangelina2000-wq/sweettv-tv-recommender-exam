@@ -49,15 +49,19 @@ def main():
         print(f"   in period {p}: any view {len(test & set(pairs[pairs.period == p].user_id))}, labelled "
               f"{len(test & set(inter[inter.period == p].user_id))}, >=0.8 {len(test & set(pos[pos.period == p].user_id))}")
 
-    print("== SCREEN TIME (one row per user x labelled airing)")
     q = [.01, .05, .1, .25, .5, .75, .9, .95, .99]
-    print("percentiles:", inter.screen_time.quantile(q).round(4).to_dict(), "max:", round(inter.screen_time.max(), 3))
-    print(f"share >= {THR}: {(inter.screen_time >= THR).mean():.4%}; share > 1: {(inter.screen_time > 1).mean():.4%} "
-          f"({(inter.screen_time > 1).sum()} rows; of those with n_pieces>1: {((inter.screen_time > 1) & (inter.n_pieces > 1)).sum()}); "
-          f"rows with n_pieces>1: {(inter.n_pieces > 1).sum()}")
-    for p in ["11-20", "21-30"]:
-        x = inter[inter.period == p]
-        print(f"   {p}: rows={len(x)} p50={x.screen_time.median():.4f} share>=0.8={(x.screen_time >= THR).mean():.4%}")
+    for col, label in [("screen_time", "UNION, clipped to 1 (used)"), ("screen_time_sum", "SUM (comparison only)")]:
+        st = inter[col]
+        print(f"== SCREEN TIME {label} (one row per user x labelled airing)")
+        print("percentiles:", st.quantile(q).round(4).to_dict(), "max:", round(st.max(), 3))
+        print(f"share >= {THR}: {(st >= THR).mean():.4%} ({(st >= THR).sum()} rows); share > 1: {(st > 1).mean():.4%} "
+              f"({(st > 1).sum()} rows; of those with n_pieces>1: {((st > 1) & (inter.n_pieces > 1)).sum()}); "
+              f"rows with n_pieces>1: {(inter.n_pieces > 1).sum()}")
+        for p in ["11-20", "21-30"]:
+            x = inter.loc[inter.period == p, col]
+            print(f"   {p}: rows={len(x)} p50={x.median():.4f} share>=0.8={(x >= THR).mean():.4%} ({(x >= THR).sum()})")
+    flip = (inter.screen_time_sum >= THR) & (inter.screen_time < THR)
+    print(f"positive under sum but not union: {flip.sum()}; union != sum rows: {(inter.overlap_s != inter.overlap_sum_s).sum()}")
 
     print("== (user, programme) PAIRS WITH >=1 AIRING AT >= 0.8")
     cnt = pos.groupby(["period", "user_id", "tv_show_id"]).size().rename("n").reset_index()
@@ -104,16 +108,18 @@ def main():
     for k, v in rows:
         print(f"| {k} | {v} |")
 
-    print("== 3 RANDOM JOINED ROWS (seed 42)")
+    print("== 3 RANDOM JOINED ROWS + 1 RANDOM ROW WITH union != sum (seed 42)")
     rng = np.random.default_rng(SEED)
     pick = inter.iloc[rng.choice(len(inter), 3, replace=False)]
+    diff = inter[inter.overlap_s != inter.overlap_sum_s]
+    pick = pd.concat([pick, diff.iloc[rng.choice(len(diff), 1)]])  # 4th row: union != sum
     for _, r in pick.iterrows():
         a = airings.loc[airings.airing_id == r.airing_id].iloc[0]
         pv = pairs[(pairs.user_id == r.user_id) & (pairs.airing_id == r.airing_id)].sort_values("view_row")
         sl = raw_lines(DATA / a.src_file, [a.src_row + 2])
         ll = raw_lines(DATA / LOG_FILE, (pv.view_row + 2).tolist())
         print(f"\n--- interaction: user_id={r.user_id} airing_id={r.airing_id} tv_show_id={r.tv_show_id} period={r.period} "
-              f"overlap_s={r.overlap_s} n_pieces={r.n_pieces} duration={r.duration} screen_time={r.screen_time:.4f}")
+              f"union_s={r.overlap_s} sum_s={r.overlap_sum_s} n_pieces={r.n_pieces} duration={r.duration} screen_time={r.screen_time:.4f}")
         print(f"schedule {a.src_file} line {a.src_row + 2}:\n  {sl[a.src_row + 2]}")
         end = a.start_time + pd.Timedelta(seconds=int(a.duration))
         print(f"  airing interval [{a.start_time}, {end})")

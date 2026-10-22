@@ -1,0 +1,9 @@
+test_edges (test_protocol.TestMAP) ... ok
+test_fill (test_protocol.TestMAP) ... ok
+test_slide_example (test_protocol.TestMAP) ... ok
+test_tiebreak (test_protocol.TestTruth) ... ok
+
+----------------------------------------------------------------------
+Ran 4 tests in 0.007s
+
+OK

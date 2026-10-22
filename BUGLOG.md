@@ -44,3 +44,10 @@ The description used for comparison is the one quoted in the exam brief; I did n
 
 ### Ranking-target trap (for later steps)
 - **B12** The Kaggle answer is "strictly 5, desc by count", but counts are small integers: **750 of the 1,150** test users with ≥ 5 programmes in 21-30 have a tie between the 5th and 6th place. The Kaggle tie-break is unknown, so any offline validation target built from 21-30 is ambiguous for most users.
+
+## Step 2 — protocol + popularity baseline
+- **B7b (resolved)** Over-counting from a user's overlapping views is removed by switching screen time to the union (D11 revised). Effect: 4,217 fewer positives (611,760 vs 615,977); pairs ≥ 0.8 in 21-30 go from 140,919 to 140,298.
+- **B13** The step-1 hand-check rows changed after the union refactor. Not a data bug: `groupby(..., sort=False)` became sorted, so seed 42 indexes a different row order. Both sets were checked by hand (RESULTS).
+- **B14 (trap for later steps)** The Kaggle target counts *airings*, and airing frequency is extremely skewed: median 4 airings per pool programme, but SpongeBob airs 6,691 times in 31-42, Фиксики 6,621 and Смешарики 4,686; 1,144 programmes air once. A programme's share of positives is largely its number of airings × the user's affinity, so methods that score programmes, not airings, will under-rank high-frequency shows.
+- **B15** In validation, "truth outside pool" is 0 by construction (truth airings come from the target schedule itself), so this check cannot detect pool problems. It is only informative for the final pool, where it can't be measured.
+- **B16** The channel fallback only touches 103 cohort users / 14 test users, and its effect is within noise: cohort 0.23728 → 0.23684, test subset 0.26775 → 0.26799. On the cold users alone it hurts the cohort (0.165 → 0.145, n = 103) and helps the test subset (0.111 → 0.132, n = 14). Kept because the brief makes it the shared fallback, but with these n it can't be judged.

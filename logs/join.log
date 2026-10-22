@@ -1,3 +1,4 @@
 log rows raw=5821987 after exact-dup drop=5821970 (dropped 17)
 (view, airing) pairs with overlap>0: 7752415; views with >=1 airing: 5408582 of 5821970; view seconds covered by any airing: 94.0656%
+union > duration (clip active): 0; union != sum: 42087
 interactions (user, labelled airing): 3014129; unlabelled (user, channel, period) rows: 340159
