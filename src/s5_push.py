@@ -39,6 +39,7 @@ ROWS = []
 
 
 class SplitData:
+    ACTIVE_WEEKS = None  # {split: (first, last ISO week)} to drop schedule-file edge weeks from active-week counts
     def __init__(self, name, inter, unlab, pairs, eval_users=None, users=None):
         t = time.perf_counter()
         self.sd = sd = Split(name, inter, unlab, eval_users=eval_users)
@@ -48,7 +49,12 @@ class SplitData:
         P._EXP_CACHE[(sd.name, len(self.users))] = (E, E3, ui, ii, info)
         self.exp_list = M.rank_lists(sd, self.users, sd.pool, E.toarray(), True, TOP)
         tw = pairs[window_mask(pairs, sd.train_windows) & pairs.user_id.isin(set(self.users)).values]
+        if self.ACTIVE_WEEKS:  # count only the split's nominal ISO train weeks (BUGLOG B38); default off = step 5
+            lo, hi = self.ACTIVE_WEEKS[name]
+            tw = tw[(tw.week >= lo) & (tw.week <= hi)]
         self.active = tw.groupby("user_id").week.nunique()
+        if self.ACTIVE_WEEKS:  # a user seen only in edge weeks gets 1 active week instead of NaN
+            self.active = self.active.reindex(self.users, fill_value=1)
         self.frames = {}
         self.build_s = time.perf_counter() - t
         print(f"[{name}] {sd.describe()} | components+exposure built in {self.build_s:.1f}s; exposure: {info}; "
@@ -190,7 +196,7 @@ def main():
     final_s7(inter, unlab, pairs, test_list, DA, DB, best)
 
 
-def final_s7(inter, unlab, pairs, test_list, DA, DB, best):
+def final_s7(inter, unlab, pairs, test_list, DA, DB, best, out="s7_best.csv"):
     """DESIGN D50: fit on A+B stacked with per-week label, apply to 11-30 -> 31-42."""
     variant, feats = best["variant"], FEATSETS[best["features"]]
     model = tuple(json.loads(best["model"]))
@@ -209,12 +215,12 @@ def final_s7(inter, unlab, pairs, test_list, DA, DB, best):
     print(f"[final] fit on A+B stacked: rows={len(Ftr)} (A {len(FA)}, B {len(FB)}), label = positives per target week; "
           f"final frame rows={len(FF)} users={FF.user_id.nunique()}")
     c = H.slot_sources(lists, test_list, H.h3_members(DF.C, LF))
-    print("\n== s7 SLOT SOURCES (1260 test users, 6300 slots; priority history > PPR > CBF > ALS > exposure > "
+    print(f"\n== {out} SLOT SOURCES (1260 test users, 6300 slots; priority history > PPR > CBF > ALS > exposure > "
           "popularity, else fallback)")
     print("| " + " | ".join(H.SLOT_SOURCES) + " |")
     print("|" + "---|" * len(H.SLOT_SOURCES))
     print("| " + " | ".join(str(c[s]) for s in H.SLOT_SOURCES) + " |")
-    path = SUB_DIR / "s7_best.csv"
+    path = SUB_DIR / out
     write_submission(path, test_list, lists)
     validate_submission(path, DF.sd.pool_set)
 

@@ -415,3 +415,19 @@ s8 slot sources (6,300 slots): history 5,558 · PPR 669 · CBF 29 · ALS 6 · ex
 | seed bagging ×5 (CatBoost) → **s7** | 0.37739 | 0.41852 | **0.35415** | **0.39646** | 0.6925 | 0.6939 | 124.6 |
 | all kept changes together | 0.37649 | 0.41741 | 0.35411 | 0.39432 | 0.7955 | 0.7916 | 311.6 |
 | blend HGB + CB (kept cands, per-week) → **s8** | **0.37830** | **0.41873** | 0.35316 | 0.39339 | 0.7955 | 0.7916 | 0.1 (fusion step only; the two fits are on top) |
+
+## Morning tasks (after step 5) — no Kaggle submissions
+### 1. Hand-check pack
+Command: `.venv/bin/python src/hand_check.py > logs/hand_check.log`. The run reproduces the s7 config on fold B exactly (CatBoost ×5 fit on A: cohort 0.35415, test 0.39646). 749 eligible users; picked `2929474010536378025`. Part a) programme 12001682 has 3 log rows and 7 schedule rows. Their `csv_line`s were checked against the raw files with `sed -n`. An independent recomputation from the raw strings matches the code for all 5 truth programmes (positive counts and overlapped airings; values deliberately not printed). Model top 5 on B: 2400480, 2400467, 6500479, 6700482, 20088; code AP@5 = 0.420000. Files and instructions: `analysis/hand_check_user.md`. The code's per-airing values come from `src/hand_check_reveal.py`, to be run after the hand computation.
+
+### 2. s2b_history.csv (history by count, ties → popularity; D59)
+Command: `.venv/bin/python src/s2b_history.py > logs/s2b_history.log`
+| tie-break | A cohort | A test | B cohort | B test |
+|---|---|---|---|---|
+| seconds (s2) | 0.32386 | 0.36449 | 0.30671 | 0.35027 |
+| **popularity (s2b, chosen on A)** | **0.33372** | **0.37524** | **0.31362** | **0.35617** |
+
+These reproduce `logs/check_history_ties.log` exactly through the new `history_lists(ties=...)`. Validation: header, 1,260 rows + header, template order, 5 unique ids, all ids in the 31-42 pool: all True; 1,218 distinct lists. vs s2: 570 / 1,260 rows identical, 803 with the same id set.
+
+### 3. s7b (prepared, not run; D60, D62)
+`src/s7b_trainpw.py` writes `submissions/s7b_trainpw.csv` when run. It was **not run**; there is no s7b file and no number for it. Only `--check` was run (`logs/s7b_trainpw_check.log`): it builds the A/B frames, all 4 rescaled columns are finite, and the means are now comparable across A and B (n_pos_pw 0.101 / 0.093, overlap_pw 468 / 423 s, pop_pw 382 / 334, air_tr_pw 53.8 / 51.0). The final split (11-30) frame is built only when the script is actually run. Expected runtime ≈ the s7 final fit (A+B frames ~1 min, 5 CatBoost fits on 611k rows).

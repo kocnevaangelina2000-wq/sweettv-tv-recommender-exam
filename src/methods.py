@@ -66,10 +66,11 @@ def history_scores(sd, variant="count", h=None):
     return up
 
 
-def history_lists(sd, variant="count", h=None, topn=K):
-    """Ranked by score desc -> total train seconds desc -> global popularity (DESIGN D31)."""
-    d = history_scores(sd, variant, h).sort_values(["user_id", "score", "overlap_s", "grank"],
-                                                   ascending=[True, False, False, True])
+def history_lists(sd, variant="count", h=None, topn=K, ties="seconds"):
+    """Ranked by score desc -> total train seconds desc -> global popularity (DESIGN D31);
+    ties="popularity" skips the seconds key (DESIGN D59)."""
+    keys, asc = (["score", "overlap_s", "grank"], [False, False, True]) if ties == "seconds" else (["score", "grank"], [False, True])
+    d = history_scores(sd, variant, h).sort_values(["user_id"] + keys, ascending=[True] + asc)
     return {u: g.tolist() for u, g in d.groupby("user_id").head(topn).groupby("user_id").tv_show_id}
 
 

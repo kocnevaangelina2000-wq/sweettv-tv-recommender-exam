@@ -1,0 +1,15 @@
+[A] history count, ties by seconds: cohort=0.32386 test=0.36449
+[A] history count, ties by popularity: cohort=0.33372 test=0.37524
+[B] history count, ties by seconds: cohort=0.30671 test=0.35027
+[B] history count, ties by popularity: cohort=0.31362 test=0.35617
+[submission check] header == template header: True
+[submission check] 1260 rows + header: True
+[submission check] user order == template: True
+[submission check] 5 unique ids per row: True
+[submission check] all ids integers in 31-42 pool: True
+wrote submissions/s2b_history.csv; distinct lists: 1218; first rows:
+            user_id                                   tv_show_id
+8377619604347126107        2400480 240081 2400508 12002955 20088
+8381667675275833309        2400480 240081 200344 12001682 500346
+8387147770138767246 12001682 12002856 12001732 12002955 12002355
+vs s2_history.csv: identical rows 570 of 1260; same 5 ids (any order) 803 of 1260

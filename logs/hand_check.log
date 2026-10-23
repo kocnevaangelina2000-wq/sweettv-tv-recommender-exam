@@ -1,0 +1,12 @@
+   [A] PPR alpha=0.5: {'mean_iter': 21.0, 'max_iter': 21, 'max_residual': 9.537e-07, 'non_converged': 0}
+[A] [A] train rows=925164 positives=154462 warm users=4572 train programmes(pos)=1376 | eval users=4574 (warm 4409, cold 165) | pool=4402 pool airings=58345 | train airings(labelled)=56985 | components+exposure built in 22.3s; exposure: train pieces=2597315 hour slots=3045325 P rows=1614267 keys=34892; active train weeks per user: median=5.0 min=1 max=6
+   [B] PPR alpha=0.5: {'mean_iter': 21.0, 'max_iter': 21, 'max_residual': 9.537e-07, 'non_converged': 0}
+[B] [B] train rows=1825255 positives=317043 warm users=4738 train programmes(pos)=2501 | eval users=4643 (warm 4540, cold 103) | pool=6363 pool airings=121505 | train airings(labelled)=115613 | components+exposure built in 41.7s; exposure: train pieces=4923917 hour slots=5864303 P rows=2778632 keys=37991; active train weeks per user: median=10.0 min=1 max=12
+   [A] H3+ features in 0.1s; exposure: train pieces=2597315 hour slots=3045325 P rows=1614267 keys=34892; exp_all>0 share=0.400
+   [B] H3+ features in 0.3s; exposure: train pieces=4923917 hour slots=5864303 P rows=2778632 keys=37991; exp_all>0 share=0.501
+s7 config on fold B: cohort=0.35415 test=0.39646 (logs/s5_push.log bagging row: 0.35415 / 0.39646)
+eligible users (test, fold-B cohort, 5 truth programmes, 0.3 <= AP@5 <= 0.8): 749; picked 2929474010536378025
+part a) programme 12001682: log rows=3, airings=7; independent raw recompute == code: positives True, overlapped airings True
+independent raw recompute == code for all 5 truth programmes: True
+c) top-5 [2400480, 2400467, 6500479, 6700482, 20088]; AP@5 (code) = 0.420000
+exit 0
