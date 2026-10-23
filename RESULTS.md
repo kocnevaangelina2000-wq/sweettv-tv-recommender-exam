@@ -429,5 +429,17 @@ Command: `.venv/bin/python src/s2b_history.py > logs/s2b_history.log`
 
 These reproduce `logs/check_history_ties.log` exactly through the new `history_lists(ties=...)`. Validation: header, 1,260 rows + header, template order, 5 unique ids, all ids in the 31-42 pool: all True; 1,218 distinct lists. vs s2: 570 / 1,260 rows identical, 803 with the same id set.
 
-### 3. s7b (prepared, not run; D60, D62)
-`src/s7b_trainpw.py` writes `submissions/s7b_trainpw.csv` when run. It was **not run**; there is no s7b file and no number for it. Only `--check` was run (`logs/s7b_trainpw_check.log`): it builds the A/B frames, all 4 rescaled columns are finite, and the means are now comparable across A and B (n_pos_pw 0.101 / 0.093, overlap_pw 468 / 423 s, pop_pw 382 / 334, air_tr_pw 53.8 / 51.0). The final split (11-30) frame is built only when the script is actually run. Expected runtime ≈ the s7 final fit (A+B frames ~1 min, 5 CatBoost fits on 611k rows).
+### 3. s7b (prepared, not run; D60, D62, D63)
+`src/s7b_perweek.py` writes `submissions/s7b_perweek.csv` when run. It was **not run**; there is no s7b file and no number for it. All 7 count features are rescaled: the train-window ones per active train week (n_pos, overlap_s) or per train week (pop, air_tr), and the target-window ones per target week (air_t, exp_all, exp_top3: A 5, B 10, final 12). Only `--check` was run (`logs/s7b_perweek_check.log`). It builds the A/B frames and finds all 7 columns finite, with means comparable across A / B:
+
+| column | A mean | B mean |
+|---|---|---|
+| n_pos_pw | 0.1014 | 0.0926 |
+| overlap_pw | 468.4 | 423.1 |
+| pop_pw | 381.9 | 333.6 |
+| air_tr_pw | 53.79 | 50.96 |
+| air_t_pw | 52.76 | 48.94 |
+| exp_all_pw | 0.3537 | 0.2941 |
+| exp_top3_pw | 0.2153 | 0.1773 |
+
+The final split (11-30 → 31-42) frame is built only when the script is actually run.
