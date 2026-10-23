@@ -1,0 +1,24 @@
+final pool (31-42 programmes, id 0 excluded): 6636 ids
+[submission check] header == template header: True
+[submission check] 1260 rows + header: True
+[submission check] user order == template: True
+[submission check] 5 unique ids per row: True
+[submission check] all ids integers in 31-42 pool: True
+wrote submissions/s7b_perweek.csv; distinct lists: 1033; first rows:
+            user_id                                   tv_show_id
+8377619604347126107        2400480 240081 2400508 20088 12002955
+8381667675275833309       2400480 12001682 240081 200344 6700482
+8387147770138767246 12001682 12002856 12002955 12001734 12001732
+[submission check] header == template header: True
+[submission check] 1260 rows + header: True
+[submission check] user order == template: True
+[submission check] 5 unique ids per row: True
+[submission check] all ids integers in 31-42 pool: True
+wrote submissions/s9_blend_pw.csv; distinct lists: 1048; first rows:
+            user_id                                   tv_show_id
+8377619604347126107        2400480 240081 2400508 20088 12002955
+8381667675275833309       2400480 12001682 240081 6700482 200344
+8387147770138767246 12001682 12002856 12002955 12001734 12001732
+s7_best.csv vs s7b_perweek.csv: identical rows 168/1260, mean shared ids 4.413
+s8_blend.csv vs s9_blend_pw.csv: identical rows 743/1260, mean shared ids 4.826
+s7b_perweek.csv vs s9_blend_pw.csv: identical rows 338/1260, mean shared ids 4.565

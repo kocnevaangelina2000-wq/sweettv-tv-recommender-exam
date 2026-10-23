@@ -5,7 +5,8 @@ of the window it is counted in, in its own split:
   target window: air_t, exp_all, exp_top3 -> per target week (A 5, B 10, final 12), the same divisor as the label
 Everything else as s7: CatBoost YetiRank lr 0.03 depth 8, seeds 42-46, current candidates, fit on A+B stacked with
 label = positives per target week (D50), applied to 11-30 -> 31-42.
-Run:   .venv/bin/python src/s7b_perweek.py          -> submissions/s7b_perweek.csv (logs/s7b_perweek.log)
+Run:   .venv/bin/python src/s7b_perweek.py          -> fold-B score (fit on A), then submissions/s7b_perweek.csv
+                                                       (logs/s7b_perweek.log)
 Check: .venv/bin/python src/s7b_perweek.py --check  -> builds the A/B frames only, asserts the columns, no fit
 """
 import os
@@ -18,6 +19,7 @@ import sys
 import numpy as np
 import pandas as pd
 
+import s4b_hybrids as H
 import s5_push as S5
 from load import ART, load_sub
 from protocol import load_interactions, load_unlab
@@ -48,7 +50,21 @@ def main(check=False):
                   + ", ".join(f"{c} mean={F[c].mean():.4g}" for c in PW.values())
                   + f"; NaN share over all features={X.isna().values.mean():.4f}")
         return
+    eval_b(DA, DB, set(test_list), pairs)
     S5.final_s7(inter, unlab, pairs, test_list, DA, DB, BEST, out="s7b_perweek.csv")
+
+
+def eval_b(DA, DB, test, pairs):
+    """Fold-B score of the s7b config, fit on A (label per target week, as S5.label_of gives for per-week sets)."""
+    feats = S5.FEATSETS["s7b per-week"]
+    FA, _, _ = DA.frame(BEST["variant"], pairs)
+    FB, LB, _ = DB.frame(BEST["variant"], pairs)
+    p = np.zeros(len(FB))
+    for s in S5.BAG_SEEDS:
+        p += S5.fit_predict(("cb", 0.03, 8), FA, S5.label_of(FA, feats), FB, feats, s) / len(S5.BAG_SEEDS)
+    m = H.fold_metrics(DB.sd, H.score_lists(DB.sd, H.h3_lists(FB, p), DB.sd.cohort), H.h3_cand(DB.C, LB), test)
+    print(f"s7b config on fold B (fit on A): cohort={m['cohort']:.5f} test={m['test']:.5f} "
+          f"cand_recall={m['cand_recall']:.4f} (s7: 0.35415 / 0.39646)", flush=True)
 
 
 if __name__ == "__main__":

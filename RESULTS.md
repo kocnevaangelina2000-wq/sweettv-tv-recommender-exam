@@ -443,3 +443,39 @@ These reproduce `logs/check_history_ties.log` exactly through the new `history_l
 | exp_top3_pw | 0.2153 | 0.1773 |
 
 The final split (11-30 → 31-42) frame is built only when the script is actually run.
+
+## Kaggle scores (late submissions, made by the user; reported to me)
+The instructor grades the **best private score per student**. All model choices up to and including s8 (and the design of s7b) were made on folds A/B only. Kaggle scores were first seen after s8 was written, and nothing before that used them. s9 was specified after these scores were known (BUGLOG B40).
+
+| file | what | A cohort (OOF) | A test | B cohort (fit on A) | B test | final fit | **Kaggle private** | Kaggle public |
+|---|---|---|---|---|---|---|---|---|
+| s1_popularity | popularity + channel fallback | 0.24370 | 0.27584 | 0.23684 | 0.26799 | 11-30 counts | **0.28680** | 0.30312 |
+| s3_ppr_air | PPR × log1p(airings), α 0.5 | 0.34111 | 0.38181 | 0.32559 | 0.36866 | 11-30 graph | **0.41277** | 0.41415 |
+| s6_h3plus | H3+ poisson HGB, raw | 0.37585 | 0.41734 | 0.35379 | 0.39499 | fit on B only | **0.41304** | 0.41277 |
+| s7_best | CatBoost ×5 seeds, current cands, raw | 0.37739 | 0.41852 | 0.35415 | 0.39646 | A+B stacked | **0.43013** | 0.43474 |
+| s8_blend | HGB + CB rank fusion, exposure + top-60 cands, per-week (B38 bug) | 0.37830 | 0.41873 | 0.35316 | 0.39339 | A+B stacked | **0.44568** | 0.44710 |
+
+Ranking: Kaggle private s8 > s7 > s6 ≈ s3 > s1; fold B s7 > s6 > s8 > s3 > s1; fold A s8 > s7 > s6 > s3 > s1. **Fold A orders the four model files the same way as Kaggle private; fold B does not.** Fold-B gaps between s6, s7 and s8 are ≤ 0.001, but the Kaggle gaps are 0.017 and 0.016. The fold-B gap between s3 and s6 is +0.028, but on Kaggle it is +0.0003. Two differences between validation and final are not exercised by fold B (fit on A only):
+1. the final fit's training data: s6 used B only, while s7/s8 used A+B stacked with a per-week label;
+2. the final window lengths: 20 train weeks and 12 target weeks, vs 5 → 10 when fitting on A and scoring on B.
+
+These are candidate explanations, not tested.
+
+### s7b and s9 (after the Kaggle scores; not submitted)
+Commands: `.venv/bin/python src/s7b_perweek.py > logs/s7b_perweek.log` (528 s), `.venv/bin/python src/s9_blend_pw.py > logs/s9_blend_pw.log` (1,349 s). Standalone re-validation and list comparison: `logs/check_s7b_s9.log`.
+
+| file | what | B cohort (fit on A) | B test | cand. recall B | compared with |
+|---|---|---|---|---|---|
+| s7_best | CatBoost ×5, current cands, raw | 0.35415 | 0.39646 | 0.6939 | — |
+| **s7b_perweek** | s7 with all 7 counts per week + B38 fix (D60, D62, D63) | 0.35414 | 0.39448 | 0.6939 | s7: −0.00001 / −0.00198 |
+| s8_blend | HGB + CB (1 seed) fusion, exposure + top-60, per-week (B38 bug) | 0.35316 | 0.39339 | 0.7916 | — |
+| **s9_blend_pw** | s8 + B38 fix + all counts per week + CB ×5 seeds (D64) | 0.35415 | 0.39739 | 0.7916 | s8: +0.00099 / +0.00400 |
+
+No fold-A numbers for s7b/s9: they were not specified to be selected on A, and computing them was not part of the request. s9 uses s8's fold-A blend weights (0.5, 0.5, 0), k = 5, without re-tuning.
+
+| file | final fit | final frame | distinct lists | slot sources (history / PPR / CBF / ALS / exposure / popularity / fallback) | checks |
+|---|---|---|---|---|---|
+| s7b_perweek.csv | A+B stacked, 611,333 rows | 89,571 rows, 1,256 users | 1,033 | 5,642 / 604 / 17 / 12 / 0 / 5 / 20 | all True (in run + standalone) |
+| s9_blend_pw.csv | A+B stacked, 1,350,769 rows | 187,340 rows, 1,256 users | 1,048 | 5,539 / 687 / 30 / 7 / 14 / 3 / 20 | all True (in run + standalone) |
+
+List agreement on the 1,260 test users: s7 vs s7b 168 identical rows (mean 4.41 shared ids of 5); s8 vs s9 743 identical (4.83); s7b vs s9 338 identical (4.57).

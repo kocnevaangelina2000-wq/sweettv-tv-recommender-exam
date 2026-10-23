@@ -1,0 +1,31 @@
+   [A] PPR alpha=0.5: {'mean_iter': 21.0, 'max_iter': 21, 'max_residual': 9.537e-07, 'non_converged': 0}
+[A] [A] train rows=925164 positives=154462 warm users=4572 train programmes(pos)=1376 | eval users=4574 (warm 4409, cold 165) | pool=4402 pool airings=58345 | train airings(labelled)=56985 | components+exposure built in 22.7s; exposure: train pieces=2597315 hour slots=3045325 P rows=1614267 keys=34892; active train weeks per user: median=5.0 min=1 max=5
+   [B] PPR alpha=0.5: {'mean_iter': 21.0, 'max_iter': 21, 'max_residual': 9.537e-07, 'non_converged': 0}
+[B] [B] train rows=1825255 positives=317043 warm users=4738 train programmes(pos)=2501 | eval users=4643 (warm 4540, cold 103) | pool=6363 pool airings=121505 | train airings(labelled)=115613 | components+exposure built in 45.4s; exposure: train pieces=4923917 hour slots=5864303 P rows=2778632 keys=37991; active train weeks per user: median=10.0 min=1 max=10
+features (19): ['n_pos_pw', 'overlap_pw', 'last_week_ago', 'share_pos', 'ppr', 'ppr_rank', 'als', 'als_rank', 'cbf', 'cbf_rank', 'pop_pw', 'air_t_pw', 'air_tr_pw', 'chan_share', 'category', 'exp_all_pw', 'exp_top3_pw', 'med_dur', 'pos_rate']
+   [A] H3+ features in 0.1s; exposure: train pieces=2597315 hour slots=3045325 P rows=1614267 keys=34892; exp_all>0 share=0.400
+   [B] H3+ features in 0.3s; exposure: train pieces=4923917 hour slots=5864303 P rows=2778632 keys=37991; exp_all>0 share=0.501
+s7b config on fold B (fit on A): cohort=0.35414 test=0.39448 cand_recall=0.6939 (s7: 0.35415 / 0.39646)
+   [final] PPR alpha=0.5: {'mean_iter': 21.0, 'max_iter': 21, 'max_residual': 9.537e-07, 'non_converged': 0}
+[final] [final] train rows=3014129 positives=611760 warm users=4841 train programmes(pos)=3866 | eval users=1260 (warm 1256, cold 4) | pool=6636 pool airings=144774 | train airings(labelled)=237118 | components+exposure built in 22.6s; exposure: train pieces=7752415 hour slots=9487403 P rows=1415998 keys=37515; active train weeks per user: median=20.0 min=2 max=20
+   [final] H3+ features in 0.3s; exposure: train pieces=7752415 hour slots=9487403 P rows=1415998 keys=37515; exp_all>0 share=0.640
+[final] fit on A+B stacked: rows=611333 (A 289475, B 321858), label = positives per target week; final frame rows=89571 users=1256
+
+== s7b_perweek.csv SLOT SOURCES (1260 test users, 6300 slots; priority history > PPR > CBF > ALS > exposure > popularity, else fallback)
+| history | PPR | CBF | ALS | exposure | popularity | fallback |
+|---|---|---|---|---|---|---|
+| 5642 | 604 | 17 | 12 | 0 | 5 | 20 |
+[submission check] header == template header: True
+[submission check] 1260 rows + header: True
+[submission check] user order == template: True
+[submission check] 5 unique ids per row: True
+[submission check] all ids integers in 31-42 pool: True
+wrote submissions/s7b_perweek.csv; distinct lists: 1033; first rows:
+            user_id                                   tv_show_id
+8377619604347126107        2400480 240081 2400508 20088 12002955
+8381667675275833309       2400480 12001682 240081 200344 6700482
+8387147770138767246 12001682 12002856 12002955 12001734 12001732
+real 527,47
+user 3964,15
+sys 174,93
+exit 0
