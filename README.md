@@ -12,7 +12,7 @@ A Top-5 TV-programme recommender for the Kaggle competition [sweet.tv - TV progr
 | `DESIGN.md` | every decision (D1–D70) and why |
 | `BUGLOG.md` | every bug and data trap (B1–B42) |
 | `PROVENANCE.md` | raw-data checksums and row counts |
-| `report/report.md`, `report/report.pdf` | the exam report (IEEE structure; build: `PYTHONPATH=<dir with markdown 3.7> /usr/bin/python3 report/build_pdf.py`, needs Google Chrome) |
+| `report/report.md`, `report/report.pdf` | the exam report (IEEE structure; build: `PYTHONPATH=<dir with markdown 3.7> /usr/bin/python3 report/build_pdf.py`, needs Google Chrome; `report/make_figs.sh` makes the content-only figure crops in `report/fig/` from the author's screenshots in `screenshots/`) |
 | `AI_NOTES.md` | how the AI assistant was used |
 | `src/` | all code; `tests/` metric unit tests; `logs/` outputs of every run |
 | `submissions/` | every written submission file (s1–s10, including the unsubmitted s2, s2b, s4, s5) |

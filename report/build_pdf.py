@@ -31,7 +31,10 @@ div.cols p, div.cols li { text-align: justify; hyphens: auto; }
 div.appendix { break-before: page; }
 div.appendix table { font-size: 7.8pt; }
 img { max-width: 100%; display: block; margin: 4pt auto 2pt; border: .5pt solid #999; }
-div.fig { break-inside: avoid; margin: 4pt 0 6pt; }
+div.fig { break-inside: avoid; margin: 4pt 0 6pt; column-span: all; }
+img[src$="hand_join_check.png"], img[src$="hand_ap_check.png"] { width: 100%; }
+img[src$="hand_reveal_check.png"] { width: 75%; }
+img[src$="kaggle_best_private.png"] { width: 70%; }
 div.fig p { text-align: center; font-size: 8.5pt; margin: 0 0 2pt; }
 span.missing { display: block; border: 1pt dashed #c00; color: #c00; padding: 10pt 4pt; text-align: center; font-size: 8.5pt; }
 ol, ul { margin: 0 0 6pt 16pt; padding: 0; }

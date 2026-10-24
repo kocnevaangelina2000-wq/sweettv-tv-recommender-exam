@@ -263,19 +263,19 @@ Positives. Five airings reach the 0.8 threshold, matching positive_count = 5 in 
 
 AP@5. The model's top 5 hits the user's true top 5 at ranks 1, 4 and 5, with precision 1, 2/4 and 3/5 at those ranks. AP@5 = (1 + 0.5 + 0.6) / 5 = 0.42, the same as the code. On my first pass I counted «Мир наизнанку» as a hit because it is in the user's 21–30 table. It is not in the top 5, so I removed it.
 
-References. I opened all six sources through their DOI or publisher page and checked authors, year, title and venue against the reference list.
+4\. References. I opened all six sources through their DOI or publisher page and checked authors, year, title and venue against the reference list; for the Kaggle competition page, the title and URL.
 
 What I did not check by hand. The full join over 5.8 M log rows, the fold-level MAP@5 averages, model training and the other users' lists all come from the code. I verified one chain end to end, not the totals. The Kaggle scores are from my Submissions page (screenshot attached).
 
-![Hand join check](../screenshots/hand_join_check.png)
+![Hand join check](fig/hand_join_check.png)
 
 *Fig. 1. Hand join check in Google Sheets: overlap seconds and screen time for the seven airings; 5 positives.*
 
-![Reveal check](../screenshots/hand_reveal_check.png)
+![Reveal check](fig/hand_reveal_check.png)
 
 *Fig. 2. Output of src/hand_check_reveal.py for the same seven airings.*
 
-![AP check](../screenshots/hand_ap_check.png)
+![AP check](fig/hand_ap_check.png)
 
 *Fig. 3. Hand AP@5 computation for the user's fold-B top 5.*
 
@@ -285,7 +285,7 @@ Airing-count weighting (+0.074 for content on B) and a learned re-ranker with ex
 
 Code, logs and every submission are at https://github.com/kocnevaangelina2000-wq/sweettv-tv-recommender-exam (README: commands in order and runtimes). Reference records are in `analysis/refs/`.
 
-![Best Kaggle private score](../screenshots/kaggle_best_private.png)
+![Best Kaggle private score](fig/kaggle_best_private.png)
 
 *Fig. 4. Best Kaggle private score: s8_blend.csv, 0.44568*
 

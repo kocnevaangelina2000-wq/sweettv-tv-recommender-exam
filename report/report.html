@@ -19,7 +19,10 @@ div.cols p, div.cols li { text-align: justify; hyphens: auto; }
 div.appendix { break-before: page; }
 div.appendix table { font-size: 7.8pt; }
 img { max-width: 100%; display: block; margin: 4pt auto 2pt; border: .5pt solid #999; }
-div.fig { break-inside: avoid; margin: 4pt 0 6pt; }
+div.fig { break-inside: avoid; margin: 4pt 0 6pt; column-span: all; }
+img[src$="hand_join_check.png"], img[src$="hand_ap_check.png"] { width: 100%; }
+img[src$="hand_reveal_check.png"] { width: 75%; }
+img[src$="kaggle_best_private.png"] { width: 70%; }
 div.fig p { text-align: center; font-size: 8.5pt; margin: 0 0 2pt; }
 span.missing { display: block; border: 1pt dashed #c00; color: #c00; padding: 10pt 4pt; text-align: center; font-size: 8.5pt; }
 ol, ul { margin: 0 0 6pt 16pt; padding: 0; }
@@ -482,18 +485,18 @@ li { margin-bottom: 2pt; text-align: justify; }
 <p>Screen time. The programme has 7 airings in the schedule, and the user has 3 log rows for it. For each airing I took end = start + duration and computed the overlap with each view as min(end) − max(start). The three views do not overlap one another, so their union is simply the sum. Watched seconds and screen time per airing: 70 s (0.047), 1,063 s (0.709), 900 s (1.0), 600 s (1.0), 600 s (1.0), 600 s (1.0), 894 s (0.993). The 27 May airing shows why the threshold matters: the user watched 1,063 of 1,500 s, which is 0.709, so it is not a positive.</p>
 <p>Positives. Five airings reach the 0.8 threshold, matching positive_count = 5 in the user's truth table. src/hand_check_reveal.py printed the same seconds and flags for all seven airings.</p>
 <p>AP@5. The model's top 5 hits the user's true top 5 at ranks 1, 4 and 5, with precision 1, 2/4 and 3/5 at those ranks. AP@5 = (1 + 0.5 + 0.6) / 5 = 0.42, the same as the code. On my first pass I counted «Мир наизнанку» as a hit because it is in the user's 21–30 table. It is not in the top 5, so I removed it.</p>
-<p>References. I opened all six sources through their DOI or publisher page and checked authors, year, title and venue against the reference list.</p>
+<p>4. References. I opened all six sources through their DOI or publisher page and checked authors, year, title and venue against the reference list; for the Kaggle competition page, the title and URL.</p>
 <p>What I did not check by hand. The full join over 5.8 M log rows, the fold-level MAP@5 averages, model training and the other users' lists all come from the code. I verified one chain end to end, not the totals. The Kaggle scores are from my Submissions page (screenshot attached).</p>
-<div class='fig'><p><img alt="Hand join check" src="../screenshots/hand_join_check.png" /></p>
+<div class='fig'><p><img alt="Hand join check" src="fig/hand_join_check.png" /></p>
 <p><em>Fig. 1. Hand join check in Google Sheets: overlap seconds and screen time for the seven airings; 5 positives.</em></p></div>
-<div class='fig'><p><img alt="Reveal check" src="../screenshots/hand_reveal_check.png" /></p>
+<div class='fig'><p><img alt="Reveal check" src="fig/hand_reveal_check.png" /></p>
 <p><em>Fig. 2. Output of src/hand_check_reveal.py for the same seven airings.</em></p></div>
-<div class='fig'><p><span class='missing'>[image not yet added: screenshots/hand_ap_check.png]</span></p>
+<div class='fig'><p><img alt="AP check" src="fig/hand_ap_check.png" /></p>
 <p><em>Fig. 3. Hand AP@5 computation for the user's fold-B top 5.</em></p></div>
 <h2>XI. Conclusion</h2>
 <p>Airing-count weighting (+0.074 for content on B) and a learned re-ranker with exposure features (+0.028 over the best single method on B) are the gains that validation could see. On Kaggle, the largest further gain came from how the final model was fit: stacked windows and per-week counts. The graded file is s8, with private MAP@5 0.44568.</p>
 <p>Code, logs and every submission are at https://github.com/kocnevaangelina2000-wq/sweettv-tv-recommender-exam (README: commands in order and runtimes). Reference records are in <code>analysis/refs/</code>.</p>
-<div class='fig'><p><span class='missing'>[image not yet added: screenshots/kaggle_best_private.png]</span></p>
+<div class='fig'><p><img alt="Best Kaggle private score" src="fig/kaggle_best_private.png" /></p>
 <p><em>Fig. 4. Best Kaggle private score: s8_blend.csv, 0.44568</em></p></div>
 <h2>References</h2>
 <p>[1] Y. Hu, Y. Koren, and C. Volinsky, "Collaborative filtering for implicit feedback datasets," in <em>Proc. 8th IEEE Int. Conf. Data Mining (ICDM)</em>, Dec. 2008, pp. 263–272, doi: 10.1109/ICDM.2008.22.</p>
