@@ -30,7 +30,10 @@ div.cols h2 { font-size: 10pt; margin: 9pt 0 4pt; }
 div.cols p, div.cols li { text-align: justify; hyphens: auto; }
 div.appendix { break-before: page; }
 div.appendix table { font-size: 7.8pt; }
-img { max-width: 70%; display: block; margin: 6pt auto; border: .5pt solid #999; }
+img { max-width: 100%; display: block; margin: 4pt auto 2pt; border: .5pt solid #999; }
+div.fig { break-inside: avoid; margin: 4pt 0 6pt; }
+div.fig p { text-align: center; font-size: 8.5pt; margin: 0 0 2pt; }
+span.missing { display: block; border: 1pt dashed #c00; color: #c00; padding: 10pt 4pt; text-align: center; font-size: 8.5pt; }
 ol, ul { margin: 0 0 6pt 16pt; padding: 0; }
 li { margin-bottom: 2pt; text-align: justify; }
 """
@@ -44,6 +47,16 @@ def main():
     # keep each "TABLE ..." caption on the same page as its table
     body = re.sub(r"(<p>TABLE [^<]*(?:<[^/][^>]*>[^<]*</[^>]+>[^<]*)*</p>\s*<table>.*?</table>)", r"<div class='tb'>\1</div>",
                   body, flags=re.S)
+    # images: a missing file becomes a visible box instead of a broken image
+    def img(m):
+        src = m.group(1)
+        if (HERE / src).exists():
+            return m.group(0)
+        return f"<span class='missing'>[image not yet added: {src.replace('../', '')}]</span>"
+    body = re.sub(r'<img alt="[^"]*" src="([^"]+)" ?/?>', img, body)
+    # keep a figure and its caption together
+    body = re.sub(r"(<p>(?:<img[^>]*>|<span class='missing'>[^<]*</span>)</p>\s*<p><em>Fig\.[^<]*</em></p>)",
+                  r"<div class='fig'>\1</div>", body)
     head, sep, appendix = body.partition("<h2>Appendix</h2>")
     lead, _, rest = head.partition("<h2>Abstract</h2>")
     body = (f"<div class='lead'>{lead}</div><div class='cols' lang='en'><h2>Abstract</h2>{rest}</div>"

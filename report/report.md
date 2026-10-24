@@ -1,6 +1,6 @@
 ---
 title: "Top-5 TV-Programme Recommendation for sweet.tv: Candidate Generation and Learned Re-ranking under a Screen-Time Target"
-author: "Exam report — LLM4Rec final exam"
+author: "Kochneva Angelina (Кочнева Ангелина), avkochneva@edu.hse.ru, HSE University, LLM4Rec final exam, AVITO cohort"
 date: "October 2026 — DRAFT"
 ---
 
@@ -255,7 +255,29 @@ The blend's +0.0007 private over s7b is a single comparison and does not justify
 
 ## X. Personal verification
 
-*[placeholder — to be written by the author]*
+In Google Sheets I followed one user (2929474010536378025, fold B) and one programme (12001682, SpongeBob) from the raw files to the final metric. All four checks matched.
+
+Screen time. The programme has 7 airings in the schedule, and the user has 3 log rows for it. For each airing I took end = start + duration and computed the overlap with each view as min(end) − max(start). The three views do not overlap one another, so their union is simply the sum. Watched seconds and screen time per airing: 70 s (0.047), 1,063 s (0.709), 900 s (1.0), 600 s (1.0), 600 s (1.0), 600 s (1.0), 894 s (0.993). The 27 May airing shows why the threshold matters: the user watched 1,063 of 1,500 s, which is 0.709, so it is not a positive.
+
+Positives. Five airings reach the 0.8 threshold, matching positive_count = 5 in the user's truth table. src/hand_check_reveal.py printed the same seconds and flags for all seven airings.
+
+AP@5. The model's top 5 hits the user's true top 5 at ranks 1, 4 and 5, with precision 1, 2/4 and 3/5 at those ranks. AP@5 = (1 + 0.5 + 0.6) / 5 = 0.42, the same as the code. On my first pass I counted «Мир наизнанку» as a hit because it is in the user's 21–30 table. It is not in the top 5, so I removed it.
+
+References. I opened all six sources through their DOI or publisher page and checked authors, year, title and venue against the reference list.
+
+What I did not check by hand. The full join over 5.8 M log rows, the fold-level MAP@5 averages, model training and the other users' lists all come from the code. I verified one chain end to end, not the totals. The Kaggle scores are from my Submissions page (screenshot attached).
+
+![Hand join check](../screenshots/hand_join_check.png)
+
+*Fig. 1. Hand join check in Google Sheets: overlap seconds and screen time for the seven airings; 5 positives.*
+
+![Reveal check](../screenshots/hand_reveal_check.png)
+
+*Fig. 2. Output of src/hand_check_reveal.py for the same seven airings.*
+
+![AP check](../screenshots/hand_ap_check.png)
+
+*Fig. 3. Hand AP@5 computation for the user's fold-B top 5.*
 
 ## XI. Conclusion
 
@@ -263,7 +285,9 @@ Airing-count weighting (+0.074 for content on B) and a learned re-ranker with ex
 
 Code, logs and every submission are at https://github.com/kocnevaangelina2000-wq/sweettv-tv-recommender-exam (README: commands in order and runtimes). Reference records are in `analysis/refs/`.
 
-*[slot — Kaggle best private score screenshot: save it as `screenshots/kaggle_best_private.png` and replace this line with `![Kaggle best private score](../screenshots/kaggle_best_private.png)`]*
+![Best Kaggle private score](../screenshots/kaggle_best_private.png)
+
+*Fig. 4. Best Kaggle private score: s8_blend.csv, 0.44568*
 
 ## References
 

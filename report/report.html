@@ -18,10 +18,13 @@ div.cols h2 { font-size: 10pt; margin: 9pt 0 4pt; }
 div.cols p, div.cols li { text-align: justify; hyphens: auto; }
 div.appendix { break-before: page; }
 div.appendix table { font-size: 7.8pt; }
-img { max-width: 70%; display: block; margin: 6pt auto; border: .5pt solid #999; }
+img { max-width: 100%; display: block; margin: 4pt auto 2pt; border: .5pt solid #999; }
+div.fig { break-inside: avoid; margin: 4pt 0 6pt; }
+div.fig p { text-align: center; font-size: 8.5pt; margin: 0 0 2pt; }
+span.missing { display: block; border: 1pt dashed #c00; color: #c00; padding: 10pt 4pt; text-align: center; font-size: 8.5pt; }
 ol, ul { margin: 0 0 6pt 16pt; padding: 0; }
 li { margin-bottom: 2pt; text-align: justify; }
-</style></head><body><h1 class='title'>Top-5 TV-Programme Recommendation for sweet.tv: Candidate Generation and Learned Re-ranking under a Screen-Time Target</h1><p class='byline'>Exam report — LLM4Rec final exam — October 2026 — DRAFT</p><div class='lead'><p><strong>Repository:</strong> https://github.com/kocnevaangelina2000-wq/sweettv-tv-recommender-exam · <strong>Final submission:</strong> <code>submissions/s8_blend.csv</code> · <strong>Kaggle private MAP@5 0.44568</strong> (public 0.44710)</p>
+</style></head><body><h1 class='title'>Top-5 TV-Programme Recommendation for sweet.tv: Candidate Generation and Learned Re-ranking under a Screen-Time Target</h1><p class='byline'>Kochneva Angelina (Кочнева Ангелина), avkochneva@edu.hse.ru, HSE University, LLM4Rec final exam, AVITO cohort — October 2026 — DRAFT</p><div class='lead'><p><strong>Repository:</strong> https://github.com/kocnevaangelina2000-wq/sweettv-tv-recommender-exam · <strong>Final submission:</strong> <code>submissions/s8_blend.csv</code> · <strong>Kaggle private MAP@5 0.44568</strong> (public 0.44710)</p>
 </div><div class='cols' lang='en'><h2>Abstract</h2>
 <p>We build a Top-5 TV-programme recommender for the 1,260 test users of the Kaggle competition <em>sweet.tv – TV program recommender</em> [6]. The target counts the airings of a programme that a user watched for at least 80% of their duration.</p>
 <p>We join 5.8 M viewing-log rows to the broadcast schedules by channel and time overlap. Screen time is the union of a user's overlapping views divided by the airing duration. Every parameter is selected on one declarative fold (A: weeks 11–15 → 16–20) and reported on another (B: 11–20 → 21–30).</p>
@@ -475,11 +478,23 @@ li { margin-bottom: 2pt; text-align: justify; }
 <h2>IX. Discussion in my words</h2>
 <p><em>[placeholder — to be written by the author]</em></p>
 <h2>X. Personal verification</h2>
-<p><em>[placeholder — to be written by the author]</em></p>
+<p>In Google Sheets I followed one user (2929474010536378025, fold B) and one programme (12001682, SpongeBob) from the raw files to the final metric. All four checks matched.</p>
+<p>Screen time. The programme has 7 airings in the schedule, and the user has 3 log rows for it. For each airing I took end = start + duration and computed the overlap with each view as min(end) − max(start). The three views do not overlap one another, so their union is simply the sum. Watched seconds and screen time per airing: 70 s (0.047), 1,063 s (0.709), 900 s (1.0), 600 s (1.0), 600 s (1.0), 600 s (1.0), 894 s (0.993). The 27 May airing shows why the threshold matters: the user watched 1,063 of 1,500 s, which is 0.709, so it is not a positive.</p>
+<p>Positives. Five airings reach the 0.8 threshold, matching positive_count = 5 in the user's truth table. src/hand_check_reveal.py printed the same seconds and flags for all seven airings.</p>
+<p>AP@5. The model's top 5 hits the user's true top 5 at ranks 1, 4 and 5, with precision 1, 2/4 and 3/5 at those ranks. AP@5 = (1 + 0.5 + 0.6) / 5 = 0.42, the same as the code. On my first pass I counted «Мир наизнанку» as a hit because it is in the user's 21–30 table. It is not in the top 5, so I removed it.</p>
+<p>References. I opened all six sources through their DOI or publisher page and checked authors, year, title and venue against the reference list.</p>
+<p>What I did not check by hand. The full join over 5.8 M log rows, the fold-level MAP@5 averages, model training and the other users' lists all come from the code. I verified one chain end to end, not the totals. The Kaggle scores are from my Submissions page (screenshot attached).</p>
+<div class='fig'><p><img alt="Hand join check" src="../screenshots/hand_join_check.png" /></p>
+<p><em>Fig. 1. Hand join check in Google Sheets: overlap seconds and screen time for the seven airings; 5 positives.</em></p></div>
+<div class='fig'><p><img alt="Reveal check" src="../screenshots/hand_reveal_check.png" /></p>
+<p><em>Fig. 2. Output of src/hand_check_reveal.py for the same seven airings.</em></p></div>
+<div class='fig'><p><span class='missing'>[image not yet added: screenshots/hand_ap_check.png]</span></p>
+<p><em>Fig. 3. Hand AP@5 computation for the user's fold-B top 5.</em></p></div>
 <h2>XI. Conclusion</h2>
 <p>Airing-count weighting (+0.074 for content on B) and a learned re-ranker with exposure features (+0.028 over the best single method on B) are the gains that validation could see. On Kaggle, the largest further gain came from how the final model was fit: stacked windows and per-week counts. The graded file is s8, with private MAP@5 0.44568.</p>
 <p>Code, logs and every submission are at https://github.com/kocnevaangelina2000-wq/sweettv-tv-recommender-exam (README: commands in order and runtimes). Reference records are in <code>analysis/refs/</code>.</p>
-<p><em>[slot — Kaggle best private score screenshot: save it as <code>screenshots/kaggle_best_private.png</code> and replace this line with <code>![Kaggle best private score](../screenshots/kaggle_best_private.png)</code>]</em></p>
+<div class='fig'><p><span class='missing'>[image not yet added: screenshots/kaggle_best_private.png]</span></p>
+<p><em>Fig. 4. Best Kaggle private score: s8_blend.csv, 0.44568</em></p></div>
 <h2>References</h2>
 <p>[1] Y. Hu, Y. Koren, and C. Volinsky, "Collaborative filtering for implicit feedback datasets," in <em>Proc. 8th IEEE Int. Conf. Data Mining (ICDM)</em>, Dec. 2008, pp. 263–272, doi: 10.1109/ICDM.2008.22.</p>
 <p>[2] T. H. Haveliwala, "Topic-sensitive PageRank," in <em>Proc. 11th Int. Conf. World Wide Web (WWW)</em>, May 2002, pp. 517–526, doi: 10.1145/511446.511513.</p>

@@ -10,3 +10,4 @@ catboost_info/
 analysis/hand_check_a_log_rows.csv
 analysis/hand_check_a_schedule_rows.csv
 logs/local/
+screenshots/local/
