@@ -5,15 +5,15 @@ Each entry: what, evidence (command/log), impact, handling.
 ## Step 1 — audit + join
 
 ### Kaggle description vs actual files
-The description used for comparison is the one quoted in the exam brief; I did not re-read the Kaggle page itself.
+The mismatch is inside the Kaggle Data tab itself: its "File descriptions" text uses the names in the "Kaggle says" column, while its Data Explorer serves the files in the "Actually" column. Evidence: `analysis/refs/kaggle_data_file_descriptions.png`. The exam brief lists the real file names. *(Corrected in step 6: this note first said the comparison was with the exam brief's description.)*
 
-| # | Kaggle says | Actually | Evidence | Handling |
+| # | Kaggle "File descriptions" says | Actually (Data Explorer / files) | Evidence | Handling |
 |---|---|---|---|---|
 | B2a | log file `dataset11-30week.csv` | `dataset11-30.csv` | `ls data` | `load.LOG_FILE` |
 | B2b | schedules `export_arh_10-19`, `_20-30`, `_31-42` | `export_arh_11-20-final.csv`, `export_arh_21-30-final.csv`, `export_arh_31-42-final.csv` | `ls data` | `load.SCHED_FILES` |
 | B2c | first schedule covers weeks 10–19, second 20–30 | the content is ISO weeks **11–20** and **21–30**: 11-20 holds 86 rows in ISO wk 10 (Sun 2020-03-08 23:00) and 2,431 in wk 21 (Mon 2020-05-18 00:00–12:00); 21-30 starts Mon 2020-05-18 | logs/audit.log | named by actual content; the "10-19 / 20-30" names are wrong (off by one, and 20-30 would overlap 31-42 in name only) |
 | B2d | log column `end_time` | `stop_time` | header of dataset11-30.csv | kept as `stop_time` |
-| B2e | log duration column (brief calls it `duraton`) | the column really is misspelled `duraton` | header | renamed to `duration` in `load.load_log` |
+| B2e | log duration column (`duraton`) | the column really is misspelled `duraton` | header | renamed to `duration` in `load.load_log` |
 | B2f | schedule `duration` unit not stated | seconds: all values are multiples of 60, and duration == seconds to the next airing on the channel for 99.96% / 99.9995% / 99.9991% of rows | logs/audit.log | used as seconds |
 
 ### Environment
@@ -93,4 +93,4 @@ The description used for comparison is the one quoted in the exam brief; I did n
 - **B41** My first standalone re-validation of s7b/s9 failed the pool check. This was a bug in the check script, not in the files: it passed `protocol.pool_programmes("31-42")`, which returns the schedule *rows* (a DataFrame), not a set of ids. Re-run with `Split("final").pool_set` (6,636 ids, the same pool the writers validate against): all checks pass (`logs/check_s7b_s9.log`). Note also that `validate_submission` prints "wrote …" even though it only reads the file.
 - **B42 — s10 is specified after seeing the Kaggle scores.** Fold C, the recency features and the A+B+C final fit were all decided after the Kaggle private/public scores for s1–s8 were known. s10 is written regardless of its fold-B/C numbers, and the final choice among files is by Kaggle private, disclosed in the report. A Kaggle score chosen as the best of several submissions is biased upward as an estimate of new-data performance; how much depends on the private set size, which we don't know.
 - **B43 — a DESIGN append was silently skipped.** The step-6 command that should have appended D69/D70 to DESIGN.md chained `cat >> DESIGN.md` after `grep -c … &&`. `grep -c` returned 0 matches (exit 1), so the append never ran, although the report and the assistant's message cited D69/D70 as written. The other lines of that command were separate statements and did run. It was found during the independent review and fixed by writing D69/D70 (D70 notes the late write).
-- **B44** The review asked to word trap B2 as "differ from the Kaggle data description". The Kaggle Data-tab screenshot (`analysis/refs/kaggle_data_target_rule.png`) shows the actual file names and the `duraton` column, so the mismatch is with the description quoted in the exam brief, as B2 already says. The report wording follows that evidence.
+- **B44 — trap B2 was attributed to the wrong source twice.** B2 first said the mismatch was with the description quoted in the exam brief. A first fix then reworded it to "differs from the exam brief", citing the Data-tab screenshot. Both were wrong: the exam brief lists the real file names. The mismatch is inside the Kaggle Data tab. Its "File descriptions" text names `dataset11-30week.csv`, `export_arh_10-19.csv`, `export_arh_20-30.csv` and `end_time`, while its Data Explorer shows `dataset11-30.csv`, `export_arh_11-20-final.csv`, `export_arh_21-30-final.csv`, `export_arh_31-42-final.csv` with `stop_time` and `duraton` (`analysis/refs/kaggle_data_file_descriptions.png`; the author's correction). The report (III, Appendix A/B2) and B2 now say this.
