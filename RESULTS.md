@@ -108,7 +108,7 @@ Test users by number of such programmes in 21-30 (union): **≥ 5: 1,150**, 1–
 | cold test users: no ≥ 0.8 interaction in 21-30 | 22 | interactions ∩ submission |
 
 ### Hand-check rows (`src/stats.py`, seed 42; raw csv lines in logs/stats.log)
-After the union change, interactions are sorted by (user, airing), so seed 42 now picks different rows than at commit e0ce54a. Those three earlier rows were checked by hand too: 8207 s, 2769 s, 124 + 278 = 402 s.
+After the union change, interactions are sorted by (user, airing), so seed 42 now picks different rows than at the step-1 commit (12eca51 after the D70 history rewrite; e0ce54a before it). Those three earlier rows were checked by hand too: 8207 s, 2769 s, 124 + 278 = 402 s.
 1. user 11971046114677874454, ch 23 *Месть природы* [2020-07-17 09:55, 11:25), duration 5400. View 10:15:58–10:19:15 → 197 s → 0.0365 ✔
 2. user 1792151577962019890, ch 3 *Мир наизнанку* [2020-05-10 09:25, 15:45), duration 22800. Three disjoint views: 300 + 134 + 588 = 1022 s → 0.0448 ✔
 3. user 14287208251067546691, ch 5 *В тылу врага, 2 ч.* [2020-05-20 13:25, 13:50), duration 1500. View 10:16:16–16:05:27 covers it all → 1500 s → 1.0 ✔

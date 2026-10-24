@@ -32,9 +32,10 @@ div.appendix { break-before: page; }
 div.appendix table { font-size: 7.8pt; }
 img { max-width: 100%; display: block; margin: 4pt auto 2pt; border: .5pt solid #999; }
 div.fig { break-inside: avoid; margin: 4pt 0 6pt; column-span: all; }
+div.fig.col { column-span: none; }
 img[src$="hand_join_check.png"], img[src$="hand_ap_check.png"] { width: 100%; }
 img[src$="hand_reveal_check.png"] { width: 75%; }
-img[src$="kaggle_best_private.png"] { width: 70%; }
+img[src$="kaggle_best_private.png"] { width: 100%; }
 div.fig p { text-align: center; font-size: 8.5pt; margin: 0 0 2pt; }
 span.missing { display: block; border: 1pt dashed #c00; color: #c00; padding: 10pt 4pt; text-align: center; font-size: 8.5pt; }
 ol, ul { margin: 0 0 6pt 16pt; padding: 0; }
@@ -59,7 +60,7 @@ def main():
     body = re.sub(r'<img alt="[^"]*" src="([^"]+)" ?/?>', img, body)
     # keep a figure and its caption together
     body = re.sub(r"(<p>(?:<img[^>]*>|<span class='missing'>[^<]*</span>)</p>\s*<p><em>Fig\.[^<]*</em></p>)",
-                  r"<div class='fig'>\1</div>", body)
+                  lambda m: f"<div class='fig{' col' if 'kaggle_best_private' in m.group(1) else ''}'>{m.group(1)}</div>", body)
     head, sep, appendix = body.partition("<h2>Appendix</h2>")
     lead, _, rest = head.partition("<h2>Abstract</h2>")
     body = (f"<div class='lead'>{lead}</div><div class='cols' lang='en'><h2>Abstract</h2>{rest}</div>"

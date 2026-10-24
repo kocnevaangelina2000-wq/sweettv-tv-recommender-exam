@@ -20,34 +20,30 @@ div.appendix { break-before: page; }
 div.appendix table { font-size: 7.8pt; }
 img { max-width: 100%; display: block; margin: 4pt auto 2pt; border: .5pt solid #999; }
 div.fig { break-inside: avoid; margin: 4pt 0 6pt; column-span: all; }
+div.fig.col { column-span: none; }
 img[src$="hand_join_check.png"], img[src$="hand_ap_check.png"] { width: 100%; }
 img[src$="hand_reveal_check.png"] { width: 75%; }
-img[src$="kaggle_best_private.png"] { width: 70%; }
+img[src$="kaggle_best_private.png"] { width: 100%; }
 div.fig p { text-align: center; font-size: 8.5pt; margin: 0 0 2pt; }
 span.missing { display: block; border: 1pt dashed #c00; color: #c00; padding: 10pt 4pt; text-align: center; font-size: 8.5pt; }
 ol, ul { margin: 0 0 6pt 16pt; padding: 0; }
 li { margin-bottom: 2pt; text-align: justify; }
-</style></head><body><h1 class='title'>Top-5 TV-Programme Recommendation for sweet.tv: Candidate Generation and Learned Re-ranking under a Screen-Time Target</h1><p class='byline'>Kochneva Angelina (Кочнева Ангелина), avkochneva@edu.hse.ru, HSE University, LLM4Rec final exam, AVITO cohort — October 2026 — DRAFT</p><div class='lead'><p><strong>Repository:</strong> https://github.com/kocnevaangelina2000-wq/sweettv-tv-recommender-exam · <strong>Final submission:</strong> <code>submissions/s8_blend.csv</code> · <strong>Kaggle private MAP@5 0.44568</strong> (public 0.44710)</p>
+</style></head><body><h1 class='title'>Top-5 TV-Programme Recommendation for sweet.tv: Candidate Generation and Learned Re-ranking under a Screen-Time Target</h1><p class='byline'>Kochneva Angelina (Кочнева Ангелина), avkochneva@edu.hse.ru, HSE University, LLM4Rec final exam, AVITO cohort — October 2026</p><div class='lead'><p><strong>Repository:</strong> https://github.com/kocnevaangelina2000-wq/sweettv-tv-recommender-exam · <strong>Final submission:</strong> <code>submissions/s8_blend.csv</code> · <strong>Kaggle private MAP@5 0.44568</strong> (public 0.44710)</p>
 </div><div class='cols' lang='en'><h2>Abstract</h2>
-<p>We build a Top-5 TV-programme recommender for the 1,260 test users of the Kaggle competition <em>sweet.tv – TV program recommender</em> [6]. The target counts the airings of a programme that a user watched for at least 80% of their duration.</p>
-<p>We join 5.8 M viewing-log rows to the broadcast schedules by channel and time overlap. Screen time is the union of a user's overlapping views divided by the airing duration. Every parameter is selected on one declarative fold (A: weeks 11–15 → 16–20) and reported on another (B: 11–20 → 21–30).</p>
-<p>We compare popularity, viewing history, implicit ALS [1], personalised PageRank [2] and content TF-IDF [3], each also weighted by the programme's airing count, against rank fusion and learned re-rankers: Poisson gradient boosting and CatBoost YetiRank [4], with hour-of-week "exposure" features.</p>
-<p>The best single method reaches MAP@5 0.326 on fold B and 0.413 on Kaggle private. The graded file, a rank fusion of the two re-rankers fit on both folds stacked, scores 0.44568 private. Fold B ranks the strongest models differently from the leaderboard, which is the main limitation of the validation design. Two of the ten files (s9, s10) were specified after Kaggle scores were known, and the final file is the best private score, per the instructor's rule.</p>
+<p>We build a Top-5 TV-programme recommender for the 1,260 test users of the Kaggle competition <em>sweet.tv – TV program recommender</em>. The target counts a programme's airings that a user watched for at least 80% of their duration, and keeps the top five programmes by that count [6].</p>
+<p>We join 5.8 M log rows to the schedules by channel and time overlap; screen time is the union of a user's overlapping views divided by the airing duration. Every parameter is selected on one declared fold (A: weeks 11–15 → 16–20) and reported on another (B: 11–20 → 21–30). We compare popularity, viewing history, implicit ALS [1], personalised PageRank [2] and content TF-IDF [3], each also weighted by airing count, against rank fusion and learned re-rankers: Poisson gradient boosting and CatBoost YetiRank [4], with hour-of-week "exposure" features.</p>
+<p>The best single method reaches MAP@5 0.326 on fold B and 0.413 on Kaggle private. The graded file, a rank fusion of the two re-rankers fit on both folds stacked, scores 0.44568 private. Fold B ranks the strongest models differently from the leaderboard, which is the main limitation of the validation design. Of twelve files written, eight were submitted. Two of them (s9, s10) were specified after Kaggle scores were known, and the final file is the best private score, per the instructor's rule.</p>
 <h2>I. Introduction</h2>
-<p>The task is to predict, for each of 1,260 sweet.tv users, the five programmes with the most airings watched to at least 80% of their length in weeks 31–42 of 2020. We are given the viewing log of weeks 11–30 and all schedules. The metric is MAP@5, where AP is divided by min(5, |truth|) [6].</p>
+<p>The task is to predict, for each of 1,260 sweet.tv users, the five programmes with the most airings watched to at least 80% of their length in weeks 31–42 of 2020 [6]. We are given the viewing log of weeks 11–30 and all schedules. The metric is MAP@5, where each user's AP is divided by min(5, |truth|), as defined in the course MAP@K slide [7].</p>
 <p>Three properties shape the work:</p>
 <ol>
 <li>The label counts <em>airings</em>, so frequently aired cartoons dominate, and re-watching a show is the norm.</li>
 <li>Only about 11% of schedule rows carry a programme id.</li>
 <li>The log has a collection gap in weeks 20–27.</li>
 </ol>
-<p>Our contributions are a verified join and labelling pipeline with every data trap logged, a fold protocol that separates selection from reporting, a comparison of single and hybrid methods on that protocol, and a record of ten submissions. That record states which choices used the leaderboard.</p>
+<p>Contributions: a verified join and labelling pipeline with every data trap logged; a fold protocol that separates selection from reporting; a comparison of single and hybrid methods on it; and a record of twelve files written and eight submitted that states which choices used the leaderboard.</p>
 <h2>II. Related Work</h2>
-<p><strong>Implicit ALS.</strong> Hu et al. [1] model implicit counts as confidence weights on binary preferences, using TV viewing as their own case study; we use their ALS via <code>implicit</code>.</p>
-<p><strong>PageRank.</strong> Topic-sensitive PageRank [2] biases the random walk towards a restart set. With one user as the restart set, it becomes the personalised PageRank (PPR) we run on the user–programme graph.</p>
-<p><strong>Content-based filtering.</strong> Content-based filtering with TF-IDF item profiles follows the survey of Lops et al. [3].</p>
-<p><strong>YetiRank.</strong> YetiRank [4] is the pairwise ranking loss behind CatBoost's <code>YetiRank</code> objective, which we use for per-user re-ranking.</p>
-<p><strong>Top-N evaluation.</strong> Cremonesi et al. [5] show that algorithm rankings depend on the metric and that popular items dominate top-N measurements. We therefore tune and report a rank metric, always next to a popularity baseline and on the test-user subset as well as the full cohort.</p>
+<p>Hu et al. [1] model implicit counts as confidence weights on binary preferences (ALS), with TV viewing as their case study. Topic-sensitive PageRank [2] biases a random walk towards a restart set; with one user as the restart set it is the personalised PageRank (PPR) we run on the user–programme graph. Content-based TF-IDF profiles follow Lops et al. [3]. YetiRank [4] is the pairwise ranking loss behind CatBoost's <code>YetiRank</code> objective. Cremonesi et al. [5] show that algorithm rankings depend on the metric and that popular items dominate top-N measurements, so we tune and report a rank metric, always next to a popularity baseline and on the test-user subset as well as the full cohort.</p>
 <h2>III. Data</h2>
 <div class='tb'><p>TABLE I. DATA ACCOUNTING (logs/stats.log, logs/audit.log)</p>
 <table>
@@ -61,6 +57,10 @@ li { margin-bottom: 2pt; text-align: justify; }
 <tr>
 <td>log rows / users / channels</td>
 <td>5,821,987 / 4,914 / 202</td>
+</tr>
+<tr>
+<td>exact-duplicate log rows dropped</td>
+<td>17</td>
 </tr>
 <tr>
 <td>schedule rows 11-20 / 21-30 / 31-42</td>
@@ -93,31 +93,22 @@ li { margin-bottom: 2pt; text-align: justify; }
 </tbody>
 </table></div>
 <p><strong>Join.</strong> A view and an airing match if <code>vsetv_id = channel_id</code> and the intervals [start, stop) and [start, start + duration) intersect. A per-channel <code>searchsorted</code> avoids a Cartesian merge, and it reproduced a brute-force merge on 9 channels exactly (47,116 pairs).</p>
-<p><strong>Screen time and the 0.8 rule.</strong> For each (user, airing), all of the user's overlap pieces are merged, and screen time = |union| / duration, clipped to 1. An airing is positive at ≥ 0.8. A union is needed because 2,617 users have overlapping views on one channel; summing pieces would make 4,217 extra interactions positive. The truth is the top five programmes by positive airings in the target window, with ties broken by total union seconds and then by id. The union was checked against a naive merge (38,889 groups) and on four rows by hand.</p>
+<p><strong>Screen time and the 0.8 rule.</strong> For each (user, airing), all of the user's overlap pieces are merged, and screen time = |union| / duration, clipped to 1. An airing is positive at ≥ 0.8. A union is needed because 2,617 users have overlapping views on one channel, and summing their pieces would make 4,217 extra interactions positive. A fraction is needed because the cut sits above most of the distribution (screen time p50 0.195, p75 0.657, p90 1.0; 20.3% of (user, airing) rows reach 0.8). Airing durations range from 60 s to 86,400 s (labelled airings up to 32,700 s), so a fraction rather than absolute seconds is needed, and the Kaggle label is itself defined as a fraction [6]. The truth is the top five programmes by positive airings in the target window, with ties broken by total union seconds and then by id. The union matched a naive merge on 38,889 groups, and four interactions were recomputed from the raw rows in the session (RESULTS, hand-check rows).</p>
 <p><strong>id = 0</strong> is unlabelled airtime. It is never recommended and never in the truth, and its seconds feed only channel-share and exposure features.</p>
-<p><strong>Traps</strong> (full table in Appendix A):</p>
-<ul>
-<li>File names and week ranges differ from the task text, and the duration column is misspelt (<code>duraton</code>).</li>
-<li><code>user_id</code> exceeds int64.</li>
-<li>The two files use different date formats (<code>YYYY-MM-DD</code> / <code>DD.MM.YYYY</code>).</li>
-<li>Both files use local time, and a DST switch is uncorrected.</li>
-<li>Multi-device overlaps exist.</li>
-<li>Schedules are cut at each channel's broadcast-day start.</li>
-<li>Five channels are never scheduled.</li>
-<li>750 of 1,150 test users tie at truth place 5/6.</li>
-<li>Airings are skewed: median 4 per programme, maximum 6,691.</li>
-</ul>
+<p>The data traps are listed in Appendix A: naming differences from the Kaggle data description, ids beyond int64, date formats, DST, multi-device overlaps, schedule cut points, unscheduled channels, truth ties and airing skew.</p>
 <h2>IV. Method</h2>
 <h3>A. Protocol</h3>
 <p>Splits are declared as (schedule file, ISO-week range) windows of the airing start:</p>
 <ul>
-<li><strong>A:</strong> train 11-20 weeks ≤ 15 → target weeks 16–20; cohort 4,574 users.</li>
-<li><strong>B:</strong> train 11-20 → target 21-30; cohort 4,643 users.</li>
+<li><strong>A:</strong> train 11-20 weeks ≤ 15 → target weeks 16–20.</li>
+<li><strong>B:</strong> train 11-20 → target 21-30.</li>
 <li><strong>Final:</strong> 11-30 → 31-42.</li>
 </ul>
-<p>The <em>cohort</em> is the users with ≥ 1 positive in the target window; we report MAP@5 on it and on its test-user subset. The <em>pool</em> is the set of labelled programmes airing in the target window. The future schedule is used only to know what airs when, and already-watched programmes may be recommended.</p>
+<p>The <em>cohort</em> is the users with ≥ 1 positive in the target window; MAP@5 is reported on it and on its test-user subset.</p>
+<p>Cohorts: A 4,574 = 4,409 warm + 165 cold (test subset 1,212); B 4,643 = 4,540 + 103 (test subset 1,238, plus 22 test users without truth = 1,260). On B, 0 truth slots fall outside the pool.</p>
+<p>The <em>pool</em> is the set of labelled programmes airing in the target window. The future schedule is used only to know what airs when, and already-watched programmes may be recommended.</p>
 <p>Every parameter and model choice up to s8 is the argmax of fold-A cohort MAP@5; re-rankers use 5-fold grouped-by-user out-of-fold scores. Fold B reports each choice, with the model fit on A.</p>
-<p><strong>Exactly five ids.</strong> Each method ranks pool ids by score (ties broken by global popularity) and truncates the list at 5. Lists that are too short are topped up, without duplicates, from a <em>shared fallback</em>: pool programmes ranked by train positives × the user's watch-time share on the channels where the programme airs. Users without positives (4 test users) receive the fallback alone. An assertion checks 5 unique pool ids, and every file is validated against the template.</p>
+<p><strong>Exactly five ids.</strong> Each method ranks pool ids by score (ties broken by global popularity) and truncates the list at 5. Short lists are topped up, without duplicates, from a <em>shared fallback</em>: pool programmes ranked by train positives × the user's watch-time share on the channels where the programme airs. Users without positives (4 test users) receive the fallback alone. An assertion checks 5 unique pool ids, and every file is validated against the template.</p>
 <h3>B. Methods</h3>
 <ul>
 <li><strong>Popularity:</strong> pool programmes by train positive airings.</li>
@@ -134,89 +125,17 @@ li { margin-bottom: 2pt; text-align: justify; }
 <li><strong>H3:</strong> a learned re-ranker over the union of five top-30 candidate lists (≈ 61 per user; recall 0.69).<ul>
 <li>Model: <code>HistGradientBoostingRegressor</code>, Poisson loss, lr 0.01 (lr 0.1 diverged; BUGLOG B28).</li>
 <li>Label: positive airings in the target window.</li>
-<li>Features: history counts and recency, method scores and ranks, popularity, train and target airings, channel share, category.</li>
+<li>Features: history counts and recency, method scores and ranks, popularity, airings, channel share, category.</li>
 </ul>
 </li>
 <li><strong>H3+:</strong> adds <em>exposure</em>: Σ over the programme's target airings of P(user watches that channel in that hour-of-week), estimated from train weeks. It also adds length features.</li>
 <li><strong>Step-5 variants:</strong> an exposure candidate source with top-60 lists (recall 0.79), per-week features, CatBoostRanker YetiRank [4], seed bagging, and a rank <strong>blend</strong> of the HGB and CatBoost rankings.</li>
 </ul>
-<p>Before any fold-B result was seen, we decided that final re-rankers are fit on A and B stacked, with label = positives per target week (5, 10 and 12 weeks in A, B and final).</p>
+<p>Before any step-5 fold-B result was seen, we decided that final re-rankers are fit on A and B stacked, with label = positives per target week (5, 10 and 12 weeks in A, B and final).</p>
 <h3>D. Settings, seeds, cost, environment</h3>
-<div class='tb'><p>TABLE II. SELECTED SETTINGS (fold-A argmax)</p>
-<table>
-<thead>
-<tr>
-<th>component</th>
-<th>setting</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>PPR × air</td>
-<td>α 0.5 (21 iterations)</td>
-</tr>
-<tr>
-<td>ALS × air</td>
-<td>count, 16 factors, reg 0.01, α 1</td>
-</tr>
-<tr>
-<td>H2</td>
-<td>all weights 1, k 10</td>
-</tr>
-<tr>
-<td>HGB</td>
-<td>Poisson, lr 0.01, ≤ 1000 iterations, early stop</td>
-</tr>
-<tr>
-<td>CatBoost</td>
-<td>YetiRank, lr 0.03, depth 8, 500 iterations</td>
-</tr>
-<tr>
-<td>s8 blend</td>
-<td>w(HGB, CB) = (0.5, 0.5), k = 5</td>
-</tr>
-</tbody>
-</table></div>
+<p>Settings selected on fold A: PPR × air α 0.5 (21 iterations); ALS × air count, 16 factors, reg 0.01, α 1; H2 all weights 1, k 10; HGB Poisson, lr 0.01, ≤ 1000 iterations with early stopping; CatBoost YetiRank, lr 0.03, depth 8, 500 iterations; s8 blend w(HGB, CB) = (0.5, 0.5), k = 5.</p>
 <p>Seeds are 42, and seed bagging uses 42–46; same-seed CatBoost fits are identical.</p>
-<p>Runtimes on fold B (4,643 users, Apple M3 Max, one BLAS thread):</p>
-<table>
-<thead>
-<tr>
-<th>step</th>
-<th>time</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>history</td>
-<td>0.06 s</td>
-</tr>
-<tr>
-<td>ALS × air</td>
-<td>0.9 s</td>
-</tr>
-<tr>
-<td>CBF × air</td>
-<td>2.9 s</td>
-</tr>
-<tr>
-<td>PPR × air</td>
-<td>24 s</td>
-</tr>
-<tr>
-<td>H3+</td>
-<td>87 s</td>
-</tr>
-<tr>
-<td>CatBoost × 5 seeds</td>
-<td>125 s</td>
-</tr>
-<tr>
-<td>the s8 script, including its fold-A grid</td>
-<td>843 s</td>
-</tr>
-</tbody>
-</table>
+<p>Runtimes on fold B (4,643 users, Apple M3 Max, one BLAS thread): history 0.06 s, ALS × air 0.9 s, CBF × air 2.9 s, PPR × air 24 s, H3+ 87 s, CatBoost × 5 seeds 125 s, and the s8 script with its fold-A grid 843 s.</p>
 <p>Environment: Python 3.9.6 with numpy 2.0.2, scipy 1.13.1, pandas 2.2.3, pyarrow 17.0.0, scikit-learn 1.5.2, implicit 0.7.3 and catboost 1.2.8.</p>
 <h2>V. Experiments</h2>
 <div class='tb'><p>TABLE III. SINGLE METHODS (MAP@5; params chosen on A)</p>
@@ -268,7 +187,7 @@ li { margin-bottom: 2pt; text-align: justify; }
 </tr>
 </tbody>
 </table></div>
-<p>Airing weighting helps most where the base score ignores frequency: CBF +0.074 on B (base CBF: 0.2247), PPR +0.006. The fold-A pick matches the fold-B best-of-grid for every method except ALS × air. The full table and grids are in Appendix B.</p>
+<p>Airing weighting helps most where the base score ignores frequency: CBF +0.074 on B (base CBF 0.2247), PPR +0.006. The fold-A pick matches the fold-B best-of-grid for every method except ALS × air. The full table and grids are in Appendix B.</p>
 <div class='tb'><p>TABLE IV. HYBRIDS AND RE-RANKERS (A: OOF; B: fit on A)</p>
 <table>
 <thead>
@@ -318,60 +237,18 @@ li { margin-bottom: 2pt; text-align: justify; }
 </tr>
 </tbody>
 </table></div>
-<p>Learned re-ranking is the largest step: H3 is +0.0175 over PPR × air on B, and H3+ adds +0.011. After H3+, every fold-A gain is ≤ 0.0025, several reverse on B, and each cell is a single fit. A larger candidate set raised recall by 0.10 but not B MAP@5. In the ablation (Table C2), only removing exposure costs clearly more than noise (−0.010 on B).</p>
-<p><strong>Kaggle.</strong> All ten files are listed with what each changed in Appendix D. The key results:</p>
-<table>
-<thead>
-<tr>
-<th>file</th>
-<th>private</th>
-<th>public</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>s1 popularity</td>
-<td>0.287</td>
-<td>0.303</td>
-</tr>
-<tr>
-<td>s3 PPR × air</td>
-<td>0.413</td>
-<td>0.414</td>
-</tr>
-<tr>
-<td>s7 CatBoost, raw counts</td>
-<td>0.430</td>
-<td>0.435</td>
-</tr>
-<tr>
-<td>s7b, per-week counts</td>
-<td>0.445</td>
-<td>0.445</td>
-</tr>
-<tr>
-<td><strong>s8 blend (final)</strong></td>
-<td><strong>0.446</strong></td>
-<td><strong>0.447</strong></td>
-</tr>
-</tbody>
-</table>
-<p>Two observations rest on one submission pair each:</p>
-<ol>
-<li>Per-week counts (s7 → s7b) raised private by +0.0148 but were neutral on fold B. Fold B, fit on A only, never exercises the stacked final fit, whose parts differ in window length.</li>
-<li>Adding fold C plus recency features (s9 → s10) lowered private by −0.0046. One plausible reason is that C's train window ends in the gap weeks, but the two changes are confounded.</li>
-</ol>
-<p>Fold-A OOF orders s3 &lt; s6 &lt; s7 &lt; s8 as Kaggle does; fold B does not.</p>
+<p>Learned re-ranking is the largest step: H3 is +0.0175 over PPR × air on B, and H3+ adds +0.011. After H3+, every fold-A gain is ≤ 0.0025, several reverse on B, and each cell is a single fit. A larger candidate set raised recall by 0.10 but not B MAP@5. In the ablation (Table C2; Δ = ablated − full), only removing exposure costs clearly more than noise (Δ = −0.010 on B).</p>
+<p><strong>Kaggle.</strong> All eight submissions, with what each changed, are in Appendix D. Private MAP@5 rose from 0.287 (s1 popularity) and 0.413 (s3 PPR × air) to 0.430 (s7) and 0.446 (s8). In the one clean pair, s7 → s7b, only the count features change (to per-week): private rises by +0.0148, while fold B is neutral. Fold B, fit on A only, never exercises the stacked final fit, whose parts differ in window length. s9 → s10 (fold C plus recency features, changed together) lowers private by −0.0046. One plausible reason is that C's train window ends in the gap weeks, but the two changes are confounded. Fold-A OOF orders s3 &lt; s6 &lt; s7 &lt; s8 as Kaggle does; fold B does not.</p>
 <h2>VI. Recommendation Examples</h2>
-<p>The users were picked by rules fixed before their lists were seen (DESIGN D68–D69). We draw from the 1,260 test users in the fold-B cohort, with seed 42.</p>
+<p>The users were drawn by stated rules (DESIGN D68–D69) from the 1,260 test users in the fold-B cohort, with seed 42.</p>
 <ul>
 <li><strong>Heavy viewer:</strong> top 10% by train positive airings (≥ 173; 127 eligible).</li>
 <li><strong>Light viewer:</strong> 1–3 train positive programmes.</li>
 </ul>
-<p><strong>The first light rule produced a degenerate case.</strong> It drew a user whose single truth programme was their single history programme (<em>Friends</em>), so every personalised method scored AP 1.0 and the example showed nothing. We therefore added a second rule: the same light-viewer condition plus ≥ 3 truth programmes in 21–30 (21 eligible), with its own seed-42 draw. We report the second draw; the first is in Appendix F.</p>
-<p>In the tables, R = re-watch (≥ 1 positive in 11–20), T = in the 21–30 truth, f = filled by the shared fallback. Each method's fold-B MAP@5 was recomputed in the same run and matches Table III/IV.</p>
-<p>Train history top 6: SpongeBob 103 positives, Fairly OddParents 28, Masha and the Bear 19, Alvinnn!!! 16, Факты (news) 14, Сегодня (news) 13. The full top 10 is in Appendix F. Truth: SpongeBob, Факты, Сегодня, Fairly OddParents, Alvinnn!!!.</p>
-<div class='tb'><p>TABLE V. HEAVY VIEWER 3086774348345899441 — 252 POSITIVES, 47 PROGRAMMES</p>
+<p>The heavy rule and the first light rule were fixed before any list was seen. The first light draw was degenerate: its single truth programme was its single history programme (<em>Friends</em>), so every personalised method scored AP 1.0. After seeing that, we added a second light rule (≥ 3 truth programmes in 21–30; 21 eligible) with its own seed-42 draw. Its result is reported below, and the first draw is in Appendix F.</p>
+<p>In the tables, R = re-watch (≥ 1 positive in 11–20), T = in the 21–30 truth, and f = filled by the shared fallback. Each method's fold-B MAP@5 was recomputed in the same run and matches Tables III–IV.</p>
+<p><strong>Heavy viewer.</strong> Train history (top 6): SpongeBob 103 positives, Fairly OddParents 28, Masha and the Bear 19, Alvinnn!!! 16, Факты (news) 14, Сегодня (news) 13. Truth: SpongeBob, Факты, Сегодня, Fairly OddParents, Alvinnn!!!.</p>
+<div class='tb'><p>TABLE V. HEAVY VIEWER 3086774348345899441 (ids, schedule titles, categories: Appendix F)</p>
 <table>
 <thead>
 <tr>
@@ -413,8 +290,8 @@ li { margin-bottom: 2pt; text-align: justify; }
 </tr>
 </tbody>
 </table></div>
-<p>Train history: two films, <em>Volga-Volga</em> (1 positive) and <em>SWAT</em> (1). Truth: Факты, ТСН, Викна-Новости (news), and the series <em>Однажды в Одессе</em> and <em>Мамочки</em>. The user had no positive on any of them in train.</p>
-<div class='tb'><p>TABLE VI. LIGHT VIEWER 706288898823145641 — 2 POSITIVES, 2 PROGRAMMES</p>
+<p><strong>Light viewer.</strong> Train history: two films, <em>Volga-Volga</em> and <em>SWAT</em> (1 positive each). Truth: Факты, ТСН, Викна-Новости (news), and the series <em>Однажды в Одессе</em> and <em>Мамочки</em>.</p>
+<div class='tb'><p>TABLE VI. LIGHT VIEWER 706288898823145641 (ids, schedule titles, categories: Appendix F)</p>
 <table>
 <thead>
 <tr>
@@ -456,55 +333,56 @@ li { margin-bottom: 2pt; text-align: justify; }
 </tr>
 </tbody>
 </table></div>
-<p><strong>Heavy viewer.</strong> Every method finds SpongeBob. Only s8 has all five truth programmes, including both news shows, which only popularity also lists.</p>
-<p><strong>Light viewer.</strong> The truth consists entirely of programmes the user never watched in train, which is the case for 33–35% of all truth items (B29). History and content therefore repeat the two films and miss. ALS returns items unrelated to their history. Only methods that fall back on global popularity reach the news programmes: popularity, PPR, and s8, which ranks them first.</p>
+<p><strong>Heavy viewer.</strong> Every method finds SpongeBob. Only s8 has all five truth programmes, including both news programmes, which only popularity also lists.</p>
+<p><strong>Light viewer.</strong> None of the truth programmes had a positive airing in this user's 11–20 log on this platform; that is the case for 33–35% of all truth items (B29). History and content therefore repeat the two films and miss. <strong>PPR</strong> reaches the news hubs ТСН and Факты by graph diffusion from those films (PPR's own items, not fallback), and <strong>s8</strong> ranks them first. <strong>ALS</strong> fills all five slots with unfamiliar programmes and scores AP 0. An unfamiliar slot is therefore not evidence of a useful discovery. <strong>Content-based</strong> can score all 4,488 pool programmes with no train positive (fold B), whereas ALS and PPR can rank only the 1,875 pool programmes that had positives in train. <strong>Popularity</strong> already does as well as s8 for this user (AP .40).</p>
 <h2>VII. Which Strategy for sweet.tv, and Why</h2>
-<p><strong>Validation.</strong> Each learned re-ranker beats every single method on both folds (≥ +0.017 on B), and on Kaggle by 0.017–0.033 private. The only exception is s6, which was fit on fold B alone (+0.0003). Within the re-rankers, files differ by &lt; 0.0015 on fold B but by up to 0.033 on Kaggle. In our submission pairs, that spread follows how the final model was fit (window stacking, per-week scaling) more closely than the model family. The three best private scores (s8 0.44568, s9 0.44534, s7b 0.44495) lie within 0.0007 of each other, below the observed public/private disagreement (up to 0.016).</p>
-<p><strong>Cost.</strong> PPR × air needs no labels and runs in 24 s. A single re-ranker adds four candidate sources and one model (CatBoost × 5: 125 s on B; the s7b script: 9 min). The blend trains two models on 2.3× as many candidate rows.</p>
-<p><strong>Lists.</strong> In s8, 88% of slots (5,558 of 6,300) are re-watches; for the heavy viewer in Sec. VI, all five are. The system mostly reflects viewing routines, and it gives new recommendations only where history runs out.</p>
+<p><strong>Validation.</strong> Each learned re-ranker beats every single method on both folds (≥ +0.017 on B). On Kaggle, every re-ranker file beats both submitted single-method files (s1, s3). The margin over s3 is 0.017–0.033, except for s6, which was fit on fold B alone (+0.0003). Within the re-rankers, files differ by &lt; 0.0015 on fold B but by up to 0.033 on Kaggle. In the one clean pair (s7 → s7b), that spread follows how the final model was fit (per-week scaling of the stacked fit) rather than the model family. The three best private scores (s8 0.44568, s9 0.44534, s7b 0.44495) lie within 0.0007 of each other.</p>
+<p><strong>Cost.</strong> PPR × air needs no labels and runs in 24 s. A single re-ranker adds four candidate sources and one model (CatBoost × 5: 125 s on B; the s7b script: 9 min). The blend trains two models with 2.3× the candidates per user (139 vs 61) and 2.2× the stacked training rows (1,350,769 vs 611,333).</p>
+<p><strong>Lists.</strong> In s8, 88% of slots (5,558 of 6,300) are re-watches, and all five are for the heavy viewer in Sec. VI. The other 742 slots (12%) hold programmes without a positive airing in the user's 11–20 log on this platform. They come from PPR, CBF, ALS, exposure, popularity or the fallback. Whether such slots are useful discoveries is not measured here, and the light viewer's ALS list shows they can all miss.</p>
+<p><strong>Association rules</strong> were not implemented. They would capture directional, time-window co-occurrence (e.g., the evening news watched right after a cartoon slot), which ALS's global low-rank factors average away. PPR's co-view graph is the closest implemented proxy, but it is undirected and ignores time. We claim no result for them.</p>
 <p><strong>Choice.</strong> We would select a two-stage system for sweet.tv:</p>
 <ol>
 <li>history, PPR × air, content × air and ALS × air as candidate generators;</li>
 <li><strong>one</strong> gradient-boosted re-ranker with per-week-normalised counts and exposure features, trained on stacked windows (the s7b configuration).</li>
 </ol>
-<p>The blend's +0.0007 private over s7b is a single comparison and does not justify doubling training and maintenance. PPR × air is the fallback: 0.413 private, 93% of s8, at a fraction of the cost. We make no engagement or revenue claim: no online test was run, and the label is the competition's offline proxy. The graded competition file remains s8, the best private score.</p>
+<p>Reach: 1,256 of 1,260 test users get a personalised list; 4 have no train positive and get the shared fallback. About a third of truth items (33–35% on A/B) are programmes the user had no interaction with in train. That is the only place where non-history sources can add hits.</p>
+<p>The blend's +0.0007 private over s7b is a single comparison and does not justify doubling training and maintenance. PPR × air is the backup ranker: 0.413 private, 93% of s8, at a fraction of the cost. We make no engagement or revenue claim: no online test was run, and the label is the competition's offline proxy. The graded competition file remains s8, the best private score.</p>
 <h2>VIII. Limitations</h2>
 <ol>
 <li><strong>Most airtime is unlabelled:</strong> 10.8% of schedule rows and 16% of airtime carry an id, although these receive 55–58% of viewed seconds. The rest of the viewing is invisible to items and labels.</li>
 <li><strong>Collection gap, weeks 20–27:</strong> log rows per week fall from ~410k to 105k at the lowest point. Fold B's target mostly lies in it, and so does the end of fold C's train window.</li>
 <li><strong>Validation vs Kaggle:</strong> fold B separates the top models by &lt; 0.0015 and misorders them. It cannot test the stacked final fit.</li>
+<li><strong>Small private set:</strong> Kaggle splits the test users 50/50 into public and private [6], so the private score covers about 630 users. The 0.0007 spread between s8, s9 and s7b is a total AP difference of about 0.44 over those users, i.e. less than one user's list.</li>
 <li><strong>Leaderboard selection.</strong> <strong>s9 and s10 were specified after Kaggle scores were known, and the final file is the best private score, per the instructor's rule.</strong> That score is therefore optimistic for new data.</li>
 <li><strong>Unknown target details:</strong> the Kaggle tie-break and the exact screen-time rule (union vs sum, DST) are unknown.</li>
 <li><strong>Single fits:</strong> results come from single fits without intervals, and some optima lie on grid edges (ALS, H2 k, CatBoost depth).</li>
-<li><strong>Known bug in the final file:</strong> s8 keeps the B38 active-week inflation (18% of fold-B users). Fixing it in s9 changed private by −0.0003.</li>
+<li><strong>Known bug in the final file:</strong> s8 keeps the B38 active-week inflation (18% of fold-B users). s9 fixes it together with other changes (per-week target counts, CatBoost × 5) and differs by −0.0003 private, so the effect of B38 alone is confounded.</li>
 </ol>
-<h2>IX. Discussion in my words</h2>
-<p><em>[placeholder — to be written by the author]</em></p>
-<h2>X. Personal verification</h2>
+<h2>IX. Personal verification</h2>
 <p>In Google Sheets I followed one user (2929474010536378025, fold B) and one programme (12001682, SpongeBob) from the raw files to the final metric. All four checks matched.</p>
 <p>Screen time. The programme has 7 airings in the schedule, and the user has 3 log rows for it. For each airing I took end = start + duration and computed the overlap with each view as min(end) − max(start). The three views do not overlap one another, so their union is simply the sum. Watched seconds and screen time per airing: 70 s (0.047), 1,063 s (0.709), 900 s (1.0), 600 s (1.0), 600 s (1.0), 600 s (1.0), 894 s (0.993). The 27 May airing shows why the threshold matters: the user watched 1,063 of 1,500 s, which is 0.709, so it is not a positive.</p>
 <p>Positives. Five airings reach the 0.8 threshold, matching positive_count = 5 in the user's truth table. src/hand_check_reveal.py printed the same seconds and flags for all seven airings.</p>
 <p>AP@5. The model's top 5 hits the user's true top 5 at ranks 1, 4 and 5, with precision 1, 2/4 and 3/5 at those ranks. AP@5 = (1 + 0.5 + 0.6) / 5 = 0.42, the same as the code. On my first pass I counted «Мир наизнанку» as a hit because it is in the user's 21–30 table. It is not in the top 5, so I removed it.</p>
 <p>4. References. I opened all six sources through their DOI or publisher page and checked authors, year, title and venue against the reference list; for the Kaggle competition page, the title and URL.</p>
 <p>What I did not check by hand. The full join over 5.8 M log rows, the fold-level MAP@5 averages, model training and the other users' lists all come from the code. I verified one chain end to end, not the totals. The Kaggle scores are from my Submissions page (screenshot attached).</p>
-<div class='fig'><p><img alt="Hand join check" src="fig/hand_join_check.png" /></p>
-<p><em>Fig. 1. Hand join check in Google Sheets: overlap seconds and screen time for the seven airings; 5 positives.</em></p></div>
-<div class='fig'><p><img alt="Reveal check" src="fig/hand_reveal_check.png" /></p>
-<p><em>Fig. 2. Output of src/hand_check_reveal.py for the same seven airings.</em></p></div>
-<div class='fig'><p><img alt="AP check" src="fig/hand_ap_check.png" /></p>
-<p><em>Fig. 3. Hand AP@5 computation for the user's fold-B top 5.</em></p></div>
-<h2>XI. Conclusion</h2>
+<p>Figures for these checks: Appendix G, Figs. 1–3.</p>
+<h2>X. Conclusion</h2>
 <p>Airing-count weighting (+0.074 for content on B) and a learned re-ranker with exposure features (+0.028 over the best single method on B) are the gains that validation could see. On Kaggle, the largest further gain came from how the final model was fit: stacked windows and per-week counts. The graded file is s8, with private MAP@5 0.44568.</p>
 <p>Code, logs and every submission are at https://github.com/kocnevaangelina2000-wq/sweettv-tv-recommender-exam (README: commands in order and runtimes). Reference records are in <code>analysis/refs/</code>.</p>
-<div class='fig'><p><img alt="Best Kaggle private score" src="fig/kaggle_best_private.png" /></p>
-<p><em>Fig. 4. Best Kaggle private score: s8_blend.csv, 0.44568</em></p></div>
+<div class='fig col'><p><img alt="Best Kaggle private score" src="fig/kaggle_best_private.png" /></p>
+<p><em>Fig. 4. Kaggle Submissions page (cropped; full page in screenshots/kaggle_best_private.png): best private score s8_blend.csv 0.44568, public 0.44710.</em></p></div>
+<h2>XI. AI usage disclosure</h2>
+<p>Claude Code 2.1.309 with the model Claude Opus 5.5 was used in session <code>d3e92eca-8fdc-404d-a062-5f4671e3db6b</code>. By this commit, the transcript holds 19 user messages (13 pasted step briefs, 6 typed; notes sent while a turn was running are not counted separately) and 315 tool calls. The submitted export of the session continues past this commit. One short earlier session, started in the author's home folder on 2026-10-22, only searched for the data files (4 read-only shell commands) and changed nothing. The assistant wrote and ran all code and drafted this report. The author set the task and made the decisions at each step (union over sum, the tie-break, the fold design, freezing modelling, the final choice). The author also did the hand-check chain and the reference check, and made every Kaggle submission. A separate chat assistant (Claude) was used to plan the steps, review results and review this report.</p>
+<h2>XII. Discussion in my words</h2>
+<p><em>[placeholder — to be written by the author]</em></p>
 <h2>References</h2>
 <p>[1] Y. Hu, Y. Koren, and C. Volinsky, "Collaborative filtering for implicit feedback datasets," in <em>Proc. 8th IEEE Int. Conf. Data Mining (ICDM)</em>, Dec. 2008, pp. 263–272, doi: 10.1109/ICDM.2008.22.</p>
 <p>[2] T. H. Haveliwala, "Topic-sensitive PageRank," in <em>Proc. 11th Int. Conf. World Wide Web (WWW)</em>, May 2002, pp. 517–526, doi: 10.1145/511446.511513.</p>
 <p>[3] P. Lops, M. de Gemmis, and G. Semeraro, "Content-based recommender systems: State of the art and trends," in <em>Recommender Systems Handbook</em>. Boston, MA, USA: Springer, 2011, pp. 73–105, doi: 10.1007/978-0-387-85820-3_3.</p>
 <p>[4] A. Gulin, I. Kuralenok, and D. Pavlov, "Winning the transfer learning track of Yahoo!'s learning to rank challenge with YetiRank," in <em>Proc. Learning to Rank Challenge</em>, PMLR, vol. 14, 2011, pp. 63–76. [Online]. Available: https://proceedings.mlr.press/v14/gulin11a.html</p>
 <p>[5] P. Cremonesi, Y. Koren, and R. Turrin, "Performance of recommender algorithms on top-N recommendation tasks," in <em>Proc. 4th ACM Conf. Recommender Systems (RecSys)</em>, Sep. 2010, pp. 39–46, doi: 10.1145/1864708.1864721.</p>
-<p>[6] Kaggle, "sweet.tv – TV program recommender," competition page. [Online]. Available: https://www.kaggle.com/competitions/sweettv-tv-program-recommender</p>
+<p>[6] Kaggle, "sweet.tv – TV program recommender," competition page and Data tab (target: airings with ≥ 80% screen time, top five programmes by count; public/private test split 50/50 by users). [Online]. Available: https://www.kaggle.com/competitions/sweettv-tv-program-recommender (accessed Oct. 24, 2026). Records: analysis/refs/kaggle_competition_page.html, analysis/refs/kaggle_data_target_rule.png.</p>
+<p>[7] LLM4Rec course, HSE University, lecture slides on ranking metrics, "MAP@K" (AP@K normalised by min(K, |relevant|)); course material, not publicly archived.</p>
 </div><div class='appendix'><h2>Appendix</h2>
 <h3>A. Data traps (BUGLOG.md)</h3>
 <table>
@@ -518,7 +396,7 @@ li { margin-bottom: 2pt; text-align: justify; }
 <tbody>
 <tr>
 <td>B2</td>
-<td>file names and week ranges differ from the task text (content is ISO weeks 11–20, 21–30, 31–42); log column <code>stop_time</code>; duration misspelt <code>duraton</code></td>
+<td>file names and week ranges differ from the Kaggle data description [6] (<code>analysis/refs/kaggle_data_target_rule.png</code>); content is ISO weeks 11–20, 21–30, 31–42; log column <code>stop_time</code>; duration misspelt <code>duraton</code></td>
 <td>names by content; explicit columns</td>
 </tr>
 <tr>
@@ -563,7 +441,7 @@ li { margin-bottom: 2pt; text-align: justify; }
 </tr>
 <tr>
 <td>B12</td>
-<td>750 of 1,150 test users with ≥ 5 positive programmes in 21-30 tie at places 5/6</td>
+<td>751 of 1,150 test users with ≥ 5 positive programmes in 21-30 tie at places 5/6 (union screen time)</td>
 <td>our tie-break: union seconds, then id</td>
 </tr>
 <tr>
@@ -775,40 +653,40 @@ li { margin-bottom: 2pt; text-align: justify; }
 </tbody>
 </table></div>
 <p>CatBoost grid, A OOF (lr 0.03 / 0.1; depth 4, 6, 8): 0.37415, 0.37651, <strong>0.37718</strong> / 0.37636, 0.37601, 0.37587. The top five points of the 126-point blend grid all give H2 weight 0.</p>
-<div class='tb'><p>TABLE C2. H3+ ABLATION ON FOLD B (refit on A without the group)</p>
+<div class='tb'><p>TABLE C2. H3+ ABLATION ON FOLD B (refit on A without the group; Δ = ablated − full, full H3+ = 0.35379)</p>
 <table>
 <thead>
 <tr>
 <th>dropped group</th>
 <th>B</th>
-<th>drop</th>
+<th>Δ</th>
 </tr>
 </thead>
 <tbody>
 <tr>
 <td>exposure</td>
 <td>0.34384</td>
-<td>+0.0100</td>
+<td>−0.0100</td>
 </tr>
 <tr>
 <td>method scores</td>
 <td>0.34979</td>
-<td>+0.0040</td>
+<td>−0.0040</td>
 </tr>
 <tr>
 <td>history</td>
 <td>0.35139</td>
-<td>+0.0024</td>
+<td>−0.0024</td>
 </tr>
 <tr>
 <td>length</td>
 <td>0.35352</td>
-<td>+0.0003</td>
+<td>−0.0003</td>
 </tr>
 <tr>
 <td>popularity / airings</td>
 <td>0.35496</td>
-<td>−0.0012</td>
+<td>+0.0012</td>
 </tr>
 </tbody>
 </table></div>
@@ -891,7 +769,7 @@ li { margin-bottom: 2pt; text-align: justify; }
 </tr>
 </tbody>
 </table>
-<p>s2, s2b, s4 and s5 were written but not submitted. Fold C, with s10's config: cohort 4,454; MAP@5 0.29470 → 0.29548 with recency features (fit on A+B).</p>
+<p>Twelve files were written and eight submitted; s2, s2b, s4 and s5 were not submitted. Fold C (fit on A+B; cohort 4,454): the s9 config scores 0.29470, and with recency features (the s10 config) 0.29548.</p>
 <h3>E. Slot sources of the final files (6,300 slots; first source containing the item: history &gt; PPR &gt; CBF &gt; ALS &gt; exposure &gt; popularity, else fallback)</h3>
 <table>
 <thead>
@@ -1337,4 +1215,11 @@ li { margin-bottom: 2pt; text-align: justify; }
 <td>90080832 Х/ф 'Безбашенные'. (Фильмы)</td>
 </tr>
 </tbody>
-</table></div></body></html>
+</table>
+<h3>G. Hand-check figures (Personal verification, Sec. IX)</h3>
+<div class='fig'><p><img alt="Hand join check" src="fig/hand_join_check.png" /></p>
+<p><em>Fig. 1. Hand join check in Google Sheets: overlap seconds and screen time for the seven airings; 5 positives.</em></p></div>
+<div class='fig'><p><img alt="Reveal check" src="fig/hand_reveal_check.png" /></p>
+<p><em>Fig. 2. Output of src/hand_check_reveal.py for the same seven airings.</em></p></div>
+<div class='fig'><p><img alt="AP check" src="fig/hand_ap_check.png" /></p>
+<p><em>Fig. 3. Hand AP@5 computation for the user's fold-B top 5 from the s7 config (CatBoost YetiRank × 5 seeds, fit on fold A).</em></p></div></div></body></html>
