@@ -95,7 +95,7 @@ li { margin-bottom: 2pt; text-align: justify; }
 <p><strong>Join.</strong> A view and an airing match if <code>vsetv_id = channel_id</code> and the intervals [start, stop) and [start, start + duration) intersect. A per-channel <code>searchsorted</code> avoids a Cartesian merge, and it reproduced a brute-force merge on 9 channels exactly (47,116 pairs).</p>
 <p><strong>Screen time and the 0.8 rule.</strong> For each (user, airing), all of the user's overlap pieces are merged, and screen time = |union| / duration, clipped to 1. An airing is positive at ≥ 0.8. A union is needed because 2,617 users have overlapping views on one channel, and summing their pieces would make 4,217 extra interactions positive. A fraction is needed because the cut sits above most of the distribution (screen time p50 0.195, p75 0.657, p90 1.0; 20.3% of (user, airing) rows reach 0.8). Airing durations range from 60 s to 86,400 s (labelled airings up to 32,700 s), so a fraction rather than absolute seconds is needed, and the Kaggle label is itself defined as a fraction [6]. The truth is the top five programmes by positive airings in the target window, with ties broken by total union seconds and then by id. The union matched a naive merge on 38,889 groups, and four interactions were recomputed from the raw rows in the session (RESULTS, hand-check rows).</p>
 <p><strong>id = 0</strong> is unlabelled airtime. It is never recommended and never in the truth, and its seconds feed only channel-share and exposure features.</p>
-<p>The data traps are listed in Appendix A: naming differences from the Kaggle data description, ids beyond int64, date formats, DST, multi-device overlaps, schedule cut points, unscheduled channels, truth ties and airing skew.</p>
+<p>The data traps are listed in Appendix A: file and week naming that differs from the exam brief's description, ids beyond int64, date formats, DST, multi-device overlaps, schedule cut points, unscheduled channels, truth ties and airing skew.</p>
 <h2>IV. Method</h2>
 <h3>A. Protocol</h3>
 <p>Splits are declared as (schedule file, ISO-week range) windows of the airing start:</p>
@@ -396,7 +396,7 @@ li { margin-bottom: 2pt; text-align: justify; }
 <tbody>
 <tr>
 <td>B2</td>
-<td>file names and week ranges differ from the Kaggle data description [6] (<code>analysis/refs/kaggle_data_target_rule.png</code>); content is ISO weeks 11–20, 21–30, 31–42; log column <code>stop_time</code>; duration misspelt <code>duraton</code></td>
+<td>file names and week ranges differ from the description quoted in the exam brief; the Kaggle Data tab [6] (<code>analysis/refs/kaggle_data_target_rule.png</code>) lists the actual names (<code>dataset11-30.csv</code>, <code>export_arh_*-final.csv</code>, column <code>duraton</code>); content is ISO weeks 11–20, 21–30, 31–42</td>
 <td>names by content; explicit columns</td>
 </tr>
 <tr>

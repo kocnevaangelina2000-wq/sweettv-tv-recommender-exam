@@ -52,7 +52,7 @@ TABLE I. DATA ACCOUNTING (logs/stats.log, logs/audit.log)
 
 **id = 0** is unlabelled airtime. It is never recommended and never in the truth, and its seconds feed only channel-share and exposure features.
 
-The data traps are listed in Appendix A: naming differences from the Kaggle data description, ids beyond int64, date formats, DST, multi-device overlaps, schedule cut points, unscheduled channels, truth ties and airing skew.
+The data traps are listed in Appendix A: file and week naming that differs from the exam brief's description, ids beyond int64, date formats, DST, multi-device overlaps, schedule cut points, unscheduled channels, truth ties and airing skew.
 
 ## IV. Method
 
@@ -261,7 +261,7 @@ Claude Code 2.1.309 with the model Claude Opus 5.5 was used in session `d3e92eca
 
 | # | trap | handling |
 |---|---|---|
-| B2 | file names and week ranges differ from the Kaggle data description [6] (`analysis/refs/kaggle_data_target_rule.png`); content is ISO weeks 11–20, 21–30, 31–42; log column `stop_time`; duration misspelt `duraton` | names by content; explicit columns |
+| B2 | file names and week ranges differ from the description quoted in the exam brief; the Kaggle Data tab [6] (`analysis/refs/kaggle_data_target_rule.png`) lists the actual names (`dataset11-30.csv`, `export_arh_*-final.csv`, column `duraton`); content is ISO weeks 11–20, 21–30, 31–42 | names by content; explicit columns |
 | B4 | `user_id` up to 20 digits (> int64) | uint64 |
 | B5 | log `YYYY-MM-DD`, schedules `DD.MM.YYYY` | explicit formats |
 | B6 | both on local wall-clock time; 117 views and 257 airings span the 2020-03-29 DST switch | detected, not corrected |
