@@ -1,0 +1,283 @@
+<!DOCTYPE html>
+<html lang="en">
+
+
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <!-- Search Engine Info --><title>Winning The Transfer Learning Track of Yahoo!’s Learning To Rank Challenge with YetiRank</title><meta name="description" content="Winning The Transfer Learning Track of Yahoo!’s Learning To Rank Challenge with YetiRankAndrey Gulin,&nbsp;Igor Kuralenok,&nbsp;Dimitry PavlovThe problem of ..."><!-- Solution from http://stackoverflow.com/questions/31593297/using-execcommand-javascript-to-copy-hidden-text-to-clipboard -->
+<script src="https://proceedings.mlr.press/v14/assets/js/copy_input.js"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
+<script src="https://proceedings.mlr.press/v14/assets/js/download.js"></script>
+<meta name="citation_publisher" content="PMLR"/><meta name="citation_title" content="Winning The Transfer Learning Track of Yahoo!’s Learning To Rank Challenge with YetiRank"/><meta name="citation_language" content="en"/>
+<meta name="citation_abstract_html_url" content="https://proceedings.mlr.press/v14/gulin11a.html"/><meta name="citation_pdf_url" content="http://proceedings.mlr.press/v14/gulin11a/gulin11a.pdf"><meta name="citation_firstpage" content="63"><meta name="citation_lastpage" content="76"><meta name="citation_author" content="Andrey Gulin"><meta name="citation_author" content="Igor Kuralenok"><meta name="citation_author" content="Dimitry Pavlov"><meta name="citation_publication_date" content="2011/01/26"><meta name="citation_inbook_title" content="Proceedings of the Learning to Rank Challenge"/><meta name="citation_conference_title" content="Proceedings of the Learning to Rank Challenge"/><meta name="citation_issn" content="1938-7228"><meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="Winning The Transfer Learning Track of Yahoo!’s Learning To Rank Challenge with YetiRank"/><meta name="twitter:site" content="@MLResearchPress" /><meta name="twitter:description" content="The problem of ranking the documents according to their relevance to a given query is a hot topic in information retrieval. Most learning-to-rank methods are..."/><meta name="twitter:image" content="https://proceedings.mlr.press/v14/assets/images/ltrc_logo.jpg"/>
+<meta name="twitter:image:alt" content="Logo"/><meta property="og:title" content="Winning The Transfer Learning Track of Yahoo!’s Learning To Rank Challenge with YetiRank"/>
+<meta property="og:description" content="The problem of ranking the documents according to their relevance to a given query is a hot topic in information retrieval. Most learning-to-rank methods are supervised and use human editor judgeme..."/>
+<meta property="og:type" content="article"/><meta property="article:published_time" content="2011-01-26T00:00:00+00:00"><meta property="og:url" content="https://proceedings.mlr.press/v14/gulin11a.html"/><meta property="og:image" content="https://proceedings.mlr.press/v14/assets/images/ltrc_logo.jpg"/><meta property="og:site_name" content="PMLR"/><!-- Style Info -->
+  <link rel="stylesheet" type="text/css" href="https://proceedings.mlr.press/v14/assets/css/pmlr.css" />
+  <style>.hero-text {
+    color: #303030;
+  }</style>
+
+  <!-- Icon Info -->
+  <link rel="shortcut icon" href="https://proceedings.mlr.press/v14/assets/images/favicon-pmlr.ico" type="image/x-icon">
+  <link rel="icon" href="https://proceedings.mlr.press/v14/assets/images/favicon-pmlr.ico" type="image/x-icon">
+
+  <!-- Feed Info --><link type="application/atom+xml" rel="alternate" href="https://proceedings.mlr.press/v14/feed.xml" title="Proceedings of Machine Learning Research" /><!-- Scripting info --><!-- Solution from http://stackoverflow.com/questions/31593297/using-execcommand-javascript-to-copy-hidden-text-to-clipboard -->
+<script src="https://proceedings.mlr.press/v14/assets/js/copy_input.js"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
+<script src="https://proceedings.mlr.press/v14/assets/js/download.js"></script>
+
+<script>
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+  ga('create', 'UA-92432422-1', 'auto');
+  ga('send', 'pageview');
+
+</script>
+
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Config({
+    TeX: {
+      equationNumbers: {
+          autoNumber: "AMS"
+        }
+      },
+      tex2jax: {
+      inlineMath: [ ['$','$'], ['\\(', '\\)'] ],
+      displayMath: [ ['$$','$$'], ['\\[', '\\]'] ],
+      processEscapes: true,
+    }
+  });
+</script>
+<script  async
+  src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/latest.js?config=TeX-AMS-MML_HTMLorMML">
+</script>
+
+
+  <!-- User custom header -->
+</head>
+
+
+
+
+
+
+<body>
+
+
+<header class="site-header">
+  <div class="wrapper">
+    
+
+
+<div class="hero-image">
+  <div class="hero-text">
+    <a href="/" target="_top"><img src="/v14/assets/images/logo-pmlr.svg" alt="[Proceedings of the Learning to Rank Challenge Logo]"></a>
+    Proceedings of Machine Learning Research
+  </div>
+</div>
+
+
+    <nav class="site-nav">
+  <input type="checkbox" id="nav-trigger" class="nav-trigger" />
+  <label for="nav-trigger">
+  <span class="menu-icon"><svg viewBox="0 0 18 15" width="18px" height="15px">
+  <path d="M18,1.484c0,0.82-0.665,1.484-1.484,1.484H1.484C0.665,2.969,0,2.304,0,1.484l0,0C0,0.665,0.665,0,1.484,0 h15.032C17.335,0,18,0.665,18,1.484L18,1.484z M18,7.516C18,8.335,17.335,9,16.516,9H1.484C0.665,9,0,8.335,0,7.516l0,0 c0-0.82,0.665-1.484,1.484-1.484h15.032C17.335,6.031,18,6.696,18,7.516L18,7.516z M18,13.516C18,14.335,17.335,15,16.516,15H1.484 C0.665,15,0,14.335,0,13.516l0,0c0-0.82,0.665-1.483,1.484-1.483h15.032C17.335,12.031,18,12.695,18,13.516L18,13.516z"/>
+</svg>
+</span>
+  </label>
+  <div class="trigger"><a class="page-link" href="https://proceedings.mlr.press/v14/">Volume 14</a><a class="page-link" href="https://www.jmlr.org/">JMLR</a> 
+    <a class="page-link" href="https://data.mlr.press/">DMLR</a> 
+    <a class="page-link" href="https://jmlr.org/tmlr/">TMLR</a> 
+    <a class="page-link" href="https://www.jmlr.org/mloss">MLOSS</a>
+    <a class="page-link" href="/faq.html">FAQ</a>
+    <a class="page-link" href="/spec.html">Submission Format</a>
+    <a class="page-link" href="https://proceedings.mlr.press//v14/assets/rss/feed.xml">
+      <img src="https://proceedings.mlr.press/v14/assets/images/RSS.gif" class="rss" alt="RSS Feed">
+    </a>
+  </div>
+</nav>
+
+  </div>
+</header>
+
+
+
+
+
+<main class="page-content" aria-label="Content"><div class="wrapper">
+
+
+<p style="text-align:right">[<a href="https://github.com/mlresearch/v14/edit/gh-pages/_posts/2011-01-26-gulin11a.md" target="_blank" onclick="ga('send', 'event', 'Edit Page', 'Edit', 'https://github.com/mlresearch/v14/edit/gh-pages/_posts/2011-01-26-gulin11a.md', 13);">edit</a>]</p>
+
+<article class="post-content">
+  <h1>Winning The Transfer Learning Track of Yahoo!’s Learning To Rank Challenge with YetiRank</h1><span class="authors">Andrey Gulin,&nbsp;Igor Kuralenok,&nbsp;Dimitry Pavlov</span>
+<div id="info"><i>Proceedings of the Learning to Rank Challenge</i>,&nbsp;PMLR 14:63-76,&nbsp;2011.
+  </div> <!-- info -->
+  
+  <h4>Abstract</h4>
+  <div id="abstract" class="abstract">
+    The problem of ranking the documents according to their relevance to a given query is a hot topic in information retrieval. Most learning-to-rank methods are supervised and use human editor judgements for learning. In this paper, we introduce novel pairwise method called YetiRank that modifies Friedman’s gradient boosting method in part of gradient computation for optimization and takes uncertainty in human judgements into account. Proposed enhancements allowed YetiRank to outperform many state-of-the-art learning to rank methods in offline experiments as well as take the first place in the second track of the Yahoo! learning-to-rank contest. Even more remarkably, the first result in the learning to rank competition that consisted of a transfer learning task was achieved without ever relying on the bigger data from the “transfer-from” domain.
+  </div>
+  <h4>Cite this Paper</h4>
+<hr class="bibhr">
+
+<div class="bibbuttongroup row row--justified">
+  <div class="bibbuttontext column">
+    BibTeX
+  </div>
+  <div class="column">
+  <div class="codebox">
+    <code class="citecode" id="bibtex">@InProceedings{pmlr-v14-gulin11a,
+  title = 	 {Winning The Transfer Learning Track of Yahoo!’s Learning To Rank Challenge with YetiRank},
+  author = 	 {Gulin, Andrey and Kuralenok, Igor and Pavlov, Dimitry},
+  booktitle = 	 {Proceedings of the Learning to Rank Challenge},
+  pages = 	 {63--76},
+  year = 	 {2011},
+  editor = 	 {Chapelle, Olivier and Chang, Yi and Liu, Tie-Yan},
+  volume = 	 {14},
+  series = 	 {Proceedings of Machine Learning Research},
+  address = 	 {Haifa, Israel},
+  month = 	 {25 Jun},
+  publisher =    {PMLR},
+  pdf = 	 {http://proceedings.mlr.press/v14/gulin11a/gulin11a.pdf},
+  url = 	 {https://proceedings.mlr.press/v14/gulin11a.html},
+  abstract = 	 {The problem of ranking the documents according to their relevance to a given query is a hot topic in information retrieval. Most learning-to-rank methods are supervised and use human editor judgements for learning. In this paper, we introduce novel pairwise method called YetiRank that modifies Friedman’s gradient boosting method in part of gradient computation for optimization and takes uncertainty in human judgements into account. Proposed enhancements allowed YetiRank to outperform many state-of-the-art learning to rank methods in offline experiments as well as take the first place in the second track of the Yahoo! learning-to-rank contest. Even more remarkably, the first result in the learning to rank competition that consisted of a transfer learning task was achieved without ever relying on the bigger data from the “transfer-from” domain.}
+}
+</code>
+  </div>
+  <button class="button"  id="button-bibtex1" onclick="CopyToClipboard('bibtex');  ga('send', 'event', 'Ref Copy', 'CopyToClipboard', '/v14/pmlr-v14-gulin11a.bib', 15);">Copy to Clipboard</button>
+  <button class="button" id="button-bibtex2" onclick="DownloadTexToFile('pmlr-v14-gulin11a.bib', 'bibtex'); ga('send', 'event', 'Ref Downloads', 'Download', '/v14/pmlr-v14-gulin11a.bib', 16);">Download</button>
+  </div>
+</div>
+
+
+<div class="bibbuttongroup row row--justified">
+  <div class="bibbuttontext column">
+    Endnote
+  </div>
+  <div class="column">
+  <div class="codebox">
+    <code class="citecode" id="endnote">%0 Conference Paper
+%T Winning The Transfer Learning Track of Yahoo!’s Learning To Rank Challenge with YetiRank
+%A Andrey Gulin
+%A Igor Kuralenok
+%A Dimitry Pavlov
+%B Proceedings of the Learning to Rank Challenge
+%C Proceedings of Machine Learning Research
+%D 2011
+%E Olivier Chapelle
+%E Yi Chang
+%E Tie-Yan Liu	
+%F pmlr-v14-gulin11a
+%I PMLR
+%P 63--76
+%U https://proceedings.mlr.press/v14/gulin11a.html
+%V 14
+%X The problem of ranking the documents according to their relevance to a given query is a hot topic in information retrieval. Most learning-to-rank methods are supervised and use human editor judgements for learning. In this paper, we introduce novel pairwise method called YetiRank that modifies Friedman’s gradient boosting method in part of gradient computation for optimization and takes uncertainty in human judgements into account. Proposed enhancements allowed YetiRank to outperform many state-of-the-art learning to rank methods in offline experiments as well as take the first place in the second track of the Yahoo! learning-to-rank contest. Even more remarkably, the first result in the learning to rank competition that consisted of a transfer learning task was achieved without ever relying on the bigger data from the “transfer-from” domain.
+</code>
+  </div>
+  <button class="button"  id="button-endnote1" onclick="CopyToClipboard('endnote');  ga('send', 'event', 'Ref Copy', 'CopyToClipboard', '/v14/pmlr-v14-gulin11a.enw', 15);">Copy to Clipboard</button>
+  <button class="button" id="button-endnote2" onclick="DownloadTexToFile('pmlr-v14-gulin11a.enw', 'endnote'); ga('send', 'event', 'Ref Downloads', 'Download', '/v14/pmlr-v14-gulin11a.enw', 16);">Download</button>
+  </div>
+</div>
+
+
+<div class="bibbuttongroup row row--justified">
+  <div class="bibbuttontext column">
+    RIS
+  </div>
+  <div class="column">
+  <div class="codebox">
+    <code class="citecode" id="ris">TY  - CPAPER
+TI  - Winning The Transfer Learning Track of Yahoo!’s Learning To Rank Challenge with YetiRank
+AU  - Andrey Gulin
+AU  - Igor Kuralenok
+AU  - Dimitry Pavlov
+BT  - Proceedings of the Learning to Rank Challenge
+DA  - 2011/01/26
+ED  - Olivier Chapelle
+ED  - Yi Chang
+ED  - Tie-Yan Liu	
+ID  - pmlr-v14-gulin11a
+PB  - PMLR
+DP  - Proceedings of Machine Learning Research
+VL  - 14
+SP  - 63
+EP  - 76
+L1  - http://proceedings.mlr.press/v14/gulin11a/gulin11a.pdf
+UR  - https://proceedings.mlr.press/v14/gulin11a.html
+AB  - The problem of ranking the documents according to their relevance to a given query is a hot topic in information retrieval. Most learning-to-rank methods are supervised and use human editor judgements for learning. In this paper, we introduce novel pairwise method called YetiRank that modifies Friedman’s gradient boosting method in part of gradient computation for optimization and takes uncertainty in human judgements into account. Proposed enhancements allowed YetiRank to outperform many state-of-the-art learning to rank methods in offline experiments as well as take the first place in the second track of the Yahoo! learning-to-rank contest. Even more remarkably, the first result in the learning to rank competition that consisted of a transfer learning task was achieved without ever relying on the bigger data from the “transfer-from” domain.
+ER  -
+
+</code>
+  </div>
+  <button class="button"  id="button-ris1" onclick="CopyToClipboard('ris');  ga('send', 'event', 'Ref Copy', 'CopyToClipboard', '/v14/pmlr-v14-gulin11a.ris', 15);">Copy to Clipboard</button>
+  <button class="button" id="button-ris2" onclick="DownloadTexToFile('pmlr-v14-gulin11a.ris', 'ris'); ga('send', 'event', 'Ref Downloads', 'Download', '/v14/pmlr-v14-gulin11a.ris', 16);">Download</button>
+  </div>
+</div>
+
+
+<div class="bibbuttongroup row row--justified">
+  <div class="bibbuttontext column">
+    APA
+  </div>
+  <div class="column">
+  <div class="codebox">
+    <code class="citecode" id="apa">Gulin, A., Kuralenok, I. & Pavlov, D.. (2011). Winning The Transfer Learning Track of Yahoo!’s Learning To Rank Challenge with YetiRank. <i>Proceedings of the Learning to Rank Challenge</i>, in <i>Proceedings of Machine Learning Research</i> 14:63-76 Available from https://proceedings.mlr.press/v14/gulin11a.html.
+
+</code>
+  </div>
+  <button class="button"  id="button-apa1" onclick="CopyToClipboard('apa');  ga('send', 'event', 'Ref Copy', 'CopyToClipboard', '/v14/pmlr-v14-gulin11a.txt', 15);">Copy to Clipboard</button>
+  <button class="button" id="button-apa2" onclick="DownloadTexToFile('pmlr-v14-gulin11a.txt', 'apa'); ga('send', 'event', 'Ref Downloads', 'Download', '/v14/pmlr-v14-gulin11a.txt', 16);">Download</button>
+  </div>
+</div>
+
+<hr class="bibhr">
+
+
+  
+  <h4>Related Material</h4>
+  <div id="extras">
+    <ul>
+      <li><a href="http://proceedings.mlr.press/v14/gulin11a/gulin11a.pdf" target="_blank" onclick="ga('send', 'event', 'PDF Downloads', 'Download', 'http://proceedings.mlr.press/v14/gulin11a/gulin11a.pdf', 10);">Download PDF</a></li>
+    </ul>
+  </div>
+  
+
+</article>
+
+
+
+
+
+
+
+
+
+      </div>
+    </main>
+
+
+<footer class="site-footer">
+  <div class="wrapper">
+    <p>This site last compiled Sun, 04 Oct 2026 20:47:41 +0000</p>
+      <div class="footer-left"><i><a href="https://github.com/mlresearch/v14">Github Account</a></i>
+      </div>
+      <div class="footer-right">Copyright &copy; <a href="https://proceedings.mlr.press">The authors and PMLR</a> 2026.<a href="https://twitter.com/MLResearchPress"><i class="icon-twitter"></i>&nbsp;MLResearchPress</a></div>
+  </div>
+</footer>
+
+
+
+
+
+</body>
+
+</html>

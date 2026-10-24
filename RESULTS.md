@@ -497,3 +497,105 @@ The s9 row on B reproduces logs/s9_blend_pw.log exactly. Each cell is one fit (C
 |---|---|---|---|---|---|
 | s10_blend_abc.csv | A+B+C stacked, 2,058,819 rows (660,856 / 689,913 / 708,050), label ÷5 / ÷10 / ÷3, + recency | 187,340 rows, 1,256 users | 1,031 | 5,643 / 603 / 19 / 3 / 12 / 0 / 20 | all True |
 List agreement on the 1,260 test users: s9 vs s10 232 identical rows (mean 4.46 shared ids of 5).
+
+## Kaggle scores — complete (modelling frozen; final = s8_blend.csv, best private 0.44568)
+The instructor grades the best private score per student. Choices up to s8 (and the design of s7b) were made on folds A/B only. s9 and s10 were specified after s1–s8 Kaggle scores were known (B40, B42). s7b was prepared before those scores and run after. The final file is s8, which has the best private score; it is chosen *by* Kaggle private, so that score is optimistic as an estimate for new data.
+
+| file | what changed vs the previous model file | A cohort (OOF) | B cohort (fit A) | B test | C cohort (fit A+B) | **Kaggle private** | Kaggle public |
+|---|---|---|---|---|---|---|---|
+| s1_popularity | popularity + channel fallback | 0.24370 | 0.23684 | 0.26799 | — | 0.28680 | 0.30312 |
+| s3_ppr_air | personalized PageRank × log1p(airings) | 0.34111 | 0.32559 | 0.36866 | — | 0.41277 | 0.41415 |
+| s6_h3plus | poisson-HGB re-ranker + exposure/length features; final fit on B only | 0.37585 | 0.35379 | 0.39499 | — | 0.41304 | 0.41277 |
+| s7_best | CatBoost YetiRank ×5 seeds; final fit on A+B stacked; raw counts | 0.37739 | 0.35415 | 0.39646 | — | 0.43013 | 0.43474 |
+| **s8_blend (final)** | HGB + CatBoost rank fusion; exposure + top-60 candidates; per-week features (B38 bug) | 0.37830 | 0.35316 | 0.39339 | — | **0.44568** | 0.44710 |
+| s7b_perweek | s7 with all 7 counts per week + B38 fix | — | 0.35414 | 0.39448 | — | 0.44495 | 0.44515 |
+| s9_blend_pw | s8 + B38 fix + all counts per week + CatBoost ×5 *(after Kaggle)* | — | 0.35415 | 0.39739 | — | 0.44534 | 0.44831 |
+| s10_blend_abc | s9 + fold C + recency features; final fit on A+B+C *(after Kaggle)* | — | 0.35455 | 0.39616 | 0.29548 | 0.44073 | 0.44500 |
+
+(s2_history, s2b_history, s4_h1, s5_best_hybrid were not submitted.)
+
+Findings, each limited to what one submission pair shows (one private score per file; no variance estimate; private-set size unknown):
+- **Per-week rescaling:** s7 → s7b changes only the count features (per week, with the B38 fix), and private goes 0.43013 → **0.44495 (+0.0148)**. On fold B the same change was neutral (0.35415 → 0.35414): fold B, fit on A, does not exercise the A+B-stacked final fit, where feature scales differ between the stacked parts and the 20-week final window (B33). This is consistent with that scale mismatch being what hurt s7, but one pair of submissions cannot establish it.
+- **Fold C:** s9 → s10 adds fold C and recency features together, and private drops 0.44534 → **0.44073 (−0.0046)**. The two changes are confounded. One plausible reason is that C's train window ends in the low-volume collection-gap weeks 21-27 (pair rows ~142k–297k per week vs ~410k–560k in weeks 11-19 and 28-30), so C rows teach the model from thin recent history. This is not tested.
+- s8 → s9 (B38 fix + per-week target counts + CatBoost ×5): private 0.44568 → 0.44534 (−0.0003), public +0.0012. That is within the public/private disagreement seen elsewhere (up to 0.016 for s1).
+- Fold-A OOF orders s3 < s6 < s7 < s8 the same way as Kaggle private; fold B does not (B40).
+
+## Step 6 — report examples (fold B, same two users for every method)
+Command: `.venv/bin/python src/examples.py > logs/examples.log` (tables also in logs/examples.md). Rule: DESIGN D68. Check: each method's fold-B MAP@5 recomputed in this run equals RESULTS (popularity 0.23684, history 0.30671, PPR × air 0.32559, CBF × air 0.29870, ALS × air 0.29041, s8 blend 0.35316 / 0.39339). Heavy threshold = 173 train positive airings (90th percentile over the 1,260 test users); eligible heavy 127, light 23.
+
+Tags: **R** = re-watch (the user had ≥ 1 positive airing of this programme in train 11-20); **T** = in the user's 21-30 truth; **f** = slot filled by the shared fallback, not by the method.
+
+#### heavy viewer `3086774348345899441`: 252 train positive airings over 47 programmes (weeks 11-20); 5 truth programmes in 21-30
+
+Train history top-10 (11-20):
+
+| # | id | title | category | positives |
+|---|---|---|---|---|
+| 1 | 12001682 | М/с 'Губка Боб Квадратные Штаны'. | Детям | 103 |
+| 2 | 12001734 | М/с 'Волшебные покровители'. | Детям | 28 |
+| 3 | 12002201 | М/с 'Маша и Медведь'. | Детям | 19 |
+| 4 | 12002856 | М/с 'Элвиннн!!! и бурундуки'. | Детям | 16 |
+| 5 | 240081 | Факты. | Инфо | 14 |
+| 6 | 2400508 | Сегодня. | Инфо | 13 |
+| 7 | 12002753 | М/с 'Санджей и Крейг'. | Детям | 7 |
+| 8 | 12002771 | М/с 'Черепашки-ниндзя'. | Детям | 5 |
+| 9 | 12002955 | М/с 'Свинка Пеппа'. | Детям | 4 |
+| 10 | 2400467 | 'Викна-Новости'. | Инфо | 2 |
+
+Truth 21-30 (in order): 12001682 М/с 'Губка Боб Квадратные Штаны'., 240081 Факты., 2400508 Сегодня., 12001734 М/с 'Волшебные покровители'., 12002856 М/с 'Элвиннн!!! и бурундуки'.
+
+| method | AP@5 | 1 | 2 | 3 | 4 | 5 |
+|---|---|---|---|---|---|---|
+| popularity | 0.353 | 2400480 ТСН. (Инфо) **R** | 240081 Факты. (Инфо) **RT** | 12001682 М/с 'Губка Боб Квадратные Штаны'. (Детям) **RT** | 20088 'Завтрак с 1+1'. Информационно-развлекательная программа. (Развлечения) **R** | 2400508 Сегодня. (Инфо) **RT** |
+| history (count) | 0.710 | 12001682 М/с 'Губка Боб Квадратные Штаны'. (Детям) **RT** | 12001734 М/с 'Волшебные покровители'. (Детям) **RT** | 12002201 М/с 'Маша и Медведь'. (Детям) **R** | 12002856 М/с 'Элвиннн!!! и бурундуки'. (Детям) **RT** | 240081 Факты. (Инфо) **RT** |
+| PPR x air (alpha 0.5) | 0.760 | 12001682 М/с 'Губка Боб Квадратные Штаны'. (Детям) **RT** | 12001734 М/с 'Волшебные покровители'. (Детям) **RT** | 12002856 М/с 'Элвиннн!!! и бурундуки'. (Детям) **RT** | 12002201 М/с 'Маша и Медведь'. (Детям) **R** | 240081 Факты. (Инфо) **RT** |
+| CBF x air | 0.600 | 12001682 М/с 'Губка Боб Квадратные Штаны'. (Детям) **RT** | 12002856 М/с 'Элвиннн!!! и бурундуки'. (Детям) **RT** | 12001734 М/с 'Волшебные покровители'. (Детям) **RT** | 12002896 М/с 'Вспыш и чудо-машинки', 2 сезон, 14 с. 'Унесённый лыжами'. (Детям) | 12001732 М/с 'Пингвины из 'Мадагаскара'. (Детям) **R** |
+| ALS x air (count, f=16, reg=0.01, alpha=1) | 0.600 | 12001682 М/с 'Губка Боб Квадратные Штаны'. (Детям) **RT** | 12002856 М/с 'Элвиннн!!! и бурундуки'. (Детям) **RT** | 12001734 М/с 'Волшебные покровители'. (Детям) **RT** | 2400480 ТСН. (Инфо) **R** | 12002355 М/с 'Кунг-фу панда: Удивительные легенды'. (Детям) **R** |
+| s8 blend (HGB + CatBoost rank fusion) | 1.000 | 12001682 М/с 'Губка Боб Квадратные Штаны'. (Детям) **RT** | 12002856 М/с 'Элвиннн!!! и бурундуки'. (Детям) **RT** | 12001734 М/с 'Волшебные покровители'. (Детям) **RT** | 240081 Факты. (Инфо) **RT** | 2400508 Сегодня. (Инфо) **RT** |
+
+#### light viewer `14394187406328124815`: 1 train positive airings over 1 programmes (weeks 11-20); 1 truth programmes in 21-30
+
+Train history top-10 (11-20):
+
+| # | id | title | category | positives |
+|---|---|---|---|---|
+| 1 | 1000376 | Т/с 'Друзья', 1 сезон, 5 с. | Сериалы | 1 |
+
+Truth 21-30 (in order): 1000376 Т/с 'Друзья', 1 сезон, 5 с.
+
+| method | AP@5 | 1 | 2 | 3 | 4 | 5 |
+|---|---|---|---|---|---|---|
+| popularity | 0.000 | 2400480 ТСН. (Инфо) | 240081 Факты. (Инфо) | 12001682 М/с 'Губка Боб Квадратные Штаны'. (Детям) | 20088 'Завтрак с 1+1'. Информационно-развлекательная программа. (Развлечения) | 2400508 Сегодня. (Инфо) |
+| history (count) | 1.000 | 1000376 Т/с 'Друзья', 1 сезон, 5 с. (Сериалы) **RT** | 12001682 М/с 'Губка Боб Квадратные Штаны'. (Детям) **f** | 2400480 ТСН. (Инфо) **f** | 240081 Факты. (Инфо) **f** | 2400467 'Викна-Новости'. (Инфо) **f** |
+| PPR x air (alpha 0.5) | 1.000 | 1000376 Т/с 'Друзья', 1 сезон, 5 с. (Сериалы) **RT** | 2400480 ТСН. (Инфо) | 12001682 М/с 'Губка Боб Квадратные Штаны'. (Детям) | 10001514 Т/с 'Теория большого взрыва', 2 сезон, 15 с. (Сериалы) | 240081 Факты. (Инфо) |
+| CBF x air | 1.000 | 1000376 Т/с 'Друзья', 1 сезон, 5 с. (Сериалы) **RT** | 10001514 Т/с 'Теория большого взрыва', 2 сезон, 15 с. (Сериалы) | 1000405 Т/с 'Клиника', 2 сезон, 19 с. (Сериалы) | 10001903 Т/с 'Американская семейка', 9 сезон, 9 с. (Сериалы) | 10002810 Т/с 'Бруклин 9-9', 6 сезон, 17 с. (Сериалы) |
+| ALS x air (count, f=16, reg=0.01, alpha=1) | 1.000 | 1000376 Т/с 'Друзья', 1 сезон, 5 с. (Сериалы) **RT** | 10001514 Т/с 'Теория большого взрыва', 2 сезон, 15 с. (Сериалы) | 1000589 Т/с 'Отчаянные домохозяйки', 5 сезон, 17 с. 'История Люси и Джесси'. (Сериалы) | 1000405 Т/с 'Клиника', 2 сезон, 19 с. (Сериалы) | 12001712 М/с 'Симпсоны'. (Детям) |
+| s8 blend (HGB + CatBoost rank fusion) | 1.000 | 1000376 Т/с 'Друзья', 1 сезон, 5 с. (Сериалы) **RT** | 10001336 Т/с 'Кости', 9 сезон, 21 с. 'Случай с холодом'. (Сериалы) | 2400480 ТСН. (Инфо) | 12001682 М/с 'Губка Боб Квадратные Штаны'. (Детям) | 12001712 М/с 'Симпсоны'. (Детям) |
+
+### Step 6 — other report inputs
+- **Labelled share of viewing** (`logs/check_labelled_share.log`, inline script over `artifacts/view_airing_pairs.parquet`): labelled airings receive 54.82% (11-20), 58.43% (21-30) and 56.43% (all) of viewed overlap seconds. They are only 10.76–11.31% of schedule rows and 15.97–16.90% of airtime (B11). The report therefore says "10.8% of schedule rows", not "10.8% of airtime".
+- **References:** six records fetched and saved in `analysis/refs/` (4 Crossref JSON, 1 PMLR page, 1 Kaggle page; index in `analysis/refs/README.md`).
+- **Report:** `report/report.md` → `report/report.pdf` via `report/build_pdf.py` (python-markdown 3.7 + headless Chrome). 9 A4 pages, single column, including references and the two placeholders. Every page was rendered to PNG with PDFKit and inspected.
+
+### Light viewer, rule 2 (DESIGN D69: rule 1 was degenerate — single truth item = single history item, every personalised method AP 1.0)
+Same run as above (`logs/examples.log`): eligible 21; picked `706288898823145641`.
+
+#### light (rule 2: >= 3 truth programmes) viewer `706288898823145641`: 2 train positive airings over 2 programmes (weeks 11-20); 5 truth programmes in 21-30
+
+Train history top-10 (11-20):
+
+| # | id | title | category | positives |
+|---|---|---|---|---|
+| 1 | 90044148 | Х/ф 'Волга-Волга'. | Фильмы | 1 |
+| 2 | 90055479 | Х/ф 'SWAT: Спецназ города ангелов'. | Фильмы | 1 |
+
+Truth 21-30 (in order): 240081 Факты., 2400480 ТСН., 10003012 Т/с 'Однажды в Одессе'., 2400467 'Викна-Новости'., 10002515 Т/с 'Мамочки', 1 сезон, 19 и 20 с.
+
+| method | AP@5 | 1 | 2 | 3 | 4 | 5 |
+|---|---|---|---|---|---|---|
+| popularity | 0.400 | 2400480 ТСН. (Инфо) **T** | 240081 Факты. (Инфо) **T** | 12001682 М/с 'Губка Боб Квадратные Штаны'. (Детям) | 20088 'Завтрак с 1+1'. Информационно-развлекательная программа. (Развлечения) | 2400508 Сегодня. (Инфо) |
+| history (count) | 0.000 | 90044148 Х/ф 'Волга-Волга'. (Фильмы) **R** | 90055479 Х/ф 'SWAT: Спецназ города ангелов'. (Фильмы) **R** | 10001261 Т/с 'Мыслить как преступник'. (Сериалы) **f** | 1000381 Т/с 'CSI: Место преступления', 7 сезон, 6 и 7 с. (Сериалы) **f** | 90077217 Х/ф 'Геракл: Начало легенды'. (Фильмы) **f** |
+| PPR x air (alpha 0.5) | 0.167 | 90055479 Х/ф 'SWAT: Спецназ города ангелов'. (Фильмы) **R** | 90044148 Х/ф 'Волга-Волга'. (Фильмы) **R** | 2400480 ТСН. (Инфо) **T** | 240081 Факты. (Инфо) **T** | 12001682 М/с 'Губка Боб Квадратные Штаны'. (Детям) |
+| CBF x air | 0.000 | 90055479 Х/ф 'SWAT: Спецназ города ангелов'. (Фильмы) **R** | 90044148 Х/ф 'Волга-Волга'. (Фильмы) **R** | 90044710 Исторический прайм. Х/ф 'Цирк'. (Фильмы) | 90073000 Х/ф 'Инопланетное вторжение: Битва за Лос-Анджелес'. (Фильмы) | 90037720 Исторический прайм. Х/ф 'Веселые ребята'. (Фильмы) |
+| ALS x air (count, f=16, reg=0.01, alpha=1) | 0.000 | 2400340 Служба розыска детей. (Инфо) | 10002744 Т/с 'Майор и магия', 8 с. (Сериалы) | 12002378 М/с 'Удивительный мир Гамбола'. (Детям) | 1000289 Т/с 'Остаться в живых', 1 сезон, 1 с. 'Таинственный остров - часть 1'. (Сериалы) | 5900347 'Деньги'. (Инфо) |
+| s8 blend (HGB + CatBoost rank fusion) | 0.400 | 2400480 ТСН. (Инфо) **T** | 240081 Факты. (Инфо) **T** | 12001682 М/с 'Губка Боб Квадратные Штаны'. (Детям) | 12002955 М/с 'Свинка Пеппа'. (Детям) | 90080832 Х/ф 'Безбашенные'. (Фильмы) |

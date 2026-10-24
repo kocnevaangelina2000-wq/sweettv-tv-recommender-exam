@@ -5,3 +5,8 @@ __pycache__/
 artifacts/
 .DS_Store
 catboost_info/
+
+# raw competition rows: local only (DESIGN D70); regenerate with src/hand_check.py
+analysis/hand_check_a_log_rows.csv
+analysis/hand_check_a_schedule_rows.csv
+logs/local/

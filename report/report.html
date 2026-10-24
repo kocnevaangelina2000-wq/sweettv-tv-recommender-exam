@@ -1,0 +1,1322 @@
+<!doctype html><html><head><meta charset='utf-8'><title>Top-5 TV-Programme Recommendation for sweet.tv: Candidate Generation and Learned Re-ranking under a Screen-Time Target</title><style>
+@page { size: A4; margin: 18mm 16mm 18mm 16mm; }
+body { font-family: "Times New Roman", Times, serif; font-size: 10pt; line-height: 1.25; color: #000; background: #fff; }
+h1.title { font-size: 17pt; text-align: center; margin: 0 0 4pt; line-height: 1.2; }
+p.byline { text-align: center; font-style: italic; margin: 0 0 10pt; }
+h2 { font-size: 11.5pt; text-transform: uppercase; letter-spacing: .03em; margin: 14pt 0 5pt; text-align: center; }
+h3 { font-size: 10.5pt; font-style: italic; margin: 9pt 0 3pt; }
+p { margin: 0 0 6pt; text-align: justify; }
+table { border-collapse: collapse; margin: 4pt auto 8pt; font-size: 8.4pt; line-height: 1.2; page-break-inside: avoid; }
+th, td { border-top: .5pt solid #000; border-bottom: .5pt solid #000; padding: 1.6pt 4pt; vertical-align: top; text-align: left; }
+th { font-weight: bold; }
+code { font-family: Menlo, Consolas, monospace; font-size: 8.6pt; }
+div.tb { break-inside: avoid; page-break-inside: avoid; }
+div.cols { column-count: 2; column-gap: 6mm; column-fill: auto; }
+div.cols table { width: 100%; font-size: 7.8pt; }
+div.lead p { text-align: center; }
+div.cols h2 { font-size: 10pt; margin: 9pt 0 4pt; }
+div.cols p, div.cols li { text-align: justify; hyphens: auto; }
+div.appendix { break-before: page; }
+div.appendix table { font-size: 7.8pt; }
+img { max-width: 70%; display: block; margin: 6pt auto; border: .5pt solid #999; }
+ol, ul { margin: 0 0 6pt 16pt; padding: 0; }
+li { margin-bottom: 2pt; text-align: justify; }
+</style></head><body><h1 class='title'>Top-5 TV-Programme Recommendation for sweet.tv: Candidate Generation and Learned Re-ranking under a Screen-Time Target</h1><p class='byline'>Exam report — LLM4Rec final exam — October 2026 — DRAFT</p><div class='lead'><p><strong>Repository:</strong> https://github.com/kocnevaangelina2000-wq/sweettv-tv-recommender-exam · <strong>Final submission:</strong> <code>submissions/s8_blend.csv</code> · <strong>Kaggle private MAP@5 0.44568</strong> (public 0.44710)</p>
+</div><div class='cols' lang='en'><h2>Abstract</h2>
+<p>We build a Top-5 TV-programme recommender for the 1,260 test users of the Kaggle competition <em>sweet.tv – TV program recommender</em> [6]. The target counts the airings of a programme that a user watched for at least 80% of their duration.</p>
+<p>We join 5.8 M viewing-log rows to the broadcast schedules by channel and time overlap. Screen time is the union of a user's overlapping views divided by the airing duration. Every parameter is selected on one declarative fold (A: weeks 11–15 → 16–20) and reported on another (B: 11–20 → 21–30).</p>
+<p>We compare popularity, viewing history, implicit ALS [1], personalised PageRank [2] and content TF-IDF [3], each also weighted by the programme's airing count, against rank fusion and learned re-rankers: Poisson gradient boosting and CatBoost YetiRank [4], with hour-of-week "exposure" features.</p>
+<p>The best single method reaches MAP@5 0.326 on fold B and 0.413 on Kaggle private. The graded file, a rank fusion of the two re-rankers fit on both folds stacked, scores 0.44568 private. Fold B ranks the strongest models differently from the leaderboard, which is the main limitation of the validation design. Two of the ten files (s9, s10) were specified after Kaggle scores were known, and the final file is the best private score, per the instructor's rule.</p>
+<h2>I. Introduction</h2>
+<p>The task is to predict, for each of 1,260 sweet.tv users, the five programmes with the most airings watched to at least 80% of their length in weeks 31–42 of 2020. We are given the viewing log of weeks 11–30 and all schedules. The metric is MAP@5, where AP is divided by min(5, |truth|) [6].</p>
+<p>Three properties shape the work:</p>
+<ol>
+<li>The label counts <em>airings</em>, so frequently aired cartoons dominate, and re-watching a show is the norm.</li>
+<li>Only about 11% of schedule rows carry a programme id.</li>
+<li>The log has a collection gap in weeks 20–27.</li>
+</ol>
+<p>Our contributions are a verified join and labelling pipeline with every data trap logged, a fold protocol that separates selection from reporting, a comparison of single and hybrid methods on that protocol, and a record of ten submissions. That record states which choices used the leaderboard.</p>
+<h2>II. Related Work</h2>
+<p><strong>Implicit ALS.</strong> Hu et al. [1] model implicit counts as confidence weights on binary preferences, using TV viewing as their own case study; we use their ALS via <code>implicit</code>.</p>
+<p><strong>PageRank.</strong> Topic-sensitive PageRank [2] biases the random walk towards a restart set. With one user as the restart set, it becomes the personalised PageRank (PPR) we run on the user–programme graph.</p>
+<p><strong>Content-based filtering.</strong> Content-based filtering with TF-IDF item profiles follows the survey of Lops et al. [3].</p>
+<p><strong>YetiRank.</strong> YetiRank [4] is the pairwise ranking loss behind CatBoost's <code>YetiRank</code> objective, which we use for per-user re-ranking.</p>
+<p><strong>Top-N evaluation.</strong> Cremonesi et al. [5] show that algorithm rankings depend on the metric and that popular items dominate top-N measurements. We therefore tune and report a rank metric, always next to a popularity baseline and on the test-user subset as well as the full cohort.</p>
+<h2>III. Data</h2>
+<div class='tb'><p>TABLE I. DATA ACCOUNTING (logs/stats.log, logs/audit.log)</p>
+<table>
+<thead>
+<tr>
+<th>quantity</th>
+<th>value</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>log rows / users / channels</td>
+<td>5,821,987 / 4,914 / 202</td>
+</tr>
+<tr>
+<td>schedule rows 11-20 / 21-30 / 31-42</td>
+<td>1.07 M / 1.07 M / 1.30 M</td>
+</tr>
+<tr>
+<td>labelled (id ≠ 0): rows / airtime</td>
+<td>10.8–11.3% / 16.0–16.9%</td>
+</tr>
+<tr>
+<td>viewed seconds on labelled airings</td>
+<td>54.8% (11-20), 58.4% (21-30)</td>
+</tr>
+<tr>
+<td>(view, airing) pairs with overlap</td>
+<td>7,752,415</td>
+</tr>
+<tr>
+<td>views matching no airing</td>
+<td>7.10%</td>
+</tr>
+<tr>
+<td>positive interactions 11-20 / 21-30</td>
+<td>317,043 / 294,717</td>
+</tr>
+<tr>
+<td>test users / cold (no positive)</td>
+<td>1,260 / 4</td>
+</tr>
+</tbody>
+</table></div>
+<p><strong>Join.</strong> A view and an airing match if <code>vsetv_id = channel_id</code> and the intervals [start, stop) and [start, start + duration) intersect. A per-channel <code>searchsorted</code> avoids a Cartesian merge, and it reproduced a brute-force merge on 9 channels exactly (47,116 pairs).</p>
+<p><strong>Screen time and the 0.8 rule.</strong> For each (user, airing), all of the user's overlap pieces are merged, and screen time = |union| / duration, clipped to 1. An airing is positive at ≥ 0.8. A union is needed because 2,617 users have overlapping views on one channel; summing pieces would make 4,217 extra interactions positive. The truth is the top five programmes by positive airings in the target window, with ties broken by total union seconds and then by id. The union was checked against a naive merge (38,889 groups) and on four rows by hand.</p>
+<p><strong>id = 0</strong> is unlabelled airtime. It is never recommended and never in the truth, and its seconds feed only channel-share and exposure features.</p>
+<p><strong>Traps</strong> (full table in Appendix A):</p>
+<ul>
+<li>File names and week ranges differ from the task text, and the duration column is misspelt (<code>duraton</code>).</li>
+<li><code>user_id</code> exceeds int64.</li>
+<li>The two files use different date formats (<code>YYYY-MM-DD</code> / <code>DD.MM.YYYY</code>).</li>
+<li>Both files use local time, and a DST switch is uncorrected.</li>
+<li>Multi-device overlaps exist.</li>
+<li>Schedules are cut at each channel's broadcast-day start.</li>
+<li>Five channels are never scheduled.</li>
+<li>750 of 1,150 test users tie at truth place 5/6.</li>
+<li>Airings are skewed: median 4 per programme, maximum 6,691.</li>
+</ul>
+<h2>IV. Method</h2>
+<h3>A. Protocol</h3>
+<p>Splits are declared as (schedule file, ISO-week range) windows of the airing start:</p>
+<ul>
+<li><strong>A:</strong> train 11-20 weeks ≤ 15 → target weeks 16–20; cohort 4,574 users.</li>
+<li><strong>B:</strong> train 11-20 → target 21-30; cohort 4,643 users.</li>
+<li><strong>Final:</strong> 11-30 → 31-42.</li>
+</ul>
+<p>The <em>cohort</em> is the users with ≥ 1 positive in the target window; we report MAP@5 on it and on its test-user subset. The <em>pool</em> is the set of labelled programmes airing in the target window. The future schedule is used only to know what airs when, and already-watched programmes may be recommended.</p>
+<p>Every parameter and model choice up to s8 is the argmax of fold-A cohort MAP@5; re-rankers use 5-fold grouped-by-user out-of-fold scores. Fold B reports each choice, with the model fit on A.</p>
+<p><strong>Exactly five ids.</strong> Each method ranks pool ids by score (ties broken by global popularity) and truncates the list at 5. Lists that are too short are topped up, without duplicates, from a <em>shared fallback</em>: pool programmes ranked by train positives × the user's watch-time share on the channels where the programme airs. Users without positives (4 test users) receive the fallback alone. An assertion checks 5 unique pool ids, and every file is validated against the template.</p>
+<h3>B. Methods</h3>
+<ul>
+<li><strong>Popularity:</strong> pool programmes by train positive airings.</li>
+<li><strong>History:</strong> the user's positive programmes by count, with recency and expected-count variants.</li>
+<li><strong>ALS [1]:</strong> <code>implicit</code>, 150-point grid over confidence (count, log1p or BM25) × factors × regularisation × α.</li>
+<li><strong>PPR [2]:</strong> damping α ∈ {0.3, 0.5, 0.7, 0.85}, explicit dangling mass, tolerance 10⁻⁶.</li>
+<li><strong>CBF [3]:</strong> TF-IDF over category, genres, channels and credits, with cosine to the user profile.</li>
+<li><strong>"× air" variants:</strong> each score is multiplied by log(1 + airings of the programme in the target schedule), because the label counts airings.</li>
+</ul>
+<h3>C. Hybrids</h3>
+<ul>
+<li><strong>H1:</strong> history first, then PPR × air.</li>
+<li><strong>H2:</strong> reciprocal-rank fusion Σ w/(k + rank) of four top-30 lists.</li>
+<li><strong>H3:</strong> a learned re-ranker over the union of five top-30 candidate lists (≈ 61 per user; recall 0.69).<ul>
+<li>Model: <code>HistGradientBoostingRegressor</code>, Poisson loss, lr 0.01 (lr 0.1 diverged; BUGLOG B28).</li>
+<li>Label: positive airings in the target window.</li>
+<li>Features: history counts and recency, method scores and ranks, popularity, train and target airings, channel share, category.</li>
+</ul>
+</li>
+<li><strong>H3+:</strong> adds <em>exposure</em>: Σ over the programme's target airings of P(user watches that channel in that hour-of-week), estimated from train weeks. It also adds length features.</li>
+<li><strong>Step-5 variants:</strong> an exposure candidate source with top-60 lists (recall 0.79), per-week features, CatBoostRanker YetiRank [4], seed bagging, and a rank <strong>blend</strong> of the HGB and CatBoost rankings.</li>
+</ul>
+<p>Before any fold-B result was seen, we decided that final re-rankers are fit on A and B stacked, with label = positives per target week (5, 10 and 12 weeks in A, B and final).</p>
+<h3>D. Settings, seeds, cost, environment</h3>
+<div class='tb'><p>TABLE II. SELECTED SETTINGS (fold-A argmax)</p>
+<table>
+<thead>
+<tr>
+<th>component</th>
+<th>setting</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>PPR × air</td>
+<td>α 0.5 (21 iterations)</td>
+</tr>
+<tr>
+<td>ALS × air</td>
+<td>count, 16 factors, reg 0.01, α 1</td>
+</tr>
+<tr>
+<td>H2</td>
+<td>all weights 1, k 10</td>
+</tr>
+<tr>
+<td>HGB</td>
+<td>Poisson, lr 0.01, ≤ 1000 iterations, early stop</td>
+</tr>
+<tr>
+<td>CatBoost</td>
+<td>YetiRank, lr 0.03, depth 8, 500 iterations</td>
+</tr>
+<tr>
+<td>s8 blend</td>
+<td>w(HGB, CB) = (0.5, 0.5), k = 5</td>
+</tr>
+</tbody>
+</table></div>
+<p>Seeds are 42, and seed bagging uses 42–46; same-seed CatBoost fits are identical.</p>
+<p>Runtimes on fold B (4,643 users, Apple M3 Max, one BLAS thread):</p>
+<table>
+<thead>
+<tr>
+<th>step</th>
+<th>time</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>history</td>
+<td>0.06 s</td>
+</tr>
+<tr>
+<td>ALS × air</td>
+<td>0.9 s</td>
+</tr>
+<tr>
+<td>CBF × air</td>
+<td>2.9 s</td>
+</tr>
+<tr>
+<td>PPR × air</td>
+<td>24 s</td>
+</tr>
+<tr>
+<td>H3+</td>
+<td>87 s</td>
+</tr>
+<tr>
+<td>CatBoost × 5 seeds</td>
+<td>125 s</td>
+</tr>
+<tr>
+<td>the s8 script, including its fold-A grid</td>
+<td>843 s</td>
+</tr>
+</tbody>
+</table>
+<p>Environment: Python 3.9.6 with numpy 2.0.2, scipy 1.13.1, pandas 2.2.3, pyarrow 17.0.0, scikit-learn 1.5.2, implicit 0.7.3 and catboost 1.2.8.</p>
+<h2>V. Experiments</h2>
+<div class='tb'><p>TABLE III. SINGLE METHODS (MAP@5; params chosen on A)</p>
+<table>
+<thead>
+<tr>
+<th>method</th>
+<th>A</th>
+<th>B</th>
+<th>B test</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>popularity</td>
+<td>.2437</td>
+<td>.2368</td>
+<td>.2680</td>
+</tr>
+<tr>
+<td>history</td>
+<td>.3239</td>
+<td>.3067</td>
+<td>.3503</td>
+</tr>
+<tr>
+<td>ALS × air</td>
+<td>.3139</td>
+<td>.2904</td>
+<td>.3178</td>
+</tr>
+<tr>
+<td>PPR</td>
+<td>.3388</td>
+<td>.3194</td>
+<td>.3613</td>
+</tr>
+<tr>
+<td><strong>PPR × air</strong></td>
+<td><strong>.3411</strong></td>
+<td><strong>.3256</strong></td>
+<td><strong>.3687</strong></td>
+</tr>
+<tr>
+<td>CBF × air</td>
+<td>.3132</td>
+<td>.2987</td>
+<td>.3340</td>
+</tr>
+</tbody>
+</table></div>
+<p>Airing weighting helps most where the base score ignores frequency: CBF +0.074 on B (base CBF: 0.2247), PPR +0.006. The fold-A pick matches the fold-B best-of-grid for every method except ALS × air. The full table and grids are in Appendix B.</p>
+<div class='tb'><p>TABLE IV. HYBRIDS AND RE-RANKERS (A: OOF; B: fit on A)</p>
+<table>
+<thead>
+<tr>
+<th>model</th>
+<th>A</th>
+<th>B</th>
+<th>recall B</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>H1 history-first</td>
+<td>.3340</td>
+<td>.3141</td>
+<td>.61</td>
+</tr>
+<tr>
+<td>H2 RRF</td>
+<td>.3444</td>
+<td>.3292</td>
+<td>.68</td>
+</tr>
+<tr>
+<td>H3 HGB</td>
+<td>.3732</td>
+<td>.3431</td>
+<td>.69</td>
+</tr>
+<tr>
+<td>H3+ (+ exposure)</td>
+<td>.3759</td>
+<td>.3538</td>
+<td>.69</td>
+</tr>
+<tr>
+<td>CatBoost ×5 (s7)</td>
+<td>.3774</td>
+<td><strong>.3542</strong></td>
+<td>.69</td>
+</tr>
+<tr>
+<td>blend (s8)</td>
+<td><strong>.3783</strong></td>
+<td>.3532</td>
+<td>.79</td>
+</tr>
+</tbody>
+</table></div>
+<p>Learned re-ranking is the largest step: H3 is +0.0175 over PPR × air on B, and H3+ adds +0.011. After H3+, every fold-A gain is ≤ 0.0025, several reverse on B, and each cell is a single fit. A larger candidate set raised recall by 0.10 but not B MAP@5. In the ablation (Table C2), only removing exposure costs clearly more than noise (−0.010 on B).</p>
+<p><strong>Kaggle.</strong> All ten files are listed with what each changed in Appendix D. The key results:</p>
+<table>
+<thead>
+<tr>
+<th>file</th>
+<th>private</th>
+<th>public</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>s1 popularity</td>
+<td>0.287</td>
+<td>0.303</td>
+</tr>
+<tr>
+<td>s3 PPR × air</td>
+<td>0.413</td>
+<td>0.414</td>
+</tr>
+<tr>
+<td>s7 CatBoost, raw counts</td>
+<td>0.430</td>
+<td>0.435</td>
+</tr>
+<tr>
+<td>s7b, per-week counts</td>
+<td>0.445</td>
+<td>0.445</td>
+</tr>
+<tr>
+<td><strong>s8 blend (final)</strong></td>
+<td><strong>0.446</strong></td>
+<td><strong>0.447</strong></td>
+</tr>
+</tbody>
+</table>
+<p>Two observations rest on one submission pair each:</p>
+<ol>
+<li>Per-week counts (s7 → s7b) raised private by +0.0148 but were neutral on fold B. Fold B, fit on A only, never exercises the stacked final fit, whose parts differ in window length.</li>
+<li>Adding fold C plus recency features (s9 → s10) lowered private by −0.0046. One plausible reason is that C's train window ends in the gap weeks, but the two changes are confounded.</li>
+</ol>
+<p>Fold-A OOF orders s3 &lt; s6 &lt; s7 &lt; s8 as Kaggle does; fold B does not.</p>
+<h2>VI. Recommendation Examples</h2>
+<p>The users were picked by rules fixed before their lists were seen (DESIGN D68–D69). We draw from the 1,260 test users in the fold-B cohort, with seed 42.</p>
+<ul>
+<li><strong>Heavy viewer:</strong> top 10% by train positive airings (≥ 173; 127 eligible).</li>
+<li><strong>Light viewer:</strong> 1–3 train positive programmes.</li>
+</ul>
+<p><strong>The first light rule produced a degenerate case.</strong> It drew a user whose single truth programme was their single history programme (<em>Friends</em>), so every personalised method scored AP 1.0 and the example showed nothing. We therefore added a second rule: the same light-viewer condition plus ≥ 3 truth programmes in 21–30 (21 eligible), with its own seed-42 draw. We report the second draw; the first is in Appendix F.</p>
+<p>In the tables, R = re-watch (≥ 1 positive in 11–20), T = in the 21–30 truth, f = filled by the shared fallback. Each method's fold-B MAP@5 was recomputed in the same run and matches Table III/IV.</p>
+<p>Train history top 6: SpongeBob 103 positives, Fairly OddParents 28, Masha and the Bear 19, Alvinnn!!! 16, Факты (news) 14, Сегодня (news) 13. The full top 10 is in Appendix F. Truth: SpongeBob, Факты, Сегодня, Fairly OddParents, Alvinnn!!!.</p>
+<div class='tb'><p>TABLE V. HEAVY VIEWER 3086774348345899441 — 252 POSITIVES, 47 PROGRAMMES</p>
+<table>
+<thead>
+<tr>
+<th>method</th>
+<th>AP</th>
+<th>top-5</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>popular.</td>
+<td>.35</td>
+<td>ТСН R · Факты RT · SpongeBob RT · Завтрак с 1+1 R · Сегодня RT</td>
+</tr>
+<tr>
+<td>history</td>
+<td>.71</td>
+<td>SpongeBob RT · OddParents RT · Masha R · Alvinnn RT · Факты RT</td>
+</tr>
+<tr>
+<td>PPR×air</td>
+<td>.76</td>
+<td>SpongeBob RT · OddParents RT · Alvinnn RT · Masha R · Факты RT</td>
+</tr>
+<tr>
+<td>CBF×air</td>
+<td>.60</td>
+<td>SpongeBob RT · Alvinnn RT · OddParents RT · Blaze · Penguins R</td>
+</tr>
+<tr>
+<td>ALS×air</td>
+<td>.60</td>
+<td>SpongeBob RT · Alvinnn RT · OddParents RT · ТСН R · Kung Fu Panda R</td>
+</tr>
+<tr>
+<td><strong>s8</strong></td>
+<td><strong>1.0</strong></td>
+<td>SpongeBob RT · Alvinnn RT · OddParents RT · Факты RT · Сегодня RT</td>
+</tr>
+</tbody>
+</table></div>
+<p>Train history: two films, <em>Volga-Volga</em> (1 positive) and <em>SWAT</em> (1). Truth: Факты, ТСН, Викна-Новости (news), and the series <em>Однажды в Одессе</em> and <em>Мамочки</em>. The user had no positive on any of them in train.</p>
+<div class='tb'><p>TABLE VI. LIGHT VIEWER 706288898823145641 — 2 POSITIVES, 2 PROGRAMMES</p>
+<table>
+<thead>
+<tr>
+<th>method</th>
+<th>AP</th>
+<th>top-5</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>popular.</td>
+<td>.40</td>
+<td>ТСН T · Факты T · SpongeBob · Завтрак с 1+1 · Сегодня</td>
+</tr>
+<tr>
+<td>history</td>
+<td>0</td>
+<td>Volga-Volga R · SWAT R · Criminal Minds f · CSI f · Hercules f</td>
+</tr>
+<tr>
+<td>PPR×air</td>
+<td>.17</td>
+<td>SWAT R · Volga-Volga R · ТСН T · Факты T · SpongeBob</td>
+</tr>
+<tr>
+<td>CBF×air</td>
+<td>0</td>
+<td>SWAT R · Volga-Volga R · Цирк · Battle: Los Angeles · Весёлые ребята</td>
+</tr>
+<tr>
+<td>ALS×air</td>
+<td>0</td>
+<td>Служба розыска детей · Майор и магия · Gumball · Lost · Деньги</td>
+</tr>
+<tr>
+<td>s8</td>
+<td>.40</td>
+<td>ТСН T · Факты T · SpongeBob · Peppa Pig · Безбашенные</td>
+</tr>
+</tbody>
+</table></div>
+<p><strong>Heavy viewer.</strong> Every method finds SpongeBob. Only s8 has all five truth programmes, including both news shows, which only popularity also lists.</p>
+<p><strong>Light viewer.</strong> The truth consists entirely of programmes the user never watched in train, which is the case for 33–35% of all truth items (B29). History and content therefore repeat the two films and miss. ALS returns items unrelated to their history. Only methods that fall back on global popularity reach the news programmes: popularity, PPR, and s8, which ranks them first.</p>
+<h2>VII. Which Strategy for sweet.tv, and Why</h2>
+<p><strong>Validation.</strong> Each learned re-ranker beats every single method on both folds (≥ +0.017 on B), and on Kaggle by 0.017–0.033 private. The only exception is s6, which was fit on fold B alone (+0.0003). Within the re-rankers, files differ by &lt; 0.0015 on fold B but by up to 0.033 on Kaggle. In our submission pairs, that spread follows how the final model was fit (window stacking, per-week scaling) more closely than the model family. The three best private scores (s8 0.44568, s9 0.44534, s7b 0.44495) lie within 0.0007 of each other, below the observed public/private disagreement (up to 0.016).</p>
+<p><strong>Cost.</strong> PPR × air needs no labels and runs in 24 s. A single re-ranker adds four candidate sources and one model (CatBoost × 5: 125 s on B; the s7b script: 9 min). The blend trains two models on 2.3× as many candidate rows.</p>
+<p><strong>Lists.</strong> In s8, 88% of slots (5,558 of 6,300) are re-watches; for the heavy viewer in Sec. VI, all five are. The system mostly reflects viewing routines, and it gives new recommendations only where history runs out.</p>
+<p><strong>Choice.</strong> We would select a two-stage system for sweet.tv:</p>
+<ol>
+<li>history, PPR × air, content × air and ALS × air as candidate generators;</li>
+<li><strong>one</strong> gradient-boosted re-ranker with per-week-normalised counts and exposure features, trained on stacked windows (the s7b configuration).</li>
+</ol>
+<p>The blend's +0.0007 private over s7b is a single comparison and does not justify doubling training and maintenance. PPR × air is the fallback: 0.413 private, 93% of s8, at a fraction of the cost. We make no engagement or revenue claim: no online test was run, and the label is the competition's offline proxy. The graded competition file remains s8, the best private score.</p>
+<h2>VIII. Limitations</h2>
+<ol>
+<li><strong>Most airtime is unlabelled:</strong> 10.8% of schedule rows and 16% of airtime carry an id, although these receive 55–58% of viewed seconds. The rest of the viewing is invisible to items and labels.</li>
+<li><strong>Collection gap, weeks 20–27:</strong> log rows per week fall from ~410k to 105k at the lowest point. Fold B's target mostly lies in it, and so does the end of fold C's train window.</li>
+<li><strong>Validation vs Kaggle:</strong> fold B separates the top models by &lt; 0.0015 and misorders them. It cannot test the stacked final fit.</li>
+<li><strong>Leaderboard selection.</strong> <strong>s9 and s10 were specified after Kaggle scores were known, and the final file is the best private score, per the instructor's rule.</strong> That score is therefore optimistic for new data.</li>
+<li><strong>Unknown target details:</strong> the Kaggle tie-break and the exact screen-time rule (union vs sum, DST) are unknown.</li>
+<li><strong>Single fits:</strong> results come from single fits without intervals, and some optima lie on grid edges (ALS, H2 k, CatBoost depth).</li>
+<li><strong>Known bug in the final file:</strong> s8 keeps the B38 active-week inflation (18% of fold-B users). Fixing it in s9 changed private by −0.0003.</li>
+</ol>
+<h2>IX. Discussion in my words</h2>
+<p><em>[placeholder — to be written by the author]</em></p>
+<h2>X. Personal verification</h2>
+<p><em>[placeholder — to be written by the author]</em></p>
+<h2>XI. Conclusion</h2>
+<p>Airing-count weighting (+0.074 for content on B) and a learned re-ranker with exposure features (+0.028 over the best single method on B) are the gains that validation could see. On Kaggle, the largest further gain came from how the final model was fit: stacked windows and per-week counts. The graded file is s8, with private MAP@5 0.44568.</p>
+<p>Code, logs and every submission are at https://github.com/kocnevaangelina2000-wq/sweettv-tv-recommender-exam (README: commands in order and runtimes). Reference records are in <code>analysis/refs/</code>.</p>
+<p><em>[slot — Kaggle best private score screenshot: save it as <code>screenshots/kaggle_best_private.png</code> and replace this line with <code>![Kaggle best private score](../screenshots/kaggle_best_private.png)</code>]</em></p>
+<h2>References</h2>
+<p>[1] Y. Hu, Y. Koren, and C. Volinsky, "Collaborative filtering for implicit feedback datasets," in <em>Proc. 8th IEEE Int. Conf. Data Mining (ICDM)</em>, Dec. 2008, pp. 263–272, doi: 10.1109/ICDM.2008.22.</p>
+<p>[2] T. H. Haveliwala, "Topic-sensitive PageRank," in <em>Proc. 11th Int. Conf. World Wide Web (WWW)</em>, May 2002, pp. 517–526, doi: 10.1145/511446.511513.</p>
+<p>[3] P. Lops, M. de Gemmis, and G. Semeraro, "Content-based recommender systems: State of the art and trends," in <em>Recommender Systems Handbook</em>. Boston, MA, USA: Springer, 2011, pp. 73–105, doi: 10.1007/978-0-387-85820-3_3.</p>
+<p>[4] A. Gulin, I. Kuralenok, and D. Pavlov, "Winning the transfer learning track of Yahoo!'s learning to rank challenge with YetiRank," in <em>Proc. Learning to Rank Challenge</em>, PMLR, vol. 14, 2011, pp. 63–76. [Online]. Available: https://proceedings.mlr.press/v14/gulin11a.html</p>
+<p>[5] P. Cremonesi, Y. Koren, and R. Turrin, "Performance of recommender algorithms on top-N recommendation tasks," in <em>Proc. 4th ACM Conf. Recommender Systems (RecSys)</em>, Sep. 2010, pp. 39–46, doi: 10.1145/1864708.1864721.</p>
+<p>[6] Kaggle, "sweet.tv – TV program recommender," competition page. [Online]. Available: https://www.kaggle.com/competitions/sweettv-tv-program-recommender</p>
+</div><div class='appendix'><h2>Appendix</h2>
+<h3>A. Data traps (BUGLOG.md)</h3>
+<table>
+<thead>
+<tr>
+<th>#</th>
+<th>trap</th>
+<th>handling</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>B2</td>
+<td>file names and week ranges differ from the task text (content is ISO weeks 11–20, 21–30, 31–42); log column <code>stop_time</code>; duration misspelt <code>duraton</code></td>
+<td>names by content; explicit columns</td>
+</tr>
+<tr>
+<td>B4</td>
+<td><code>user_id</code> up to 20 digits (&gt; int64)</td>
+<td>uint64</td>
+</tr>
+<tr>
+<td>B5</td>
+<td>log <code>YYYY-MM-DD</code>, schedules <code>DD.MM.YYYY</code></td>
+<td>explicit formats</td>
+</tr>
+<tr>
+<td>B6</td>
+<td>both on local wall-clock time; 117 views and 257 airings span the 2020-03-29 DST switch</td>
+<td>detected, not corrected</td>
+</tr>
+<tr>
+<td>B7b</td>
+<td>same-user overlapping views (multi-device): sum &gt; 1 for 24,005 interactions</td>
+<td>union, not sum</td>
+</tr>
+<tr>
+<td>B7d</td>
+<td>collection gap weeks 20–27: rows/week ~410k → 105k; active test users 1,232 → 795 (week 26)</td>
+<td>documented</td>
+</tr>
+<tr>
+<td>B8</td>
+<td>schedules cut at each channel's broadcast-day start, running into Monday 12:00 of the next ISO week</td>
+<td>concatenation; period = source file</td>
+</tr>
+<tr>
+<td>B10</td>
+<td>5 log channels never scheduled; 5 movie channels scheduled only from April–June</td>
+<td>7.1% of views unmatched</td>
+</tr>
+<tr>
+<td>B11</td>
+<td>labelled airings: 10.8–11.3% of rows, 16.0–16.9% of airtime</td>
+<td>id = 0 kept as features only</td>
+</tr>
+<tr>
+<td>B12</td>
+<td>750 of 1,150 test users with ≥ 5 positive programmes in 21-30 tie at places 5/6</td>
+<td>our tie-break: union seconds, then id</td>
+</tr>
+<tr>
+<td>B14</td>
+<td>airings per programme: median 4, maximum 6,691 (31-42)</td>
+<td>× log(1 + airings)</td>
+</tr>
+<tr>
+<td>B38</td>
+<td>edge weeks inflate active-week counts for 882 of 4,874 fold-B users</td>
+<td>fixed in s7b/s9/s10, not in s8</td>
+</tr>
+</tbody>
+</table>
+<h3>B. Single methods, full (MAP@5; A and B cohort, B test, re-watch share of slots)</h3>
+<table>
+<thead>
+<tr>
+<th>method</th>
+<th>params (chosen on A)</th>
+<th>A</th>
+<th>A test</th>
+<th>B</th>
+<th>B test</th>
+<th>re-watch</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>popularity</td>
+<td>—</td>
+<td>0.24370</td>
+<td>0.27584</td>
+<td>0.23684</td>
+<td>0.26799</td>
+<td>0.543</td>
+</tr>
+<tr>
+<td>history count (ties: seconds)</td>
+<td>—</td>
+<td>0.32386</td>
+<td>0.36449</td>
+<td>0.30671</td>
+<td>0.35027</td>
+<td>0.945</td>
+</tr>
+<tr>
+<td>history count (ties: popularity)</td>
+<td>—</td>
+<td>0.33372</td>
+<td>0.37524</td>
+<td>0.31362</td>
+<td>0.35617</td>
+<td>—</td>
+</tr>
+<tr>
+<td>history recency</td>
+<td>half-life 4 w</td>
+<td>0.31811</td>
+<td>0.35874</td>
+<td>0.30008</td>
+<td>0.34509</td>
+<td>0.945</td>
+</tr>
+<tr>
+<td>history expected</td>
+<td>—</td>
+<td>0.32312</td>
+<td>0.36118</td>
+<td>0.29559</td>
+<td>0.33877</td>
+<td>0.945</td>
+</tr>
+<tr>
+<td>ALS</td>
+<td>log1p, f 128, reg 0.1, α 0.1</td>
+<td>0.31649</td>
+<td>0.35658</td>
+<td>0.28542</td>
+<td>0.31797</td>
+<td>0.912</td>
+</tr>
+<tr>
+<td>ALS × air</td>
+<td>count, f 16, reg 0.01, α 1</td>
+<td>0.31385</td>
+<td>0.34472</td>
+<td>0.29041</td>
+<td>0.31775</td>
+<td>0.776</td>
+</tr>
+<tr>
+<td>PPR</td>
+<td>α 0.7</td>
+<td>0.33879</td>
+<td>0.38095</td>
+<td>0.31944</td>
+<td>0.36125</td>
+<td>0.885</td>
+</tr>
+<tr>
+<td>PPR × air</td>
+<td>α 0.5</td>
+<td>0.34111</td>
+<td>0.38181</td>
+<td>0.32559</td>
+<td>0.36866</td>
+<td>0.923</td>
+</tr>
+<tr>
+<td>CBF</td>
+<td>—</td>
+<td>0.23688</td>
+<td>0.26276</td>
+<td>0.22467</td>
+<td>0.24891</td>
+<td>0.598</td>
+</tr>
+<tr>
+<td>CBF × air</td>
+<td>—</td>
+<td>0.31320</td>
+<td>0.34897</td>
+<td>0.29870</td>
+<td>0.33400</td>
+<td>0.712</td>
+</tr>
+</tbody>
+</table>
+<p>PPR by α on fold B (plain / × air): 0.3 0.3146 / 0.3229; 0.5 0.3182 / <strong>0.3256</strong>; 0.7 <strong>0.3194</strong> / 0.3179; 0.85 0.2986 / 0.2922. The full 150-point ALS grids per fold are in <code>logs/s4a_grid.csv</code>.</p>
+<h3>C. Re-rankers, step 5 and ablation</h3>
+<div class='tb'><p>TABLE C1. STEP-5 CONFIGURATIONS (A: OOF; B: fit on A)</p>
+<table>
+<thead>
+<tr>
+<th>config</th>
+<th>A</th>
+<th>A test</th>
+<th>B</th>
+<th>B test</th>
+<th>recall B</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>H3+ (current)</td>
+<td>0.37585</td>
+<td>0.41734</td>
+<td>0.35379</td>
+<td>0.39499</td>
+<td>0.694</td>
+</tr>
+<tr>
+<td>+ exposure source, others top-30</td>
+<td>0.37738</td>
+<td>0.41848</td>
+<td>0.35256</td>
+<td>0.39353</td>
+<td>0.764</td>
+</tr>
+<tr>
+<td>+ exposure source, top-60 everywhere</td>
+<td>0.37614</td>
+<td>0.41570</td>
+<td>0.35168</td>
+<td>0.39300</td>
+<td>0.792</td>
+</tr>
+<tr>
+<td>per-week features</td>
+<td>0.37600</td>
+<td>0.41755</td>
+<td>0.35214</td>
+<td>0.39363</td>
+<td>0.694</td>
+</tr>
+<tr>
+<td>CatBoost YetiRank lr 0.03 d 8</td>
+<td>0.37718</td>
+<td>0.41785</td>
+<td>0.35332</td>
+<td>0.39598</td>
+<td>0.694</td>
+</tr>
+<tr>
+<td>CatBoost × 5 seeds (s7)</td>
+<td>0.37739</td>
+<td>0.41852</td>
+<td>0.35415</td>
+<td>0.39646</td>
+<td>0.694</td>
+</tr>
+<tr>
+<td>all step-5 changes together</td>
+<td>0.37649</td>
+<td>0.41741</td>
+<td>0.35411</td>
+<td>0.39432</td>
+<td>0.792</td>
+</tr>
+<tr>
+<td>blend HGB + CB (s8)</td>
+<td>0.37830</td>
+<td>0.41873</td>
+<td>0.35316</td>
+<td>0.39339</td>
+<td>0.792</td>
+</tr>
+</tbody>
+</table></div>
+<p>CatBoost grid, A OOF (lr 0.03 / 0.1; depth 4, 6, 8): 0.37415, 0.37651, <strong>0.37718</strong> / 0.37636, 0.37601, 0.37587. The top five points of the 126-point blend grid all give H2 weight 0.</p>
+<div class='tb'><p>TABLE C2. H3+ ABLATION ON FOLD B (refit on A without the group)</p>
+<table>
+<thead>
+<tr>
+<th>dropped group</th>
+<th>B</th>
+<th>drop</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>exposure</td>
+<td>0.34384</td>
+<td>+0.0100</td>
+</tr>
+<tr>
+<td>method scores</td>
+<td>0.34979</td>
+<td>+0.0040</td>
+</tr>
+<tr>
+<td>history</td>
+<td>0.35139</td>
+<td>+0.0024</td>
+</tr>
+<tr>
+<td>length</td>
+<td>0.35352</td>
+<td>+0.0003</td>
+</tr>
+<tr>
+<td>popularity / airings</td>
+<td>0.35496</td>
+<td>−0.0012</td>
+</tr>
+</tbody>
+</table></div>
+<h3>D. All Kaggle submissions</h3>
+<table>
+<thead>
+<tr>
+<th>file</th>
+<th>what changed</th>
+<th>A</th>
+<th>B</th>
+<th>private</th>
+<th>public</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>s1</td>
+<td>popularity + channel fallback</td>
+<td>0.24370</td>
+<td>0.23684</td>
+<td>0.28680</td>
+<td>0.30312</td>
+</tr>
+<tr>
+<td>s3</td>
+<td>PPR × air</td>
+<td>0.34111</td>
+<td>0.32559</td>
+<td>0.41277</td>
+<td>0.41415</td>
+</tr>
+<tr>
+<td>s6</td>
+<td>H3+ HGB; final fit on B only</td>
+<td>0.37585</td>
+<td>0.35379</td>
+<td>0.41304</td>
+<td>0.41277</td>
+</tr>
+<tr>
+<td>s7</td>
+<td>CatBoost × 5; final fit on A+B; raw counts</td>
+<td>0.37739</td>
+<td>0.35415</td>
+<td>0.43013</td>
+<td>0.43474</td>
+</tr>
+<tr>
+<td><strong>s8 (final)</strong></td>
+<td>HGB + CB rank blend; exposure + top-60 candidates; per-week features</td>
+<td>0.37830</td>
+<td>0.35316</td>
+<td><strong>0.44568</strong></td>
+<td>0.44710</td>
+</tr>
+<tr>
+<td>s7b</td>
+<td>s7 with all 7 counts per week + B38 fix (designed before, run after the scores)</td>
+<td>—</td>
+<td>0.35414</td>
+<td>0.44495</td>
+<td>0.44515</td>
+</tr>
+<tr>
+<td>s9 <em>(after scores)</em></td>
+<td>s8 + B38 fix + all counts per week + CB × 5</td>
+<td>—</td>
+<td>0.35415</td>
+<td>0.44534</td>
+<td>0.44831</td>
+</tr>
+<tr>
+<td>s10 <em>(after scores)</em></td>
+<td>s9 + fold C (train 11–27 → 28–30) + recency; fit on A+B+C</td>
+<td>—</td>
+<td>0.35455</td>
+<td>0.44073</td>
+<td>0.44500</td>
+</tr>
+</tbody>
+</table>
+<p>s2, s2b, s4 and s5 were written but not submitted. Fold C, with s10's config: cohort 4,454; MAP@5 0.29470 → 0.29548 with recency features (fit on A+B).</p>
+<h3>E. Slot sources of the final files (6,300 slots; first source containing the item: history &gt; PPR &gt; CBF &gt; ALS &gt; exposure &gt; popularity, else fallback)</h3>
+<table>
+<thead>
+<tr>
+<th>file</th>
+<th>history</th>
+<th>PPR</th>
+<th>CBF</th>
+<th>ALS</th>
+<th>exposure</th>
+<th>popularity</th>
+<th>fallback</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>s4 (H1)</td>
+<td>6,226</td>
+<td>54</td>
+<td>0</td>
+<td>0</td>
+<td>—</td>
+<td>0</td>
+<td>20</td>
+</tr>
+<tr>
+<td>s5 (H3)</td>
+<td>5,400</td>
+<td>633</td>
+<td>101</td>
+<td>117</td>
+<td>—</td>
+<td>29</td>
+<td>20</td>
+</tr>
+<tr>
+<td>s6 (H3+)</td>
+<td>5,178</td>
+<td>764</td>
+<td>143</td>
+<td>152</td>
+<td>—</td>
+<td>43</td>
+<td>20</td>
+</tr>
+<tr>
+<td>s7</td>
+<td>5,606</td>
+<td>595</td>
+<td>34</td>
+<td>36</td>
+<td>0</td>
+<td>9</td>
+<td>20</td>
+</tr>
+<tr>
+<td><strong>s8</strong></td>
+<td>5,558</td>
+<td>669</td>
+<td>29</td>
+<td>6</td>
+<td>15</td>
+<td>3</td>
+<td>20</td>
+</tr>
+<tr>
+<td>s7b</td>
+<td>5,642</td>
+<td>604</td>
+<td>17</td>
+<td>12</td>
+<td>0</td>
+<td>5</td>
+<td>20</td>
+</tr>
+<tr>
+<td>s9</td>
+<td>5,539</td>
+<td>687</td>
+<td>30</td>
+<td>7</td>
+<td>14</td>
+<td>3</td>
+<td>20</td>
+</tr>
+<tr>
+<td>s10</td>
+<td>5,643</td>
+<td>603</td>
+<td>19</td>
+<td>3</td>
+<td>12</td>
+<td>0</td>
+<td>20</td>
+</tr>
+</tbody>
+</table>
+<h3>F. Example users, full tables</h3>
+<p>Full rows from <code>logs/examples.md</code> (titles as in the schedule, Russian). Users: heavy, light rule 1 (degenerate, reported for transparency) and light rule 2 (used in Sec. VI).</p>
+<p>Tags: <strong>R</strong> = re-watch (the user had ≥ 1 positive airing of this programme in train 11-20); <strong>T</strong> = in the user's 21-30 truth; <strong>f</strong> = slot filled by the shared fallback, not by the method.</p>
+<p><strong>heavy viewer <code>3086774348345899441</code></strong>: 252 train positive airings over 47 programmes (weeks 11-20); 5 truth programmes in 21-30</p>
+<p>Train history top-10 (11-20):</p>
+<table>
+<thead>
+<tr>
+<th>#</th>
+<th>id</th>
+<th>title</th>
+<th>category</th>
+<th>positives</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1</td>
+<td>12001682</td>
+<td>М/с 'Губка Боб Квадратные Штаны'.</td>
+<td>Детям</td>
+<td>103</td>
+</tr>
+<tr>
+<td>2</td>
+<td>12001734</td>
+<td>М/с 'Волшебные покровители'.</td>
+<td>Детям</td>
+<td>28</td>
+</tr>
+<tr>
+<td>3</td>
+<td>12002201</td>
+<td>М/с 'Маша и Медведь'.</td>
+<td>Детям</td>
+<td>19</td>
+</tr>
+<tr>
+<td>4</td>
+<td>12002856</td>
+<td>М/с 'Элвиннн!!! и бурундуки'.</td>
+<td>Детям</td>
+<td>16</td>
+</tr>
+<tr>
+<td>5</td>
+<td>240081</td>
+<td>Факты.</td>
+<td>Инфо</td>
+<td>14</td>
+</tr>
+<tr>
+<td>6</td>
+<td>2400508</td>
+<td>Сегодня.</td>
+<td>Инфо</td>
+<td>13</td>
+</tr>
+<tr>
+<td>7</td>
+<td>12002753</td>
+<td>М/с 'Санджей и Крейг'.</td>
+<td>Детям</td>
+<td>7</td>
+</tr>
+<tr>
+<td>8</td>
+<td>12002771</td>
+<td>М/с 'Черепашки-ниндзя'.</td>
+<td>Детям</td>
+<td>5</td>
+</tr>
+<tr>
+<td>9</td>
+<td>12002955</td>
+<td>М/с 'Свинка Пеппа'.</td>
+<td>Детям</td>
+<td>4</td>
+</tr>
+<tr>
+<td>10</td>
+<td>2400467</td>
+<td>'Викна-Новости'.</td>
+<td>Инфо</td>
+<td>2</td>
+</tr>
+</tbody>
+</table>
+<p>Truth 21-30 (in order): 12001682 М/с 'Губка Боб Квадратные Штаны'., 240081 Факты., 2400508 Сегодня., 12001734 М/с 'Волшебные покровители'., 12002856 М/с 'Элвиннн!!! и бурундуки'.</p>
+<table>
+<thead>
+<tr>
+<th>method</th>
+<th>AP@5</th>
+<th>1</th>
+<th>2</th>
+<th>3</th>
+<th>4</th>
+<th>5</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>popularity</td>
+<td>0.353</td>
+<td>2400480 ТСН. (Инфо) <strong>R</strong></td>
+<td>240081 Факты. (Инфо) <strong>RT</strong></td>
+<td>12001682 М/с 'Губка Боб Квадратные Штаны'. (Детям) <strong>RT</strong></td>
+<td>20088 'Завтрак с 1+1'. Информационно-развлекательная программа. (Развлечения) <strong>R</strong></td>
+<td>2400508 Сегодня. (Инфо) <strong>RT</strong></td>
+</tr>
+<tr>
+<td>history (count)</td>
+<td>0.710</td>
+<td>12001682 М/с 'Губка Боб Квадратные Штаны'. (Детям) <strong>RT</strong></td>
+<td>12001734 М/с 'Волшебные покровители'. (Детям) <strong>RT</strong></td>
+<td>12002201 М/с 'Маша и Медведь'. (Детям) <strong>R</strong></td>
+<td>12002856 М/с 'Элвиннн!!! и бурундуки'. (Детям) <strong>RT</strong></td>
+<td>240081 Факты. (Инфо) <strong>RT</strong></td>
+</tr>
+<tr>
+<td>PPR x air (alpha 0.5)</td>
+<td>0.760</td>
+<td>12001682 М/с 'Губка Боб Квадратные Штаны'. (Детям) <strong>RT</strong></td>
+<td>12001734 М/с 'Волшебные покровители'. (Детям) <strong>RT</strong></td>
+<td>12002856 М/с 'Элвиннн!!! и бурундуки'. (Детям) <strong>RT</strong></td>
+<td>12002201 М/с 'Маша и Медведь'. (Детям) <strong>R</strong></td>
+<td>240081 Факты. (Инфо) <strong>RT</strong></td>
+</tr>
+<tr>
+<td>CBF x air</td>
+<td>0.600</td>
+<td>12001682 М/с 'Губка Боб Квадратные Штаны'. (Детям) <strong>RT</strong></td>
+<td>12002856 М/с 'Элвиннн!!! и бурундуки'. (Детям) <strong>RT</strong></td>
+<td>12001734 М/с 'Волшебные покровители'. (Детям) <strong>RT</strong></td>
+<td>12002896 М/с 'Вспыш и чудо-машинки', 2 сезон, 14 с. 'Унесённый лыжами'. (Детям)</td>
+<td>12001732 М/с 'Пингвины из 'Мадагаскара'. (Детям) <strong>R</strong></td>
+</tr>
+<tr>
+<td>ALS x air (count, f=16, reg=0.01, alpha=1)</td>
+<td>0.600</td>
+<td>12001682 М/с 'Губка Боб Квадратные Штаны'. (Детям) <strong>RT</strong></td>
+<td>12002856 М/с 'Элвиннн!!! и бурундуки'. (Детям) <strong>RT</strong></td>
+<td>12001734 М/с 'Волшебные покровители'. (Детям) <strong>RT</strong></td>
+<td>2400480 ТСН. (Инфо) <strong>R</strong></td>
+<td>12002355 М/с 'Кунг-фу панда: Удивительные легенды'. (Детям) <strong>R</strong></td>
+</tr>
+<tr>
+<td>s8 blend (HGB + CatBoost rank fusion)</td>
+<td>1.000</td>
+<td>12001682 М/с 'Губка Боб Квадратные Штаны'. (Детям) <strong>RT</strong></td>
+<td>12002856 М/с 'Элвиннн!!! и бурундуки'. (Детям) <strong>RT</strong></td>
+<td>12001734 М/с 'Волшебные покровители'. (Детям) <strong>RT</strong></td>
+<td>240081 Факты. (Инфо) <strong>RT</strong></td>
+<td>2400508 Сегодня. (Инфо) <strong>RT</strong></td>
+</tr>
+</tbody>
+</table>
+<p><strong>light viewer <code>14394187406328124815</code></strong>: 1 train positive airings over 1 programmes (weeks 11-20); 1 truth programmes in 21-30</p>
+<p>Train history top-10 (11-20):</p>
+<table>
+<thead>
+<tr>
+<th>#</th>
+<th>id</th>
+<th>title</th>
+<th>category</th>
+<th>positives</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1</td>
+<td>1000376</td>
+<td>Т/с 'Друзья', 1 сезон, 5 с.</td>
+<td>Сериалы</td>
+<td>1</td>
+</tr>
+</tbody>
+</table>
+<p>Truth 21-30 (in order): 1000376 Т/с 'Друзья', 1 сезон, 5 с.</p>
+<table>
+<thead>
+<tr>
+<th>method</th>
+<th>AP@5</th>
+<th>1</th>
+<th>2</th>
+<th>3</th>
+<th>4</th>
+<th>5</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>popularity</td>
+<td>0.000</td>
+<td>2400480 ТСН. (Инфо)</td>
+<td>240081 Факты. (Инфо)</td>
+<td>12001682 М/с 'Губка Боб Квадратные Штаны'. (Детям)</td>
+<td>20088 'Завтрак с 1+1'. Информационно-развлекательная программа. (Развлечения)</td>
+<td>2400508 Сегодня. (Инфо)</td>
+</tr>
+<tr>
+<td>history (count)</td>
+<td>1.000</td>
+<td>1000376 Т/с 'Друзья', 1 сезон, 5 с. (Сериалы) <strong>RT</strong></td>
+<td>12001682 М/с 'Губка Боб Квадратные Штаны'. (Детям) <strong>f</strong></td>
+<td>2400480 ТСН. (Инфо) <strong>f</strong></td>
+<td>240081 Факты. (Инфо) <strong>f</strong></td>
+<td>2400467 'Викна-Новости'. (Инфо) <strong>f</strong></td>
+</tr>
+<tr>
+<td>PPR x air (alpha 0.5)</td>
+<td>1.000</td>
+<td>1000376 Т/с 'Друзья', 1 сезон, 5 с. (Сериалы) <strong>RT</strong></td>
+<td>2400480 ТСН. (Инфо)</td>
+<td>12001682 М/с 'Губка Боб Квадратные Штаны'. (Детям)</td>
+<td>10001514 Т/с 'Теория большого взрыва', 2 сезон, 15 с. (Сериалы)</td>
+<td>240081 Факты. (Инфо)</td>
+</tr>
+<tr>
+<td>CBF x air</td>
+<td>1.000</td>
+<td>1000376 Т/с 'Друзья', 1 сезон, 5 с. (Сериалы) <strong>RT</strong></td>
+<td>10001514 Т/с 'Теория большого взрыва', 2 сезон, 15 с. (Сериалы)</td>
+<td>1000405 Т/с 'Клиника', 2 сезон, 19 с. (Сериалы)</td>
+<td>10001903 Т/с 'Американская семейка', 9 сезон, 9 с. (Сериалы)</td>
+<td>10002810 Т/с 'Бруклин 9-9', 6 сезон, 17 с. (Сериалы)</td>
+</tr>
+<tr>
+<td>ALS x air (count, f=16, reg=0.01, alpha=1)</td>
+<td>1.000</td>
+<td>1000376 Т/с 'Друзья', 1 сезон, 5 с. (Сериалы) <strong>RT</strong></td>
+<td>10001514 Т/с 'Теория большого взрыва', 2 сезон, 15 с. (Сериалы)</td>
+<td>1000589 Т/с 'Отчаянные домохозяйки', 5 сезон, 17 с. 'История Люси и Джесси'. (Сериалы)</td>
+<td>1000405 Т/с 'Клиника', 2 сезон, 19 с. (Сериалы)</td>
+<td>12001712 М/с 'Симпсоны'. (Детям)</td>
+</tr>
+<tr>
+<td>s8 blend (HGB + CatBoost rank fusion)</td>
+<td>1.000</td>
+<td>1000376 Т/с 'Друзья', 1 сезон, 5 с. (Сериалы) <strong>RT</strong></td>
+<td>10001336 Т/с 'Кости', 9 сезон, 21 с. 'Случай с холодом'. (Сериалы)</td>
+<td>2400480 ТСН. (Инфо)</td>
+<td>12001682 М/с 'Губка Боб Квадратные Штаны'. (Детям)</td>
+<td>12001712 М/с 'Симпсоны'. (Детям)</td>
+</tr>
+</tbody>
+</table>
+<p><strong>light (rule 2: &gt;= 3 truth programmes) viewer <code>706288898823145641</code></strong>: 2 train positive airings over 2 programmes (weeks 11-20); 5 truth programmes in 21-30</p>
+<p>Train history top-10 (11-20):</p>
+<table>
+<thead>
+<tr>
+<th>#</th>
+<th>id</th>
+<th>title</th>
+<th>category</th>
+<th>positives</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1</td>
+<td>90044148</td>
+<td>Х/ф 'Волга-Волга'.</td>
+<td>Фильмы</td>
+<td>1</td>
+</tr>
+<tr>
+<td>2</td>
+<td>90055479</td>
+<td>Х/ф 'SWAT: Спецназ города ангелов'.</td>
+<td>Фильмы</td>
+<td>1</td>
+</tr>
+</tbody>
+</table>
+<p>Truth 21-30 (in order): 240081 Факты., 2400480 ТСН., 10003012 Т/с 'Однажды в Одессе'., 2400467 'Викна-Новости'., 10002515 Т/с 'Мамочки', 1 сезон, 19 и 20 с.</p>
+<table>
+<thead>
+<tr>
+<th>method</th>
+<th>AP@5</th>
+<th>1</th>
+<th>2</th>
+<th>3</th>
+<th>4</th>
+<th>5</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>popularity</td>
+<td>0.400</td>
+<td>2400480 ТСН. (Инфо) <strong>T</strong></td>
+<td>240081 Факты. (Инфо) <strong>T</strong></td>
+<td>12001682 М/с 'Губка Боб Квадратные Штаны'. (Детям)</td>
+<td>20088 'Завтрак с 1+1'. Информационно-развлекательная программа. (Развлечения)</td>
+<td>2400508 Сегодня. (Инфо)</td>
+</tr>
+<tr>
+<td>history (count)</td>
+<td>0.000</td>
+<td>90044148 Х/ф 'Волга-Волга'. (Фильмы) <strong>R</strong></td>
+<td>90055479 Х/ф 'SWAT: Спецназ города ангелов'. (Фильмы) <strong>R</strong></td>
+<td>10001261 Т/с 'Мыслить как преступник'. (Сериалы) <strong>f</strong></td>
+<td>1000381 Т/с 'CSI: Место преступления', 7 сезон, 6 и 7 с. (Сериалы) <strong>f</strong></td>
+<td>90077217 Х/ф 'Геракл: Начало легенды'. (Фильмы) <strong>f</strong></td>
+</tr>
+<tr>
+<td>PPR x air (alpha 0.5)</td>
+<td>0.167</td>
+<td>90055479 Х/ф 'SWAT: Спецназ города ангелов'. (Фильмы) <strong>R</strong></td>
+<td>90044148 Х/ф 'Волга-Волга'. (Фильмы) <strong>R</strong></td>
+<td>2400480 ТСН. (Инфо) <strong>T</strong></td>
+<td>240081 Факты. (Инфо) <strong>T</strong></td>
+<td>12001682 М/с 'Губка Боб Квадратные Штаны'. (Детям)</td>
+</tr>
+<tr>
+<td>CBF x air</td>
+<td>0.000</td>
+<td>90055479 Х/ф 'SWAT: Спецназ города ангелов'. (Фильмы) <strong>R</strong></td>
+<td>90044148 Х/ф 'Волга-Волга'. (Фильмы) <strong>R</strong></td>
+<td>90044710 Исторический прайм. Х/ф 'Цирк'. (Фильмы)</td>
+<td>90073000 Х/ф 'Инопланетное вторжение: Битва за Лос-Анджелес'. (Фильмы)</td>
+<td>90037720 Исторический прайм. Х/ф 'Веселые ребята'. (Фильмы)</td>
+</tr>
+<tr>
+<td>ALS x air (count, f=16, reg=0.01, alpha=1)</td>
+<td>0.000</td>
+<td>2400340 Служба розыска детей. (Инфо)</td>
+<td>10002744 Т/с 'Майор и магия', 8 с. (Сериалы)</td>
+<td>12002378 М/с 'Удивительный мир Гамбола'. (Детям)</td>
+<td>1000289 Т/с 'Остаться в живых', 1 сезон, 1 с. 'Таинственный остров - часть 1'. (Сериалы)</td>
+<td>5900347 'Деньги'. (Инфо)</td>
+</tr>
+<tr>
+<td>s8 blend (HGB + CatBoost rank fusion)</td>
+<td>0.400</td>
+<td>2400480 ТСН. (Инфо) <strong>T</strong></td>
+<td>240081 Факты. (Инфо) <strong>T</strong></td>
+<td>12001682 М/с 'Губка Боб Квадратные Штаны'. (Детям)</td>
+<td>12002955 М/с 'Свинка Пеппа'. (Детям)</td>
+<td>90080832 Х/ф 'Безбашенные'. (Фильмы)</td>
+</tr>
+</tbody>
+</table></div></body></html>
