@@ -32,19 +32,7 @@ Hu et al. [1] model implicit counts as confidence weights on binary preferences 
 
 ## III. Data
 
-TABLE I. DATA ACCOUNTING (logs/stats.log, logs/audit.log)
-
-| quantity | value |
-|---|---|
-| log rows / users / channels | 5,821,987 / 4,914 / 202 |
-| exact-duplicate log rows dropped | 17 |
-| schedule rows 11-20 / 21-30 / 31-42 | 1.07 M / 1.07 M / 1.30 M |
-| labelled (id ≠ 0): rows / airtime | 10.8–11.3% / 16.0–16.9% |
-| viewed seconds on labelled airings | 54.8% (11-20), 58.4% (21-30) |
-| (view, airing) pairs with overlap | 7,752,415 |
-| views matching no airing | 7.10% |
-| positive interactions 11-20 / 21-30 | 317,043 / 294,717 |
-| test users / cold (no positive) | 1,260 / 4 |
+Data accounting (log, schedule, join and test-user counts) is in Table A0, Appendix A.
 
 **Join.** A view and an airing match if `vsetv_id = channel_id` and the intervals [start, stop) and [start, start + duration) intersect. A per-channel `searchsorted` avoids a Cartesian merge, and it reproduced a brute-force merge on 9 channels exactly (47,116 pairs).
 
@@ -106,29 +94,9 @@ Environment: Python 3.9.6 with numpy 2.0.2, scipy 1.13.1, pandas 2.2.3, pyarrow 
 
 ## V. Experiments
 
-TABLE III. SINGLE METHODS (MAP@5; params chosen on A)
+Single methods (Appendix B), MAP@5 on fold B: popularity 0.2368, history 0.3067, ALS × air 0.2904, CBF × air 0.2987, PPR 0.3194, PPR × air 0.3256 (best; A 0.3411). Airing weighting helps most where the base score ignores frequency: CBF +0.074 on B (base CBF 0.2247), PPR +0.006. The fold-A pick matches the fold-B best-of-grid for every method except ALS × air.
 
-| method | A | B | B test |
-|---|---|---|---|
-| popularity | .2437 | .2368 | .2680 |
-| history | .3239 | .3067 | .3503 |
-| ALS × air | .3139 | .2904 | .3178 |
-| PPR | .3388 | .3194 | .3613 |
-| **PPR × air** | **.3411** | **.3256** | **.3687** |
-| CBF × air | .3132 | .2987 | .3340 |
-
-Airing weighting helps most where the base score ignores frequency: CBF +0.074 on B (base CBF 0.2247), PPR +0.006. The fold-A pick matches the fold-B best-of-grid for every method except ALS × air. The full table and grids are in Appendix B.
-
-TABLE IV. HYBRIDS AND RE-RANKERS (A: OOF; B: fit on A)
-
-| model | A | B | recall B |
-|---|---|---|---|
-| H1 history-first | .3340 | .3141 | .61 |
-| H2 RRF | .3444 | .3292 | .68 |
-| H3 HGB | .3732 | .3431 | .69 |
-| H3+ (+ exposure) | .3759 | .3538 | .69 |
-| CatBoost ×5 (s7) | .3774 | **.3542** | .69 |
-| blend (s8) | **.3783** | .3532 | .79 |
+Hybrids and re-rankers (Table C0), B cohort: H1 0.3141, H2 0.3292, H3 0.3431, H3+ 0.3538, CatBoost × 5 (s7) 0.3542, blend (s8) 0.3532; on A the blend is best (0.3783).
 
 Learned re-ranking is the largest step: H3 is +0.0175 over PPR × air on B, and H3+ adds +0.011. After H3+, every fold-A gain is ≤ 0.0025, several reverse on B, and each cell is a single fit. A larger candidate set raised recall by 0.10 but not B MAP@5. In the ablation (Table C2; Δ = ablated − full), only removing exposure costs clearly more than noise (Δ = −0.010 on B).
 
@@ -143,11 +111,11 @@ The users were drawn by stated rules (DESIGN D68–D69) from the 1,260 test user
 
 The heavy rule and the first light rule were fixed before any list was seen. The first light draw was degenerate: its single truth programme was its single history programme (*Friends*), so every personalised method scored AP 1.0. After seeing that, we added a second light rule (≥ 3 truth programmes in 21–30; 21 eligible) with its own seed-42 draw. Its result is reported below, and the first draw is in Appendix F.
 
-In the tables, R = re-watch (≥ 1 positive in 11–20), T = in the 21–30 truth, and f = filled by the shared fallback. Each method's fold-B MAP@5 was recomputed in the same run and matches Tables III–IV.
+In the tables, R = re-watch (≥ 1 positive in 11–20), T = in the 21–30 truth, and f = filled by the shared fallback. Each method's fold-B MAP@5 was recomputed in the same run and matches Appendices B–C.
 
 **Heavy viewer.** Train history (top 6): SpongeBob 103 positives, Fairly OddParents 28, Masha and the Bear 19, Alvinnn!!! 16, Факты (news) 14, Сегодня (news) 13. Truth: SpongeBob, Факты, Сегодня, Fairly OddParents, Alvinnn!!!.
 
-TABLE V. HEAVY VIEWER 3086774348345899441 (ids, schedule titles, categories: Appendix F)
+TABLE I. HEAVY VIEWER 3086774348345899441 (ids, schedule titles, categories: Appendix F)
 
 | method | AP | top-5 |
 |---|---|---|
@@ -160,7 +128,7 @@ TABLE V. HEAVY VIEWER 3086774348345899441 (ids, schedule titles, categories: App
 
 **Light viewer.** Train history: two films, *Volga-Volga* and *SWAT* (1 positive each). Truth: Факты, ТСН, Викна-Новости (news), and the series *Однажды в Одессе* and *Мамочки*.
 
-TABLE VI. LIGHT VIEWER 706288898823145641 (ids, schedule titles, categories: Appendix F)
+TABLE II. LIGHT VIEWER 706288898823145641 (ids, schedule titles, categories: Appendix F)
 
 | method | AP | top-5 |
 |---|---|---|
@@ -237,7 +205,21 @@ Claude Code 2.1.309 with the model Claude Opus 5.5 was used in session `d3e92eca
 
 ## XII. Discussion in my words
 
-*[placeholder — to be written by the author]*
+What surprised me. The simplest method went much further than I expected. Ranking a user's own past programmes by count gave MAP@5 0.307 on fold B. That beats ALS × air (0.290) and content × air (0.299), and it is 87% of the final blend (0.353). The reason is in the label: it counts airings, and people watch the same cartoons and news every day. One heavy viewer had 103 positive airings of SpongeBob alone. As a result, the recommendations are mostly repeats: 88% of the slots in s8 are programmes the user already watched, and for history and PPR × air the share is 92–95%. The models mostly learned to put familiar shows in the right order. Only a small part of their work is finding new ones.
+
+Why validation and Kaggle disagreed. On fold B the re-rankers differed by less than 0.0015. On Kaggle the spread was 0.033. I think the main cause is how the final model was fit, and fold B could not see this. Every fold-B model is fit on fold A only, so it never tests a model trained on several windows stacked together. On Kaggle, moving from s6 (HGB fit on B only, 0.413) to s7 (CatBoost fit on A and B stacked, 0.430) added 0.017, though the model also changed, so this pair is not clean. Switching counts to per-week values (s7 → s7b) added another 0.015, while fold B stayed flat. My explanation is that raw counts from windows of different length (5, 10 and 20 train weeks) are not comparable, and the per-week version makes them comparable. The collection gap in weeks 20–27 matters too: fold B's target falls mostly inside it, so fold B judged the models on weeks with far fewer views. Fold A, which is outside the gap, ordered the four submissions I could compare (s3, s6, s7, s8) the same way Kaggle did. Finally, the private score covers only about 630 users, so differences below 0.001 are noise.
+
+The most instructive mistake. The H3 re-ranker diverged at learning rate 0.1, and early stopping did not catch it. Nothing crashed. The model simply produced bad scores. The assistant noticed that training stopped after exactly 10 iterations and traced it to the divergence; I would have accepted the result without that check. The lesson for me: a training run that finishes without errors is not proof that it worked. I need to check the result against a simple baseline every time. The airing watched to 0.709 taught me something similar about the data. A user can watch 1,063 of 1,500 seconds and still get no credit, so small details of the label decide what the model learns.
+
+What I would choose for sweet.tv as a product manager. One gradient-boosted re-ranker (the s7b setup), not the blend. The blend scores 0.0007 higher on private, which is less than one user's list. In return it needs 2.3 times more candidates and 2.2 times more training rows. As a backup I would keep PPR × air: it needs no labels, runs in 24 seconds and reaches 93% of the final score. As for the repeats, for TV this is not necessarily bad. Viewing is a habit, and a list of your usual shows works like a reminder of what is on and when. But a viewer who only sees familiar titles gets nothing new, and my offline metric cannot tell whether the 12% of new slots help or annoy. I would show familiar shows and new ones separately and test both with real users before deciding.
+
+What I would do with one more week.
+
+1. Build a validation that matches the final setup: several folds outside the gap, with the model fit on stacked windows, as in the final fit.
+2. Fix the B38 bug on its own and measure its effect, without other changes mixed in.
+3. Repeat the main comparisons with several seeds and bootstrap over users, to see which differences are real.
+4. Add a metric for new programmes only, so discovery is measured separately from repeats.
+5. Try association rules on time-ordered viewing, for example the news watched right after a cartoon slot.
 
 ## References
 
@@ -257,7 +239,23 @@ Claude Code 2.1.309 with the model Claude Opus 5.5 was used in session `d3e92eca
 
 ## Appendix
 
-### A. Data traps (BUGLOG.md)
+### A. Data accounting and traps
+
+TABLE A0. DATA ACCOUNTING (logs/stats.log, logs/audit.log)
+
+| quantity | value |
+|---|---|
+| log rows / users / channels | 5,821,987 / 4,914 / 202 |
+| exact-duplicate log rows dropped | 17 |
+| schedule rows 11-20 / 21-30 / 31-42 | 1.07 M / 1.07 M / 1.30 M |
+| labelled (id ≠ 0): rows / airtime | 10.8–11.3% / 16.0–16.9% |
+| viewed seconds on labelled airings | 54.8% (11-20), 58.4% (21-30) |
+| (view, airing) pairs with overlap | 7,752,415 |
+| views matching no airing | 7.10% |
+| positive interactions 11-20 / 21-30 | 317,043 / 294,717 |
+| test users / cold (no positive) | 1,260 / 4 |
+
+TABLE A1. DATA TRAPS (BUGLOG.md)
 
 | # | trap | handling |
 |---|---|---|
@@ -293,6 +291,17 @@ Claude Code 2.1.309 with the model Claude Opus 5.5 was used in session `d3e92eca
 PPR by α on fold B (plain / × air): 0.3 0.3146 / 0.3229; 0.5 0.3182 / **0.3256**; 0.7 **0.3194** / 0.3179; 0.85 0.2986 / 0.2922. The full 150-point ALS grids per fold are in `logs/s4a_grid.csv`.
 
 ### C. Re-rankers, step 5 and ablation
+
+TABLE C0. HYBRIDS AND RE-RANKERS (A: OOF; B: fit on A)
+
+| model | A | B | recall B |
+|---|---|---|---|
+| H1 history-first | .3340 | .3141 | .61 |
+| H2 RRF | .3444 | .3292 | .68 |
+| H3 HGB | .3732 | .3431 | .69 |
+| H3+ (+ exposure) | .3759 | .3538 | .69 |
+| CatBoost ×5 (s7) | .3774 | **.3542** | .69 |
+| blend (s8) | **.3783** | .3532 | .79 |
 
 TABLE C1. STEP-5 CONFIGURATIONS (A: OOF; B: fit on A)
 
