@@ -19,7 +19,7 @@ from load import ART, load_sub
 from protocol import Split, channel_share, load_interactions, load_unlab, mapk, user_programme_stats, window_mask
 from s1_popularity import SUB_DIR, validate_submission, write_submission
 
-TRAIN_WEEKS = {"A": 5, "B": 10, "final": 20}
+TRAIN_WEEKS = {"A": 5, "B": 10, "final": 20, "C": 17}
 GROUPS = {
     "history": ["n_pos", "overlap_s", "last_week_ago", "share_pos"],
     "graph/ALS/content scores": ["ppr", "ppr_rank", "als", "als_rank", "cbf", "cbf_rank"],

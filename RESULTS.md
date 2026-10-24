@@ -479,3 +479,21 @@ No fold-A numbers for s7b/s9: they were not specified to be selected on A, and c
 | s9_blend_pw.csv | A+B stacked, 1,350,769 rows | 187,340 rows, 1,256 users | 1,048 | 5,539 / 687 / 30 / 7 / 14 / 3 / 20 | all True (in run + standalone) |
 
 List agreement on the 1,260 test users: s7 vs s7b 168 identical rows (mean 4.41 shared ids of 5); s8 vs s9 743 identical (4.83); s7b vs s9 338 identical (4.57).
+
+### s10 (fold C + recency; specified after the Kaggle scores, B42; not submitted)
+Command: `.venv/bin/python src/s10_blend_abc.py > logs/s10_blend_abc.log` (4,493 s wall). Config: s9 (D64) + fold C (D65) + recency features (D66); final fit on A+B+C stacked (D67).
+
+Fold C: cohort **4,454** users (1,211 test users); **4,402** of them (1,204 test) have ≥ 1 positive in the C train window; pool 3,275 programmes; 19,739 truth items. C's 3-week target gives fewer positives per user than B's 10 weeks, so its MAP@5 level is not comparable with B's; only compare within a column.
+
+| config | B cohort (fit A) | B test | C cohort (fit A+B) | C test |
+|---|---|---|---|---|
+| s9 config | 0.35415 | 0.39739 | 0.29470 | 0.31576 |
+| + recency | **0.35455** | 0.39616 | **0.29548** | **0.31711** |
+| Δ recency | +0.00040 | −0.00123 | +0.00078 | +0.00135 |
+
+The s9 row on B reproduces logs/s9_blend_pw.log exactly. Each cell is one fit (CatBoost 5 seeds + HGB seed 42), with no variance estimate. The recency deltas are the same size as the noise-level margins in B32.
+
+| file | final fit | final frame | distinct lists | slot sources (history / PPR / CBF / ALS / exposure / popularity / fallback) | checks |
+|---|---|---|---|---|---|
+| s10_blend_abc.csv | A+B+C stacked, 2,058,819 rows (660,856 / 689,913 / 708,050), label ÷5 / ÷10 / ÷3, + recency | 187,340 rows, 1,256 users | 1,031 | 5,643 / 603 / 19 / 3 / 12 / 0 / 20 | all True |
+List agreement on the 1,260 test users: s9 vs s10 232 identical rows (mean 4.46 shared ids of 5).

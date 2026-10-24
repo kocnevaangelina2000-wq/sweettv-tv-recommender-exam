@@ -25,7 +25,7 @@ from s1_popularity import SUB_DIR, validate_submission, write_submission
 
 TOP = 60
 TRAIN_WEEKS = P.TRAIN_WEEKS                       # A 5, B 10, final 20
-TARGET_WEEKS = {"A": 5, "B": 10, "final": 12}
+TARGET_WEEKS = {"A": 5, "B": 10, "final": 12, "C": 3}
 BAG_SEEDS = [42, 43, 44, 45, 46]
 CB_GRID = [(lr, d) for lr in [0.03, 0.1] for d in [4, 6, 8]]
 CB_ITERS = 500

@@ -5,6 +5,7 @@ applied to the airing (source file + ISO week of airing start; DESIGN D6, D29).
   A:     train 11-20 weeks <=15            -> target 11-20 weeks 16-20   (DESIGN D30)
   B:     train 11-20 (whole file)          -> target 21-30               (= step 2/3 validation, "val")
   final: train 11-20 + 21-30               -> target 31-42 (no truth)
+  C:     train 11-20 + 21-30 weeks 21-27   -> target 21-30 weeks 28-30   (DESIGN D65; specified after Kaggle scores)
 """
 import numpy as np
 import pandas as pd
@@ -18,6 +19,7 @@ SPLITS = {
     "A": {"train": [("11-20", 0, 15)], "target": [("11-20", 16, 20)], "train_end": "2020-04-13"},
     "B": {"train": [("11-20", *ALL)], "target": [("21-30", *ALL)], "train_end": "2020-05-18"},
     "final": {"train": [("11-20", *ALL), ("21-30", *ALL)], "target": [("31-42", *ALL)], "train_end": "2020-07-27"},
+    "C": {"train": [("11-20", *ALL), ("21-30", 21, 27)], "target": [("21-30", 28, 30)], "train_end": "2020-07-06"},
 }
 SPLITS["val"] = SPLITS["B"]
 
